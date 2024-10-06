@@ -7,35 +7,49 @@ app = FastAPI()
 class Pokemon(BaseModel):
     id: int
     identificador: str
-    id_especie: int
-    altura: int
-    peso: int
-    experiencia_base: int
-    orden: int
-    es_default: bool
+    _id_especie: int
+    _altura: int
+    _peso: int
+    _experiencia_base: int
+    _orden: int
+    _es_default: bool
+    imagen: str
+    tipo: str
 
 
+lista_nombres_tipos = []
+with open("type_names.csv") as nombres_tipos:
+    for linea in nombres_tipos:
+        linea = linea.rstrip("\n").split(",")
+        if linea[1] == "7":
+            lista_nombres_tipos.append(linea)
+lista_tipos = []
+with open("pokemon_types.csv") as tipos:
+    for linea in tipos:
+        linea = linea.rstrip("\n").split(",")
+        lista_tipos.append(linea)
 lista_pokemones = []
-contador = 0
 with open("pokemon.csv") as pokemones:
-    for linea in pokemones:
-        contador += 1
-        if contador == 1:
-            continue
-        linea = linea.rstrip("\n")
-        linea = linea.split(",")
+    for contador, linea in enumerate(pokemones):
+        linea = linea.rstrip("\n").split(",")
+        tipo_pokemon = None
+        for tipo in lista_tipos:
+            if tipo[0] == linea[0]:
+                tipo_id = tipo[1]
+                for nombre_tipo in lista_nombres_tipos:
+                    if tipo_id == nombre_tipo[0]:
+                        tipo_pokemon = nombre_tipo[2]
+                        break
+                break
 
-        pokemon = Pokemon(
-            id=linea[0],
-            identificador=linea[1],
-            id_especie=linea[2],
-            altura=linea[3],
-            peso=linea[4],
-            experiencia_base=linea[5],
-            orden=linea[6],
-            es_default=linea[7],
-        )
-        lista_pokemones.append(pokemon)
+        if tipo_pokemon:
+            pokemon = Pokemon(
+                id=int(linea[0]),
+                identificador=linea[1],
+                imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
+                tipo=tipo_pokemon,
+            )
+            lista_pokemones.append(pokemon)
 
 
 @app.get("/pokemons")
