@@ -16,14 +16,12 @@ class Pokemon(BaseModel):
 
 
 lista_pokemones = []
-contador = 0
 with open("pokemon.csv") as pokemones:
     for linea in pokemones:
-        contador += 1
-        if contador == 1:
-            continue
         linea = linea.rstrip("\n")
         linea = linea.split(",")
+        if linea[0] == "id":
+            continue
 
         pokemon = Pokemon(
             id=linea[0],
@@ -36,3 +34,4 @@ with open("pokemon.csv") as pokemones:
             es_default=linea[7],
         )
         lista_pokemones.append(pokemon)
+print(lista_pokemones)
