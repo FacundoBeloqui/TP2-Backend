@@ -4,15 +4,22 @@ from pydantic import BaseModel
 app = FastAPI()
 
 
+class Pokemon_basico(BaseModel):
+    id: int
+    identificador: str
+    imagen: str
+    tipo: str
+
+
 class Pokemon(BaseModel):
     id: int
     identificador: str
-    _id_especie: int
-    _altura: int
-    _peso: int
-    _experiencia_base: int
-    _orden: int
-    _es_default: bool
+    id_especie: int
+    altura: int
+    peso: int
+    experiencia_base: int
+    orden: int
+    es_default: bool
     imagen: str
     tipo: str
 
@@ -43,7 +50,7 @@ with open("pokemon.csv") as pokemones:
                 break
 
         if tipo_pokemon:
-            pokemon = Pokemon(
+            pokemon = Pokemon_basico(
                 id=int(linea[0]),
                 identificador=linea[1],
                 imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
