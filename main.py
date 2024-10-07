@@ -28,7 +28,6 @@ pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
     for linea in tipos:
         linea = linea.rstrip("\n").split(",")
-        pokemon_id = linea[0]
         nombre_del_tipo = tipo_nombres.get(linea[1], "")
         if nombre_del_tipo != "":
             if linea[0] not in pokemon_tipos:
@@ -60,3 +59,12 @@ with open("pokemon.csv") as pokemones:
 @app.get("/pokemons")
 def leer_pokemones():
     return lista_pokemones
+
+
+@app.delete("/pokemones/{id}")
+def eliminar_pokemon(id):
+    for pokemon in lista_pokemones:
+        if pokemon.id == int(id):
+            lista_pokemones.remove(pokemon)
+            return {"Mensaje": "Pokemon eliminado correctamente"}
+    raise HTTPException(status_code=404, detail="Pokemon no encontrado")
