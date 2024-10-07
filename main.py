@@ -60,4 +60,3 @@ with open("pokemon.csv") as pokemones:
 @app.get("/pokemons")
 def leer_pokemones():
     return lista_pokemones
-        lista_pokemones.append(pokemon)
