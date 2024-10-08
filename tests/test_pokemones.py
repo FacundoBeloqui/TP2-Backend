@@ -25,40 +25,28 @@ def test_leer_pokemones():
 
 
 def test_eliminar_pokemon_existente():
-    # Realiza una petición DELETE para eliminar un Pokémon existente
+    largo_lista_pokemones_original = len(lista_pokemones)
+    primer_pokemon = lista_pokemones[0]
     response = client.delete("/pokemones/1")
-
-    # Verifica que la respuesta tenga un código de estado 200
     assert response.status_code == 200
-    assert response.json() == {"Mensaje": "Pokémon eliminado correctamente"}
-
-    # Verifica que el Pokémon ha sido eliminado de la lista
-    assert len(lista_pokemones) == 1
-    assert lista_pokemones[0].id == 2  # Verifica que el Pokémon restante sea bulbasaur
+    assert response.json() == primer_pokemon.model_dump()
+    assert len(lista_pokemones) == largo_lista_pokemones_original - 1
+    assert lista_pokemones[0].id == 2
 
 
 def test_eliminar_pokemon_ya_eliminado():
-    # Intentar eliminar el mismo Pokémon que ya fue eliminado
-    response = client.delete("/pokemones/1")  # ID que ya no existe
-
-    # Verifica que la respuesta tenga un código de estado 404
+    response = client.delete("/pokemones/1")
     assert response.status_code == 404
-    assert response.json() == {"detail": "Pokémon no encontrado"}
+    assert response.json() == {"detail": "Pokemon no encontrado"}
 
 
 def test_eliminar_pokemon_no_existente():
-    # Realiza una petición DELETE para eliminar un Pokémon que no existe
-    response = client.delete("/pokemones/999")  # ID que no existe
-
-    # Verifica que la respuesta tenga un código de estado 404
+    response = client.delete("/pokemones/999")
     assert response.status_code == 404
-    assert response.json() == {"detail": "Pokémon no encontrado"}
+    assert response.json() == {"detail": "Pokemon no encontrado"}
 
 
 def test_eliminar_pokemon_id_invalido():
-    # Realiza una petición DELETE con un ID negativo
     response = client.delete("/pokemones/-1")
-
-    # Verifica que la respuesta tenga un código de estado 400
     assert response.status_code == 400
-    assert response.json() == {"detail": "ID debe ser un número positivo"}
+    assert response.json() == {"detail": "El id debe ser un numero entero"}
