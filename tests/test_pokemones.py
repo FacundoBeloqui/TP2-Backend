@@ -7,7 +7,7 @@ client = TestClient(app)
 
 def test_leer_pokemones():
     # Realiza una petición GET al endpoint /pokemons
-    response = client.get("/pokemons")
+    response = client.get("/pokemones")
 
     # Verifica que la respuesta tenga un código de estado 200
     assert response.status_code == 200
