@@ -1,5 +1,6 @@
 from fastapi.testclient import TestClient
-from main import app, lista_pokemones
+from main import app
+from db import lista_pokemones
 
 client = TestClient(app)
 
