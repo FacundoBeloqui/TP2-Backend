@@ -6,16 +6,12 @@ client = TestClient(app)
 
 
 def test_leer_pokemones():
-    # Realiza una petición GET al endpoint /pokemons
     response = client.get("/pokemones")
 
-    # Verifica que la respuesta tenga un código de estado 200
     assert response.status_code == 200
     content = response.json()
-    # Verifica que el contenido devuelto sea una lista
     assert isinstance(content, list)
 
-    # Verifica que los datos coincidan con lo que esperas
     if lista_pokemones:
         assert len(content) == len(lista_pokemones)
         primer_pokemon = content[0]
