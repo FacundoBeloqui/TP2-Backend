@@ -14,6 +14,18 @@ class Pokemon(BaseModel):
     tipo: list[str]
 
 
+class Movimiento(BaseModel):
+    id: int
+    nombre: str
+    tipo: int
+    poder: str
+    accuracy: str
+    pp: str
+    generacion: int
+    categoria: str
+    efecto: int
+
+
 tipo_nombres = {}
 with open("type_names.csv") as nombres_tipos:
     for linea in nombres_tipos:
@@ -52,3 +64,21 @@ with open("pokemon.csv") as pokemones:
             tipo=pokemon_tipos.get(linea[0], []),
         )
         lista_pokemones.append(pokemon)
+lista_movimientos = []
+with open("moves.csv") as movimientos:
+    for linea in movimientos:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "id":
+            continue
+        movimiento = Movimiento(
+            id=linea[0],
+            nombre=linea[1],
+            tipo=linea[3],
+            poder=linea[4],
+            accuracy=linea[6],
+            pp=linea[5],
+            generacion=linea[2],
+            categoria=linea[9],
+            efecto=linea[10],
+        )
+        lista_movimientos.append(movimiento)
