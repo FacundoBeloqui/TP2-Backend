@@ -111,4 +111,4 @@ with open("pokemon.csv") as pokemones:
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
         )
         lista_pokemones.append(pokemon)
-
+        

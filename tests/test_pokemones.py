@@ -49,8 +49,6 @@ def test_eliminar_pokemon_id_invalido():
     assert response.json() == {"detail": "El id debe ser un numero entero"}
 
 
-client = TestClient(app)
-
 def test_leer_pokemon():
     pokemon_id = 1 
     response = client.get(f"/pokemon/{pokemon_id}")

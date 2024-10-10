@@ -4,11 +4,18 @@ from db import lista_pokemones, Pokemon
 
 router = APIRouter()
 
-@router.get("/{pokemon_id}", response_model=Pokemon)
+@router.pp.get("/pokemon/{pokemon_id}", response_model=Pokemon)
 def leer_pokemon(pokemon_id: int):
-    for pokemon in lista_pokemones:
-        if pokemon.id == pokemon_id:
-            return pokemon
+    pokemon = None
+    for p in lista_pokemones:
+        if p.id == pokemon_id:
+            pokemon = p
+            break
+    
+    if pokemon is None:
+        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
+    
+    return pokemon
         
 @router.get("/")
 def leer_pokemones():
