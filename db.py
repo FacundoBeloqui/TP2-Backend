@@ -119,28 +119,39 @@ with open("pokemon_move_method_prose.csv") as metodos:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             dicc_metodos[linea[0]] = linea[2]
+movimientos_subida_nivel = {}
+movimientos_tm = {}
+movimientos_grupo_huevo = {}
+
 with open("pokemon_moves.csv") as movimientos_pokemon:
     for linea in movimientos_pokemon:
         linea = linea.rstrip("\n").split(",")
         pokemon_id = linea[0]
         metodo_id = linea[3]
+
         if metodo_id in dicc_metodos:
             metodo_nombre = dicc_metodos[metodo_id]
             if pokemon_id in pokemon_por_id:
+                pokemon_nombre = pokemon_por_id[pokemon_id]
+
                 if metodo_nombre.lower() == "nivel":
                     if linea[2] not in movimientos_subida_nivel:
                         movimientos_subida_nivel[linea[2]] = []
-                    movimientos_subida_nivel[linea[2]].append(
-                        pokemon_por_id[pokemon_id]
-                    )
+                    if pokemon_nombre not in movimientos_subida_nivel[linea[2]]:
+                        movimientos_subida_nivel[linea[2]].append(pokemon_nombre)
+
                 elif metodo_nombre.lower() == "máquina":
                     if linea[2] not in movimientos_tm:
                         movimientos_tm[linea[2]] = []
-                    movimientos_tm[linea[2]].append(pokemon_por_id[pokemon_id])
+                    if pokemon_nombre not in movimientos_tm[linea[2]]:
+                        movimientos_tm[linea[2]].append(pokemon_nombre)
+
                 elif metodo_nombre.lower() == "huevo":
                     if linea[2] not in movimientos_grupo_huevo:
                         movimientos_grupo_huevo[linea[2]] = []
-                    movimientos_grupo_huevo[linea[2]].append(pokemon_por_id[pokemon_id])
+                    if pokemon_nombre not in movimientos_grupo_huevo[linea[2]]:
+                        movimientos_grupo_huevo[linea[2]].append(pokemon_nombre)
+
 
 lista_movimientos = []
 with open("moves.csv") as movimientos:
