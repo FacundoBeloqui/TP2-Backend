@@ -11,16 +11,12 @@ class Pokemon(BaseModel):
     orden: int
     es_default: bool
     imagen: str
-    tipo: list[str]
-    estadisticas: dict
+    tipos: list[str]
+    estadisticas: dict[str, int]
     habilidades: list[str]
 
 
-lista_estadisticas = []
 dicc_stats = {}
-pokemon_habilidades = []
-pokemon_estadisticas = []
-
 with open("stats.csv") as f:
     for i, linea in enumerate(f):
         if i == 0:
@@ -78,6 +74,20 @@ with open("type_names.csv") as nombres_tipos:
         if linea[1] == "7":
             tipo_nombres[linea[0]] = linea[2]
 
+debilidades_tipos = {}
+with open("type_efficacy.csv") as efectividad_tipos:
+    for linea in efectividad_tipos:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "damage_type_id":
+            continue
+        efectividad = linea[2]
+        nombre_tipo_daño = tipo_nombres[linea[1]]
+        nombre_tipo_target = tipo_nombres[linea[0]]
+        if nombre_tipo_daño not in debilidades_tipos:
+            debilidades_tipos[nombre_tipo_daño] = {}
+        debilidades_tipos[nombre_tipo_daño][nombre_tipo_target] = efectividad
+
+
 pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
     for linea in tipos:
@@ -106,10 +116,8 @@ with open("pokemon.csv") as pokemones:
             orden=linea[6],
             es_default=linea[7],
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
-            tipo=pokemon_tipos.get(linea[0], []),
+            tipos=pokemon_tipos.get(linea[0], []),
             estadisticas=dicc_pokemon_stats.get(linea[0], ""),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
         )
         lista_pokemones.append(pokemon)
-
-print(lista_pokemones[1])
