@@ -1,9 +1,4 @@
 from fastapi import HTTPException, APIRouter
-import sys
-import os
-
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
-
 from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon
 
 
