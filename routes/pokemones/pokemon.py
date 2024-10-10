@@ -4,6 +4,8 @@ from db import lista_pokemones, pokemon_tipos, debilidades_tipos, Pokemon
 
 router = APIRouter()
 
+print(pokemon_tipos, debilidades_tipos)
+
 
 def calcular_debilidades(pokemon_id):
     debilidades_totales = {}
@@ -15,12 +17,20 @@ def calcular_debilidades(pokemon_id):
     return debilidades_totales
 
 
+@router.get("/{id}")
+def get_pokemon_id(id: int):
+    for pokemon in lista_pokemones:
+        if pokemon.id == id:
+            return {
+                "pokemon": pokemon,
+                "debilidades": calcular_debilidades(pokemon.id),
+            }
+    raise HTTPException(status_code=404, detail="Pokémon no encontrado")
+
+
 @router.get("/")
 def leer_pokemones():
-    lista = []
-    for pokemon in lista_pokemones:
-        lista += pokemon + calcular_debilidades(pokemon.id) + ","
-    return lista
+    return lista_pokemones
 
 
 @router.delete("/{id}")
