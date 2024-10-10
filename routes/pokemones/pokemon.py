@@ -1,20 +1,33 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_pokemones, pokemon_tipos, debilidades_tipos, Pokemon
+import sys
+import os
+
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "../../")))
+
+from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon
 
 
 router = APIRouter()
 
-print(pokemon_tipos, debilidades_tipos)
 
-
-def calcular_debilidades(pokemon_id):
+def calcular_debilidades(pokemon):
     debilidades_totales = {}
-    for tipo in pokemon_tipos.get(pokemon_id, []):
-        for debilidad, efect in debilidades_tipos[tipo].items():
+    for tipo in pokemon.tipos:
+        for debilidad, efect in debilidades_tipos.get(tipo, {}).items():
             if debilidad not in debilidades_totales:
                 debilidades_totales[debilidad] = 1
             debilidades_totales[debilidad] *= int(efect) / 100
     return debilidades_totales
+
+
+def calcular_fortalezas(pokemon):
+    fortalezas_totales = {}
+    for tipo in pokemon.tipos:
+        for fortaleza, efect in fortalezas_tipos.get(tipo, {}).items():
+            if fortaleza not in fortalezas_totales:
+                fortalezas_totales[fortaleza] = 1
+            fortalezas_totales[fortaleza] *= int(efect) / 100
+    return fortalezas_totales
 
 
 @router.get("/{id}")
@@ -23,7 +36,8 @@ def get_pokemon_id(id: int):
         if pokemon.id == id:
             return {
                 "pokemon": pokemon,
-                "debilidades": calcular_debilidades(pokemon.id),
+                "debilidades": calcular_debilidades(pokemon),
+                "fortalezas": calcular_fortalezas(pokemon),
             }
     raise HTTPException(status_code=404, detail="Pokémon no encontrado")
 

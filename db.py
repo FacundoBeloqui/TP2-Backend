@@ -75,6 +75,7 @@ with open("type_names.csv") as nombres_tipos:
             tipo_nombres[linea[0]] = linea[2]
 
 debilidades_tipos = {}
+fortalezas_tipos = {}
 with open("type_efficacy.csv") as efectividad_tipos:
     for linea in efectividad_tipos:
         linea = linea.rstrip("\n").split(",")
@@ -86,6 +87,9 @@ with open("type_efficacy.csv") as efectividad_tipos:
         if nombre_tipo_daño not in debilidades_tipos:
             debilidades_tipos[nombre_tipo_daño] = {}
         debilidades_tipos[nombre_tipo_daño][nombre_tipo_target] = efectividad
+        if nombre_tipo_target not in fortalezas_tipos:
+            fortalezas_tipos[nombre_tipo_target] = {}
+        fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
 
 
 pokemon_tipos = {}
