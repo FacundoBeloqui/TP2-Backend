@@ -51,7 +51,7 @@ def test_eliminar_pokemon_id_invalido():
 
 def test_leer_pokemon():
     pokemon_id = 1 
-    response = client.get(f"/pokemon/{pokemon_id}")
+    response = client.get("/pokemon/1")
 
     assert response.status_code == 200
 
@@ -70,7 +70,7 @@ def test_leer_pokemon():
 
 def test_leer_pokemon_no_existente():
     pokemon_id = 9999  
-    response = client.get(f"/pokemon/{pokemon_id}")
+    response = client.get("/pokemon/-1")
     
     assert response.status_code == 404
     assert response.json() == {"detail": "Pokémon no encontrado"}
