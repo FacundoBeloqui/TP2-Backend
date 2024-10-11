@@ -14,6 +14,8 @@ class Pokemon(BaseModel):
     imagen: str
     tipo: list[str]
     grupo_de_huevo: str
+    estadisticas: dict
+    habilidades: list[str]
 
 
 class Movimiento(BaseModel):
@@ -39,6 +41,59 @@ with open("pokemon.csv") as archivo_pokemon:
             continue
         pokemon_por_id[linea[0]] = linea[1]
 
+lista_estadisticas = []
+dicc_stats = {}
+pokemon_habilidades = []
+pokemon_estadisticas = []
+
+with open("stats.csv") as f:
+    for i, linea in enumerate(f):
+        if i == 0:
+            continue
+        linea = linea.rstrip("\n").split(",")
+        id_stat = int(linea[0])
+        nombre_stat = linea[2]
+        if id_stat in dicc_stats:
+            dicc_stats[id_stat].append(dicc_stats)
+        else:
+            dicc_stats[id_stat] = nombre_stat
+
+dicc_pokemon_stats = {}
+with open("pokemon_stats.csv") as pokemon_stats:
+    for i, linea in enumerate(pokemon_stats):
+        lista_habilidades = []
+        if i == 0:
+            continue
+        linea = linea.rstrip("\n").split(",")
+        pokemon_id = linea[0]
+        stat_id = int(linea[1])
+        base_stat = int(linea[2])
+        stat_nombre = dicc_stats[stat_id]
+        if pokemon_id not in dicc_pokemon_stats:
+            dicc_pokemon_stats[pokemon_id] = {}
+        dicc_pokemon_stats[pokemon_id][stat_nombre] = base_stat
+
+nombres_habilidades = {}
+with open("ability_names.csv") as ability_names:
+    for i, linea in enumerate(ability_names):
+        if i == 0:
+            continue
+        linea = linea.rstrip("\n").split(",")
+        if linea[1] == "7":
+            nombres_habilidades[linea[0]] = linea[2]
+
+
+habilidades_de_cada_pokemon = {}
+with open("pokemon_abilities.csv") as pokemon_abilities:
+    for i, linea in enumerate(pokemon_abilities):
+        if i == 0:
+            continue
+        linea = linea.rstrip("\n").split(",")
+        id_pokemon = linea[0]
+        nombre_del_movimiento = nombres_habilidades.get(linea[1])
+        if id_pokemon not in habilidades_de_cada_pokemon:
+            habilidades_de_cada_pokemon[id_pokemon] = []
+        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
 
 tipo_nombres = {}
 with open("type_names.csv") as nombres_tipos:
@@ -91,6 +146,8 @@ with open("pokemon.csv") as pokemones:
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             tipo=pokemon_tipos.get(linea[0], []),
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
+            estadisticas=dicc_pokemon_stats.get(linea[0], {}),
+            habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
         )
         lista_pokemones.append(pokemon)
 
@@ -119,9 +176,6 @@ with open("pokemon_move_method_prose.csv") as metodos:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             dicc_metodos[linea[0]] = linea[2]
-movimientos_subida_nivel = {}
-movimientos_tm = {}
-movimientos_grupo_huevo = {}
 
 with open("pokemon_moves.csv") as movimientos_pokemon:
     for linea in movimientos_pokemon:
