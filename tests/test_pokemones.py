@@ -47,3 +47,30 @@ def test_eliminar_pokemon_id_invalido():
     response = client.delete("/pokemones/-1")
     assert response.status_code == 400
     assert response.json() == {"detail": "El id debe ser un numero entero"}
+
+
+def test_leer_pokemon():
+    pokemon_id = 1 
+    response = client.get("/pokemon/1")
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "id" in data
+    assert "identificador" in data
+    assert "altura" in data
+    assert "peso" in data
+    assert "experiencia_base" in data
+    assert "imagen" in data
+    assert "tipos" in data
+    assert "habilidades" in data
+    assert "estadisticas" in data
+
+    assert data["id"] == pokemon_id 
+
+def test_leer_pokemon_no_existente():
+    pokemon_id = 9999  
+    response = client.get("/pokemon/-1")
+    
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Pokémon no encontrado"}
