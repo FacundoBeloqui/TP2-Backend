@@ -4,7 +4,7 @@ from db import lista_pokemones, Pokemon
 
 router = APIRouter()
 
-@router.get("/pokemon/{pokemon_id}", response_model=Pokemon)
+@router.get("/{pokemon_id}", response_model=Pokemon)
 def leer_pokemon(pokemon_id: int):
     pokemon = None
     for p in lista_pokemones:
