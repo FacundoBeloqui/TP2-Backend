@@ -6,16 +6,12 @@ client = TestClient(app)
 
 
 def test_leer_pokemones():
-    # Realiza una petición GET al endpoint /pokemons
     response = client.get("/pokemones")
 
-    # Verifica que la respuesta tenga un código de estado 200
     assert response.status_code == 200
     content = response.json()
-    # Verifica que el contenido devuelto sea una lista
     assert isinstance(content, list)
 
-    # Verifica que los datos coincidan con lo que esperas
     if lista_pokemones:
         assert len(content) == len(lista_pokemones)
         primer_pokemon = content[0]
@@ -51,3 +47,30 @@ def test_eliminar_pokemon_id_invalido():
     response = client.delete("/pokemones/-1")
     assert response.status_code == 400
     assert response.json() == {"detail": "El id debe ser un numero entero"}
+
+
+def test_leer_pokemon():
+    pokemon_id = 1 
+    response = client.get("/pokemon/1")
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "id" in data
+    assert "identificador" in data
+    assert "altura" in data
+    assert "peso" in data
+    assert "experiencia_base" in data
+    assert "imagen" in data
+    assert "tipos" in data
+    assert "habilidades" in data
+    assert "estadisticas" in data
+
+    assert data["id"] == pokemon_id 
+
+def test_leer_pokemon_no_existente():
+    pokemon_id = 9999  
+    response = client.get("/pokemon/-1")
+    
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Pokémon no encontrado"}
