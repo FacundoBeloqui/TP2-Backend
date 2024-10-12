@@ -34,12 +34,6 @@ class Movimiento(BaseModel):
     pokemones_grupo_huevo: List[str]
 
 
-class Team(BaseModel):
-    id: int
-    nombre: str
-    pokemones_incluidos: list[Pokemon]
-
-
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
