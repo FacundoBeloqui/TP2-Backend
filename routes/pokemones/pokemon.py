@@ -29,17 +29,25 @@ def calcular_fortalezas(pokemon):
 def get_pokemon_id(id: int):
     for pokemon in lista_pokemones:
         if pokemon.id == id:
-            return {
-                "pokemon": pokemon,
-                "debilidades": calcular_debilidades(pokemon),
-                "fortalezas": calcular_fortalezas(pokemon),
-            }
+           
     raise HTTPException(status_code=404, detail="Pokémon no encontrado")
 
 
 @router.get("/")
 def leer_pokemones():
     return lista_pokemones
+
+
+@router.get("/{pokemon_id}", response_model=Pokemon)
+def leer_pokemon(pokemon_id: int):
+    for p in lista_pokemones:
+        if p.id == pokemon_id:
+            return {
+                "pokemon": p,
+                "debilidades": calcular_debilidades(p),
+                "fortalezas": calcular_fortalezas(p),
+            }
+    raise HTTPException(status_code=404, detail="Pokémon no encontrado")
 
 
 @router.delete("/{id}")
