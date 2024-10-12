@@ -33,6 +33,7 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
+
 class Team(BaseModel):
     id: int
     nombre: str
@@ -99,11 +100,10 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
         nombre_del_movimiento = nombres_habilidades.get(linea[1])
         if id_pokemon not in habilidades_de_cada_pokemon:
             habilidades_de_cada_pokemon[id_pokemon] = []
-<<<<<<< HEAD
+
         habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
-=======
-        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)    generaciones: list
->>>>>>> Parte_1
+
+        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
 
 
 tipo_nombres = {}
@@ -113,7 +113,6 @@ with open("type_names.csv") as nombres_tipos:
         if linea[1] == "7":
             tipo_nombres[linea[0]] = linea[2]
 
-<<<<<<< HEAD
 debilidades_tipos = {}
 fortalezas_tipos = {}
 with open("type_efficacy.csv") as efectividad_tipos:
@@ -131,8 +130,6 @@ with open("type_efficacy.csv") as efectividad_tipos:
             fortalezas_tipos[nombre_tipo_target] = {}
         fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
 
-=======
->>>>>>> Parte_1
 
 pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
@@ -181,7 +178,6 @@ with open("pokemon.csv") as pokemones:
         pokemon = Pokemon(
             id=int(linea[0]),
             identificador=linea[1],
-<<<<<<< HEAD
             id_especie=linea[2],
             altura=linea[3],
             peso=linea[4],
@@ -191,7 +187,6 @@ with open("pokemon.csv") as pokemones:
             tipo=pokemon_tipos.get(linea[0], []),
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             estadisticas=dicc_pokemon_stats.get(linea[0], ""),
-=======
             id_especie=int(linea[2]),
             altura=int(linea[3]),
             peso=int(linea[4]),
@@ -202,7 +197,6 @@ with open("pokemon.csv") as pokemones:
             tipo=pokemon_tipos.get(linea[0], []),
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
             estadisticas=dicc_pokemon_stats.get(linea[0], {}),
->>>>>>> Parte_1
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
             generaciones=generaciones_pokemon.get(linea[0], ""),
         )
