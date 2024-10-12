@@ -25,14 +25,6 @@ def calcular_fortalezas(pokemon):
     return fortalezas_totales
 
 
-@router.get("/{id}")
-def get_pokemon_id(id: int):
-    for pokemon in lista_pokemones:
-        if pokemon.id == id:
-           
-    raise HTTPException(status_code=404, detail="Pokémon no encontrado")
-
-
 @router.get("/")
 def leer_pokemones():
     return lista_pokemones
