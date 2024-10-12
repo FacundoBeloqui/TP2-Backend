@@ -11,9 +11,16 @@ class Pokemon(BaseModel):
     orden: int
     es_default: bool
     imagen: str
-    tipos: list[str]
+    tipo: list[str]
     estadisticas: dict[str, int]
     habilidades: list[str]
+    generaciones: list
+
+
+class Team(BaseModel):
+    id: int
+    nombre: str
+    pokemones_incluidos: list[Pokemon]
 
 
 dicc_stats = {}
@@ -103,6 +110,19 @@ with open("pokemon_types.csv") as tipos:
                 pokemon_tipos[pokemon_id] = []
             pokemon_tipos[pokemon_id].append(nombre_del_tipo)
 
+generaciones_pokemon = {}
+with open("pokemon_form_generations.csv") as generaciones_csv:
+    for linea in generaciones_csv:
+        linea = linea.rstrip("\n").split(",")
+        pokemon_id = linea[0]
+        generacion = linea[1]
+        if pokemon_id == "pokemon_form_id":
+            continue
+        if pokemon_id not in generaciones_pokemon:
+            generaciones_pokemon[pokemon_id] = []
+        generaciones_pokemon[pokemon_id].append(int(generacion))
+
+
 lista_pokemones = []
 with open("pokemon.csv") as pokemones:
     for linea in pokemones:
@@ -119,9 +139,11 @@ with open("pokemon.csv") as pokemones:
             experiencia_base=linea[5],
             orden=linea[6],
             es_default=linea[7],
+            tipo=pokemon_tipos.get(linea[0], [])
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
-            tipos=pokemon_tipos.get(linea[0], []),
             estadisticas=dicc_pokemon_stats.get(linea[0], ""),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
+            ,
+            generaciones=generaciones_pokemon.get(linea[0], ""),
         )
         lista_pokemones.append(pokemon)
