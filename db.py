@@ -32,6 +32,11 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
+class Team(BaseModel):
+    id: int
+    nombre: str
+    pokemones_incluidos: list[Pokemon]
+
 
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
@@ -94,12 +99,6 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
         if id_pokemon not in habilidades_de_cada_pokemon:
             habilidades_de_cada_pokemon[id_pokemon] = []
         habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)    generaciones: list
-
-
-class Team(BaseModel):
-    id: int
-    nombre: str
-    pokemones_incluidos: list[Pokemon]
 
 
 tipo_nombres = {}
