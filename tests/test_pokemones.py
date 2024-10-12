@@ -50,8 +50,8 @@ def test_eliminar_pokemon_id_invalido():
 
 
 def test_leer_pokemon():
-    pokemon_id = 1 
-    response = client.get("/pokemon/1")
+    pokemon_id = 1
+    response = client.get("/pokemones/1")
 
     assert response.status_code == 200
 
@@ -66,11 +66,12 @@ def test_leer_pokemon():
     assert "habilidades" in data
     assert "estadisticas" in data
 
-    assert data["id"] == pokemon_id 
+    assert data["id"] == pokemon_id
+
 
 def test_leer_pokemon_no_existente():
-    pokemon_id = 9999  
-    response = client.get("/pokemon/-1")
-    
+    pokemon_id = 9999
+    response = client.get(f"/pokemones/{pokemon_id}")
+
     assert response.status_code == 404
     assert response.json() == {"detail": "Pokémon no encontrado"}
