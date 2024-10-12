@@ -13,15 +13,10 @@ class Pokemon(BaseModel):
     es_default: bool
     imagen: str
     tipo: list[str]
-<<<<<<< HEAD
-    estadisticas: dict[str, int]
-    habilidades: list[str]
     generaciones: list
-=======
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
->>>>>>> Parte_1
 
 
 class Movimiento(BaseModel):
@@ -44,9 +39,6 @@ class Team(BaseModel):
     pokemones_incluidos: list[Pokemon]
 
 
-<<<<<<< HEAD
-dicc_stats = {}
-=======
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
@@ -60,7 +52,6 @@ dicc_stats = {}
 pokemon_habilidades = []
 pokemon_estadisticas = []
 
->>>>>>> Parte_1
 with open("stats.csv") as f:
     for i, linea in enumerate(f):
         if i == 0:
