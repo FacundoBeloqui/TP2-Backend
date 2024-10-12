@@ -11,6 +11,9 @@ class Pokemon(BaseModel):
     experiencia_base: int
     imagen: str
     tipo: list[str]
+    grupo_de_huevo: str
+    estadisticas: dict
+    habilidades: list[str]
 
 class PokemonCreate(BaseModel):
     identificador: str

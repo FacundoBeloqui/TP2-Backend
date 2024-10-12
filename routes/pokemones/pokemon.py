@@ -44,7 +44,10 @@ def create_pokemon(pokemon: PokemonCreate):
         peso=pokemon.peso,
         experiencia_base=pokemon.experiencia_base,
         imagen=pokemon.imagen,
-        tipo=pokemon.tipo
+        tipo=pokemon.tipo,
+        grupo_de_huevo=pokemon.grupo_de_huevo,
+        estadisticas=pokemon.estadisticas,
+        habilidades=pokemon.habilidades
     )
     lista_pokemones.append(nuevo_pokemon)
     return nuevo_pokemon
