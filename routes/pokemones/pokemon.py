@@ -57,5 +57,9 @@ def eliminar_pokemon(id):
     for pokemon in lista_pokemones:
         if pokemon.id == int(id):
             lista_pokemones.remove(pokemon)
-            return pokemon
+            return {
+                "pokemon": pokemon,
+                "debilidades": calcular_debilidades(pokemon),
+                "fortalezas": calcular_fortalezas(pokemon),
+            }
     raise HTTPException(status_code=404, detail="Pokemon no encontrado")
