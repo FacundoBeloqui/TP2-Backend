@@ -7,7 +7,7 @@ router = APIRouter()
 
 def calcular_debilidades(pokemon):
     debilidades_totales = {}
-    for tipo in pokemon.tipos:
+    for tipo in pokemon.tipo:
         for debilidad, efect in debilidades_tipos.get(tipo, {}).items():
             if debilidad not in debilidades_totales:
                 debilidades_totales[debilidad] = 1
@@ -17,7 +17,7 @@ def calcular_debilidades(pokemon):
 
 def calcular_fortalezas(pokemon):
     fortalezas_totales = {}
-    for tipo in pokemon.tipos:
+    for tipo in pokemon.tipo:
         for fortaleza, efect in fortalezas_tipos.get(tipo, {}).items():
             if fortaleza not in fortalezas_totales:
                 fortalezas_totales[fortaleza] = 1
@@ -30,16 +30,24 @@ def leer_pokemones():
     return lista_pokemones
 
 
-@router.get("/{pokemon_id}", response_model=Pokemon)
+@router.get("/{pokemon_id}")
 def leer_pokemon(pokemon_id: int):
+    pokemon = None
     for p in lista_pokemones:
         if p.id == pokemon_id:
-            return {
-                "pokemon": p,
-                "debilidades": calcular_debilidades(p),
-                "fortalezas": calcular_fortalezas(p),
-            }
-    raise HTTPException(status_code=404, detail="Pokémon no encontrado")
+            pokemon = p
+            debilidades = calcular_debilidades(pokemon)
+            fortalezas = calcular_fortalezas(pokemon)
+            break
+
+    if pokemon is None:
+        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
+
+    return {
+        "pokemon": pokemon,
+        "debilidades": debilidades,
+        "fortalezas": fortalezas,
+    }
 
 
 @router.delete("/{id}")

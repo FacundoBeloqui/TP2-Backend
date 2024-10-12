@@ -123,9 +123,11 @@ with open("type_efficacy.csv") as efectividad_tipos:
         efectividad = linea[2]
         nombre_tipo_daño = tipo_nombres[linea[1]]
         nombre_tipo_target = tipo_nombres[linea[0]]
+
         if nombre_tipo_daño not in debilidades_tipos:
             debilidades_tipos[nombre_tipo_daño] = {}
         debilidades_tipos[nombre_tipo_daño][nombre_tipo_target] = efectividad
+
         if nombre_tipo_target not in fortalezas_tipos:
             fortalezas_tipos[nombre_tipo_target] = {}
         fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
