@@ -8,8 +8,6 @@ class Pokemon(BaseModel):
     altura: int
     peso: int
     experiencia_base: int
-    orden: int
-    es_default: bool
     imagen: str
     tipo: list[str]
 
@@ -56,8 +54,6 @@ with open("pokemon.csv") as pokemones:
             altura=linea[3],
             peso=linea[4],
             experiencia_base=linea[5],
-            orden=linea[6],
-            es_default=linea[7],
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             tipo=pokemon_tipos.get(linea[0], []),
         )
