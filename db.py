@@ -139,11 +139,10 @@ with open("pokemon.csv") as pokemones:
             experiencia_base=linea[5],
             orden=linea[6],
             es_default=linea[7],
-            tipo=pokemon_tipos.get(linea[0], [])
+            tipo=pokemon_tipos.get(linea[0], []),
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             estadisticas=dicc_pokemon_stats.get(linea[0], ""),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
-            ,
             generaciones=generaciones_pokemon.get(linea[0], ""),
         )
         lista_pokemones.append(pokemon)
