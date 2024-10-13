@@ -22,6 +22,7 @@ class PokemonCreate(BaseModel):
     experiencia_base: int
     imagen: str
     tipo: list[str]
+    generaciones: list
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
@@ -102,7 +103,11 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
         nombre_del_movimiento = nombres_habilidades.get(linea[1])
         if id_pokemon not in habilidades_de_cada_pokemon:
             habilidades_de_cada_pokemon[id_pokemon] = []
+
         habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
+
+        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
+
 
 tipo_nombres = {}
 pokemon_tipos = {}
@@ -114,6 +119,25 @@ with open("type_names.csv") as nombres_tipos:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             tipo_nombres[linea[0]] = linea[2]
+
+debilidades_tipos = {}
+fortalezas_tipos = {}
+with open("type_efficacy.csv") as efectividad_tipos:
+    for linea in efectividad_tipos:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "damage_type_id":
+            continue
+        efectividad = linea[2]
+        nombre_tipo_daño = tipo_nombres[linea[1]]
+        nombre_tipo_target = tipo_nombres[linea[0]]
+
+        if nombre_tipo_daño not in debilidades_tipos:
+            debilidades_tipos[nombre_tipo_daño] = {}
+        debilidades_tipos[nombre_tipo_daño][nombre_tipo_target] = efectividad
+
+        if nombre_tipo_target not in fortalezas_tipos:
+            fortalezas_tipos[nombre_tipo_target] = {}
+        fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
 
 pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
@@ -140,6 +164,19 @@ with open("egg_group_prose.csv") as nombres_huevo:
             huevos_nombres[linea[0]] = linea[2]
 
 
+generaciones_pokemon = {}
+with open("pokemon_form_generations.csv") as generaciones_csv:
+    for linea in generaciones_csv:
+        linea = linea.rstrip("\n").split(",")
+        pokemon_id = linea[0]
+        generacion = linea[1]
+        if pokemon_id == "pokemon_form_id":
+            continue
+        if pokemon_id not in generaciones_pokemon:
+            generaciones_pokemon[pokemon_id] = []
+        generaciones_pokemon[pokemon_id].append(int(generacion))
+
+
 lista_pokemones = []
 with open("pokemon.csv") as pokemones:
     for linea in pokemones:
@@ -149,15 +186,16 @@ with open("pokemon.csv") as pokemones:
         pokemon = Pokemon(
             id=int(linea[0]),
             identificador=linea[1],
-            id_especie=int(linea[2]),
-            altura=int(linea[3]),
-            peso=int(linea[4]),
-            experiencia_base=int(linea[5]),
-            imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
+            id_especie=linea[2],
+            altura=linea[3],
+            peso=linea[4],
+            experiencia_base=linea[5],
             tipo=pokemon_tipos.get(linea[0], []),
+            imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
             estadisticas=dicc_pokemon_stats.get(linea[0], {}),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
+            generaciones=generaciones_pokemon.get(linea[0], ""),
         )
         lista_pokemones.append(pokemon)
 

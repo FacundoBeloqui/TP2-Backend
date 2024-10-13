@@ -50,7 +50,7 @@ def test_eliminar_pokemon_id_invalido():
 
     
 def test_create_pokemon():
-    data = {"identificador": "Test", "altura": 25, "peso": 19, "experiencia_base": 250, "imagen": "http://youtube.com", "tipo": ["Humo", "Saltar"]}
+    data = {"identificador": "Test", "altura": 25, "peso": 19, "experiencia_base": 250, "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/numero_id.png", "tipo": ["Humo", "Saltar"]}
     response = client.post("/pokemones", json=data)
     assert response.status_code == 201
     content = response.json()
@@ -59,7 +59,7 @@ def test_create_pokemon():
     assert content["altura"] == 25
     assert content["peso"] == 19
     assert content["experiencia_base"] == 250
-    assert content["imagen"] == "http://youtube.com"
+    assert content["imagen"] == "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/numero_id.png"
     assert content["tipo"] == ["Humo", "Saltar"]
     assert "id" in content
     assert "id_especie" in content
