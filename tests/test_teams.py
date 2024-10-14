@@ -6,7 +6,7 @@ client = TestClient(app)
 
 
 def test_leer_naturalezas():
-    response = client.get("/equipos")
+    response = client.get("/teams")
 
     assert response.status_code == 200
     content = response.json()
