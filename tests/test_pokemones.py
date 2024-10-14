@@ -55,13 +55,11 @@ def test_eliminar_pokemon_id_invalido():
 
 
 def test_leer_pokemon_existente():
-    # Asumiendo que hay un Pokémon con id=1 en lista_pokemones
     response = client.get("/pokemones/1")
-
     assert response.status_code == 200
-    pokemon = lista_pokemones[0]  # Cambia esto según el Pokémon que esperas
+    pokemon = lista_pokemones[0]
     assert response.json() == {
-        "pokemon": pokemon.model_dump(),  # Asegúrate de que esta función exista
+        "pokemon": pokemon.model_dump(),
         "debilidades": calcular_debilidades(pokemon),
         "fortalezas": calcular_fortalezas(pokemon),
     }

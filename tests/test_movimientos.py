@@ -34,18 +34,18 @@ def test_leer_movimientos_vacio():
 
 def test_leer_movimiento_por_id():
     movimiento_id = lista_movimientos[0].id
-    response = client.get(f"/movimiento/{movimiento_id}")
+    response = client.get(f"/movimientos/{movimiento_id}")
     assert response.status_code == 200
     assert response.json()["id"] == movimiento_id
 
 
 def test_leer_movimiento_invalido():
-    response = client.get("/movimiento/99999")
+    response = client.get("/movimientos/99999")
     assert response.status_code == 404
 
 
 def test_leer_movimiento_id_invalido():
-    response = client.get("/movimiento/abc")
+    response = client.get("/movimientos/abc")
     assert response.status_code == 422
 
 
