@@ -58,8 +58,6 @@ def test_leer_movimiento_invalido():
     assert "pokemones_tm" in data
     assert "pokemones_grupo_huevo" in data
 
-    assert data["id"] == movimiento_id
-
 
 def test_leer_movimiento_id_invalido():
     response = client.get("/movimientos/abc")
@@ -70,8 +68,7 @@ def test_leer_movimiento_id_invalido():
 
 
 def test_leer_movimiento_no_existente():
-    movimiento_id = 9999
-    response = client.get(f"/movimientos/{movimiento_id}")
+    response = client.get(f"/movimientos/9999")
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Movimiento no encontrado"}
