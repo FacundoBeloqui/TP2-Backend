@@ -300,7 +300,7 @@ with open("moves.csv") as movimientos:
                 efecto=dicc_efectos[linea[10]],
                 pokemones_subida_nivel=movimientos_subida_nivel.get(linea[0], []),
                 pokemones_tm=movimientos_tm.get(linea[0], []),
-                pokemones_grupo_huevo=movimientos_grupo_huevo.get(int(linea[0]), []),
+                pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
 naturalezas_nombres = {}
@@ -335,3 +335,4 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
+print(lista_movimientos[20])
