@@ -21,6 +21,29 @@ def test_leer_pokemones():
         assert primer_pokemon["tipo"] == lista_pokemones[0].tipo
 
 
+def test_leer_pokemon_id():
+    pokemon_id = 1
+    response = client.get(f"/pokemones/{pokemon_id}")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "id" in data
+    assert "identificador" in data
+    assert "id_especie" in data
+    assert "altura" in data
+    assert "peso" in data
+    assert "experiencia_base" in data
+    assert "orden" in data
+    assert "es_default" in data
+    assert "imagen" in data
+    assert "tipo" in data
+    assert "grupo_de_huevo" in data
+
+    assert data["id"] == pokemon_id
+
+
 def test_eliminar_pokemon_existente():
     largo_lista_pokemones_original = len(lista_pokemones)
     primer_pokemon = lista_pokemones[0]
