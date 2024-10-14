@@ -21,6 +21,29 @@ def test_leer_pokemones():
         assert primer_pokemon["tipo"] == lista_pokemones[0].tipo
 
 
+def test_leer_pokemon_id():
+    pokemon_id = 1
+    response = client.get(f"/pokemones/{pokemon_id}")
+
+    assert response.status_code == 200
+
+    data = response.json()
+
+    assert "id" in data
+    assert "identificador" in data
+    assert "id_especie" in data
+    assert "altura" in data
+    assert "peso" in data
+    assert "experiencia_base" in data
+    assert "orden" in data
+    assert "es_default" in data
+    assert "imagen" in data
+    assert "tipo" in data
+    assert "grupo_de_huevo" in data
+
+    assert data["id"] == pokemon_id
+
+
 def test_eliminar_pokemon_existente():
     largo_lista_pokemones_original = len(lista_pokemones)
     primer_pokemon = lista_pokemones[0]
@@ -50,7 +73,7 @@ def test_eliminar_pokemon_id_invalido():
 
     
 def test_create_pokemon():
-    data = {"identificador": "Test", "altura": 25, "peso": 19, "experiencia_base": 250, "imagen": "http://youtube.com", "tipo": ["Humo", "Saltar"]}
+    data = {"id": 1, "identificador": "Test", "altura": 25, "peso": 19, "experiencia_base": 250, "imagen": "http://youtube.com", "tipo": ["Humo", "Saltar"], "grupo_de_huevo": "Huevo", "estadisticas": {"ATK": 200, "DEF": 200}, "habilidades": ["Salto", "Invisible"]}
     response = client.post("/pokemones", json=data)
     assert response.status_code == 201
     content = response.json()
@@ -61,33 +84,17 @@ def test_create_pokemon():
     assert content["experiencia_base"] == 250
     assert content["imagen"] == "http://youtube.com"
     assert content["tipo"] == ["Humo", "Saltar"]
+    assert content["grupo_de_huevo"] == "Huevo"
+    assert content["estadisticas"] == {"ATK": 200, "DEF": 200}
+    assert content["habilidades"] == ["Salto", "Invisible"]
     assert "id" in content
     assert "id_especie" in content
 
 
-def test_leer_pokemon():
-    pokemon_id = 1 
-    response = client.get("/pokemon/1")
-
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "id" in data
-    assert "identificador" in data
-    assert "altura" in data
-    assert "peso" in data
-    assert "experiencia_base" in data
-    assert "imagen" in data
-    assert "tipos" in data
-    assert "habilidades" in data
-    assert "estadisticas" in data
-
-    assert data["id"] == pokemon_id 
-
 def test_leer_pokemon_no_existente():
-    pokemon_id = 9999  
-    response = client.get("/pokemon/-1")
-    
+    pokemon_id = 9999
+    response = client.get(f"/pokemones/{pokemon_id}")
+
     assert response.status_code == 404
     assert response.json() == {"detail": "Pokémon no encontrado"}
     
