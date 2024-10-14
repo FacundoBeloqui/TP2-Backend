@@ -335,4 +335,3 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
-print(lista_movimientos[20])
