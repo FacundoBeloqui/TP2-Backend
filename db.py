@@ -31,6 +31,7 @@ class PokemonCreate(BaseModel):
 class Movimiento(BaseModel):
     id: int
     nombre: str
+    generacion: int
     tipo: str
     poder: str
     accuracy: str
@@ -41,6 +42,16 @@ class Movimiento(BaseModel):
     pokemones_subida_nivel: List[str]
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
+
+
+class Naturaleza(BaseModel):
+    id: int
+    nombre: str
+    stat_decreciente: str
+    stat_creciente: str
+    id_gusto_preferido: int
+    id_gusto_menos_preferido: int
+    indice_juego: int
 
 
 pokemon_por_id = {}
@@ -271,6 +282,7 @@ with open("moves.csv") as movimientos:
             movimiento = Movimiento(
                 id=int(linea[0]),
                 nombre=linea[1],
+                generacion=int(linea[2]),
                 tipo=tipo_nombres[linea[3]],
                 poder=linea[4],
                 accuracy=linea[6],
@@ -283,4 +295,37 @@ with open("moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
+
+naturalezas_nombres = {}
+with open("nature_names.csv") as nombres_naturalezas:
+    for linea in nombres_naturalezas:
+        linea = linea.rstrip("\n").split(",")
+        if linea[1] == "7":
+            naturalezas_nombres[linea[0]] = linea[2]
+dicc_estadisticas = {}
+with open("stats.csv") as estadisticas:
+    for linea in estadisticas:
+        linea = linea.rstrip("\n").split(",")
+        dicc_estadisticas[linea[0]] = linea[2]
+
+lista_naturalezas = []
+with open("natures.csv") as naturalezas:
+    for linea in naturalezas:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "id":
+            continue
+        if linea[2] in dicc_estadisticas:
+            estadistica_decreciente = dicc_estadisticas.get(linea[2], "")
+        if linea[3] in dicc_estadisticas:
+            estadistica_creciente = dicc_estadisticas.get(linea[3], "")
+            naturaleza = Naturaleza(
+                id=int(linea[0]),
+                nombre=naturalezas_nombres[linea[0]],
+                stat_decreciente=estadistica_decreciente,
+                stat_creciente=estadistica_creciente,
+                id_gusto_preferido=int(linea[4]),
+                id_gusto_menos_preferido=int(linea[5]),
+                indice_juego=int(linea[6]),
+            )
+            lista_naturalezas.append(naturaleza)
 
