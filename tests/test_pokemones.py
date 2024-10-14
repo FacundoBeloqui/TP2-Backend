@@ -66,7 +66,7 @@ def test_leer_pokemon_existente():
 
 
 def test_leer_pokemon_no_existente():
-    response = client.get("/pokemones/999")
+    response = client.get("/pokemones/9999")
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Pokémon no encontrado"}
