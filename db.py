@@ -22,6 +22,7 @@ class Pokemon(BaseModel):
 class Movimiento(BaseModel):
     id: int
     nombre: str
+    generacion: int
     tipo: str
     poder: str
     accuracy: str
@@ -271,6 +272,7 @@ with open("moves.csv") as movimientos:
             movimiento = Movimiento(
                 id=int(linea[0]),
                 nombre=linea[1],
+                generacion=int(linea[2]),
                 tipo=tipo_nombres[linea[3]],
                 poder=linea[4],
                 accuracy=linea[6],
