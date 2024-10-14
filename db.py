@@ -94,9 +94,6 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
         nombre_del_movimiento = nombres_habilidades.get(linea[1])
         if id_pokemon not in habilidades_de_cada_pokemon:
             habilidades_de_cada_pokemon[id_pokemon] = []
-
-        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
-
         habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
 
 

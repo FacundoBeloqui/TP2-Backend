@@ -8,24 +8,21 @@ lista_equipos = []
 generacion = ""
 
 
-@router.get("/{generacion}")
-def limitar_generacion(generacion):
-    return generacion
-
-
 @router.get("/")
-def obtener_todos_los_equipos(pagina: 1):
-    if len(lista_equipos) == 0:
+def obtener_todos_los_equipos(pagina: int):
+    if lista_equipos == []:
         raise HTTPException(status_code=404, detail="No se encontraron equipos creados")
-    if pagina > (len(lista_equipos) // 10) + 1:
+    if pagina <= 0:
+        raise HTTPException(
+            status_code=400,
+            detail="Error en el ingreso. La pagina debe ser un entero mayor a cero",
+        )
+
+    if pagina > (len(lista_equipos) + 9) // 10:
         raise HTTPException(
             status_code=404,
-            detail="No se encontro la pagina solicitada. No hay suficientes equipos creados",
+            detail="No se encontro la pagina solicitada",
         )
-    lista_a_mostrar = []
-    try:
-        for equipo in range(10 * (pagina - 1), 10 * (pagina - 1) + 10):
-            lista_a_mostrar.append(equipo)
-    except IndentationError:
-        pass
-    return lista_a_mostrar
+    if len(lista_equipos) <= 10 and pagina == 1:
+        return lista_equipos
+    return lista_equipos[10 * (pagina - 1) : 10 * (pagina - 1) + 10]
