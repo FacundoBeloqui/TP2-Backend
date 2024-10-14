@@ -1,0 +1,165 @@
+from fastapi.testclient import TestClient
+from main import app
+from db import Team
+
+client = TestClient(app)
+
+# lista_equipos_prueba = [
+#         Team(id=1, name="Equipo A", pokemones_incluidos=[
+#         {
+#             "id": 1,
+#             "identificador": "pikachu",
+#             "id_especie": 25,
+#             "altura": 40,
+#             "peso": 60,
+#             "experiencia_base": 112,
+#             "imagen": "http://example.com/pikachu.png",
+#             "tipo": ["Electrico"],
+#             "grupo_de_huevo": "Grupo 1",
+#             "estadisticas": {"ataque": 55, "defensa": 40},
+#             "habilidades": ["static", "lightning-rod"]
+#         }]),
+#         Team(id=2, name="Equipo B", pokemones_incluidos=[
+#         {
+#             "id": 2,
+#             "identificador": "charmander",
+#             "id_especie": 4,
+#             "altura": 60,
+#             "peso": 85,
+#             "experiencia_base": 62,
+#             "imagen": "http://example.com/charmander.png",
+#             "tipo": ["Fuego"],
+#             "grupo_de_huevo": "Grupo 1",
+#             "estadisticas": {"ataque": 52, "defensa": 43},
+#             "habilidades": ["blaze", "solar-power"]
+#         }
+#         ]),
+# ]
+
+
+def test_get_team_by_id():
+    lista_equipos_prueba = [
+        Team(id=1, nombre="Equipo A", pokemones_incluidos=[
+        {
+            "id": 1,
+            "identificador": "pikachu",
+            "id_especie": 25,
+            "altura": 40,
+            "peso": 60,
+            "experiencia_base": 112,
+            "imagen": "http://example.com/pikachu.png",
+            "tipo": ["Electrico"],
+            "grupo_de_huevo": "Grupo 1",
+            "estadisticas": {"ataque": 55, "defensa": 40},
+            "habilidades": ["static", "lightning-rod"]
+        }])
+    ]
+    response = client.get("/teams/1")
+    assert response.status_code == 200
+    assert response.json() == {"id": 1, "nombre": "Equipo A", "pokemones_incluidos": [
+        {
+            "id": 1,
+            "identificador": "pikachu",
+            "id_especie": 25,
+            "altura": 40,
+            "peso": 60,
+            "experiencia_base": 112,
+            "imagen": "http://example.com/pikachu.png",
+            "tipo": ["Electrico"],
+            "grupo_de_huevo": "Grupo 1",
+            "estadisticas": {"ataque": 55, "defensa": 40},
+            "habilidades": ["static", "lightning-rod"]
+        }]}
+
+def test_get_team_by_id_not_found():
+    response = client.get("/teams/99999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Equipo no encontrado"}
+
+
+def test_get_team_by_id_invalid():
+    response = client.get("/teams/abc")
+    assert response.status_code == 400
+    assert response.json() == {"detail": "El id debe ser un numero entero"}
+
+
+def test_create_team():
+    pokemon_data = [
+        {
+            "id": 1,
+            "identificador": "pikachu",
+            "id_especie": 25,
+            "altura": 40,
+            "peso": 60,
+            "experiencia_base": 112,
+            "imagen": "http://example.com/pikachu.png",
+            "tipo": ["Electrico"],
+            "grupo_de_huevo": "Grupo 1",
+            "estadisticas": {"ataque": 55, "defensa": 40},
+            "habilidades": ["static", "lightning-rod"]
+        },
+        {
+            "id": 2,
+            "identificador": "charmander",
+            "id_especie": 4,
+            "altura": 60,
+            "peso": 85,
+            "experiencia_base": 62,
+            "imagen": "http://example.com/charmander.png",
+            "tipo": ["Fuego"],
+            "grupo_de_huevo": "Grupo 1",
+            "estadisticas": {"ataque": 52, "defensa": 43},
+            "habilidades": ["blaze", "solar-power"]
+        }
+    ]
+    
+    team_data = {
+        "id": 1,
+        "nombre": "Equipo A",
+        "pokemones_incluidos": pokemon_data
+    }
+
+    response = client.post("/", json=team_data)
+    assert response.status_code == 200
+    assert response.json() == {"id": 1, "nombre": "Equipo A", "pokemones_incluidos": pokemon_data}
+
+def test_create_team_nombre_vacio():
+    pokemon_data = [
+        {
+            "id": 3,
+            "identificador": "bulbasaur",
+            "id_especie": 1,
+            "altura": 70,
+            "peso": 69,
+            "experiencia_base": 64,
+            "imagen": "http://example.com/bulbasaur.png",
+            "tipo": ["Planta", "Veneno"],
+            "grupo_de_huevo": "Grupo 1",
+            "estadisticas": {"ataque": 49, "defensa": 49},
+            "habilidades": ["overgrow", "chlorophyll"]
+        }
+    ]
+
+    team_data = {
+        "nombre": "",
+        "pokemones_incluidos": pokemon_data
+    }
+
+    response = client.post("/", json=team_data)
+    assert response.status_code == 422 
+
+
+def test_create_team_without_pokemones():
+    team_data = {
+        "nombre": "Equipo B",
+        "pokemones_incluidos": []
+    }
+
+    response = client.post("/", json=team_data)
+    assert response.status_code == 200
+    assert response.json() == {
+        "id": 1,
+        "nombre": "Equipo B",
+        "pokemones_incluidos": []
+    }
+
