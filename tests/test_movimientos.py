@@ -5,8 +5,9 @@ from db import lista_movimientos
 client = TestClient(app)
 
 
-def test_get_movimientos():
-    response = client.get("/movimientos")
+def test_leer_movimiento_id():
+    movimiento_id = 1
+    response = client.get("/movimientos/1")
 
     assert response.status_code == 200
     content = response.json()
@@ -34,22 +35,40 @@ def test_leer_movimientos_vacio():
 
 def test_leer_movimiento_por_id():
     movimiento_id = lista_movimientos[0].id
-    response = client.get(f"/movimiento/{movimiento_id}")
+    response = client.get(f"/movimientos/{movimiento_id}")
     assert response.status_code == 200
     assert response.json()["id"] == movimiento_id
 
 
 def test_leer_movimiento_invalido():
-    response = client.get("/movimiento/99999")
+    response = client.get("/movimientos/99999")
     assert response.status_code == 404
+
+    data = response.json()
+    assert "id" in data
+    assert "nombre" in data
+    assert "tipo" in data
+    assert "poder" in data
+    assert "accuracy" in data
+    assert "pp" in data
+    assert "generacion" in data
+    assert "categoria" in data
+    assert "efecto" in data
+    assert "pokemones_subida_nivel" in data
+    assert "pokemones_tm" in data
+    assert "pokemones_grupo_huevo" in data
 
 
 def test_leer_movimiento_id_invalido():
-    response = client.get("/movimiento/abc")
+    response = client.get("/movimientos/abc")
+    assert response.status_code == 400
+    assert response.json() == {"detail": "El id debe ser un numero entero"}
+    response = client.get("/movimientos/abc")
     assert response.status_code == 422
 
 
-def test_error_manejo():
-    lista_movimientos = None
-    response = client.get("/movimientos")
-    assert response.status_code == 500
+def test_leer_movimiento_no_existente():
+    response = client.get(f"/movimientos/9999")
+
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Movimiento no encontrado"}
