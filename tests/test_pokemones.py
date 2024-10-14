@@ -1,6 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
 from db import lista_pokemones
+from routes.pokemones.pokemon import calcular_debilidades, calcular_fortalezas
 
 client = TestClient(app)
 
@@ -22,12 +23,11 @@ def test_leer_pokemones():
 
 
 def test_leer_pokemon_id():
-    pokemon_id = 1
-    response = client.get(f"/pokemones/{pokemon_id}")
+    response = client.get("/pokemones/1")
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["pokemon"]
 
     assert "id" in data
     assert "identificador" in data
@@ -41,7 +41,7 @@ def test_leer_pokemon_id():
     assert "tipo" in data
     assert "grupo_de_huevo" in data
 
-    assert data["id"] == pokemon_id
+    assert data["id"] == 1
 
 
 def test_eliminar_pokemon_existente():
@@ -49,7 +49,11 @@ def test_eliminar_pokemon_existente():
     primer_pokemon = lista_pokemones[0]
     response = client.delete("/pokemones/1")
     assert response.status_code == 200
-    assert response.json() == primer_pokemon.model_dump()
+    assert response.json() == {
+        "pokemon": primer_pokemon.model_dump(),
+        "debilidades": calcular_debilidades(primer_pokemon),
+        "fortalezas": calcular_fortalezas(primer_pokemon),
+    }
     assert len(lista_pokemones) == largo_lista_pokemones_original - 1
     assert lista_pokemones[0].id == 2
 
@@ -72,9 +76,33 @@ def test_eliminar_pokemon_id_invalido():
     assert response.json() == {"detail": "El id debe ser un numero entero"}
 
 
+def test_leer_pokemon():
+    pokemon_id = 1
+    response = client.get("/pokemones/1")
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert "id" in data
+    assert "identificador" in data
+    assert "altura" in data
+    assert "peso" in data
+    assert "experiencia_base" in data
+    assert "imagen" in data
+    assert "tipos" in data
+    assert "habilidades" in data
+    assert "estadisticas" in data
+
+    assert data["id"] == pokemon_id
+
+
 def test_leer_pokemon_no_existente():
-    pokemon_id = 9999
-    response = client.get(f"/pokemones/{pokemon_id}")
+    response = client.get("/pokemones/9999")
 
     assert response.status_code == 404
     assert response.json() == {"detail": "Pokémon no encontrado"}
+
+
+def test_leer_pokemon_con_id_invalido():
+    response = client.get("/pokemones/not_a_number")
+    assert response.status_code == 422

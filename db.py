@@ -105,9 +105,6 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
         nombre_del_movimiento = nombres_habilidades.get(linea[1])
         if id_pokemon not in habilidades_de_cada_pokemon:
             habilidades_de_cada_pokemon[id_pokemon] = []
-
-        habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
-
         habilidades_de_cada_pokemon[id_pokemon].append(nombre_del_movimiento)
 
 
@@ -277,7 +274,6 @@ with open("moves.csv") as movimientos:
                 poder=linea[4],
                 accuracy=linea[6],
                 pp=linea[5],
-                generacion=int(linea[2]),
                 categoria=dicc_categorias[linea[9]],
                 efecto=dicc_efectos[linea[10]],
                 pokemones_subida_nivel=movimientos_subida_nivel.get(linea[0], []),
