@@ -1,13 +1,17 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_pokemones, Pokemon
+from db import lista_pokemones, Pokemon, lista_naturalezas
+
 
 router = APIRouter()
 
-lista_equipos = []
 
+lista_equipos = []
 generacion = ""
 
-
+@router.get("/")
+def leer_naturalezas():
+    return lista_naturalezas
+  
 @router.get("/")
 def obtener_todos_los_equipos(pagina: int):
     if len(lista_equipos) == 0:
@@ -26,3 +30,6 @@ def obtener_todos_los_equipos(pagina: int):
     if len(lista_equipos) <= 10 and pagina == 1:
         return lista_equipos
     return lista_equipos[10 * (pagina - 1) : 10 * (pagina - 1) + 10]
+
+
+
