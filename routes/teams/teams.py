@@ -8,7 +8,7 @@ generacion = ""
 router = APIRouter()
 
 
-@router.get("/")
+@router.get("/nature")
 def leer_naturalezas():
     return lista_naturalezas
 

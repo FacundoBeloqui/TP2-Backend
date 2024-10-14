@@ -23,12 +23,11 @@ def test_leer_pokemones():
 
 
 def test_leer_pokemon_id():
-    pokemon_id = 1
-    response = client.get(f"/pokemones/{pokemon_id}")
+    response = client.get("/pokemones/1")
 
     assert response.status_code == 200
 
-    data = response.json()
+    data = response.json()["pokemon"]
 
     assert "id" in data
     assert "identificador" in data
@@ -42,7 +41,7 @@ def test_leer_pokemon_id():
     assert "tipo" in data
     assert "grupo_de_huevo" in data
 
-    assert data["id"] == pokemon_id
+    assert data["id"] == 1
 
 
 def test_eliminar_pokemon_existente():

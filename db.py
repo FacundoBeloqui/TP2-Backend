@@ -274,7 +274,6 @@ with open("moves.csv") as movimientos:
                 poder=linea[4],
                 accuracy=linea[6],
                 pp=linea[5],
-                generacion=int(linea[2]),
                 categoria=dicc_categorias[linea[9]],
                 efecto=dicc_efectos[linea[10]],
                 pokemones_subida_nivel=movimientos_subida_nivel.get(linea[0], []),
