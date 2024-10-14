@@ -41,6 +41,15 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
+class Team(BaseModel):
+    id: int
+    nombre: str
+    pokemones_incluidos: list[dict]
+
+
+class TeamCreate(BaseModel):
+    nombre: str
+    pokemones_incluidos: list[dict]
 
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
@@ -246,3 +255,5 @@ with open("moves.csv") as movimientos:
             )
             lista_movimientos.append(movimiento)
 
+
+lista_equipos = []
