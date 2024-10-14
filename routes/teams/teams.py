@@ -10,7 +10,7 @@ generacion = ""
 
 @router.get("/")
 def obtener_todos_los_equipos(pagina: int):
-    if lista_equipos == []:
+    if len(lista_equipos) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron equipos creados")
     if pagina <= 0:
         raise HTTPException(
