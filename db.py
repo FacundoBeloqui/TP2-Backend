@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 from typing import List
-from typing import Dict
+from typing import Dict, Optional
 
 
 class Pokemon(BaseModel):
@@ -326,12 +326,6 @@ with open("/home/jean-luka-arena/TP2(intro)/TP2/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-
-from fastapi import FastAPI, HTTPException
-from pydantic import BaseModel
-from typing import List, Optional, Dict
-
-app = FastAPI()
 
 class Movimiento(BaseModel):
     id: int

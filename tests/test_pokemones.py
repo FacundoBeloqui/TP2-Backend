@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_pokemones
-from routes.pokemones.pokemon import calcular_debilidades, calcular_fortalezas
+from db import lista_pokemones, datos_movimientos, datos_pokemon 
+from routes.pokemones.pokemon import calcular_debilidades, calcular_fortalezas, obtener_movimientos_pokemon
 
 client = TestClient(app)
 
