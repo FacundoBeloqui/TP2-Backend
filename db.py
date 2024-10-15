@@ -9,8 +9,17 @@ class Pokemon(BaseModel):
     altura: int
     peso: int
     experiencia_base: int
-    orden: int
-    es_default: bool
+    imagen: str
+    tipo: list[str]
+    grupo_de_huevo: str
+    estadisticas: dict
+    habilidades: list[str]
+
+class PokemonCreate(BaseModel):
+    identificador: str
+    altura: int
+    peso: int
+    experiencia_base: int
     imagen: str
     tipo: list[str]
     generaciones: list
@@ -109,6 +118,10 @@ with open("pokemon_abilities.csv") as pokemon_abilities:
 
 
 tipo_nombres = {}
+pokemon_tipos = {}
+evoluciones_pokemones = {}
+lista_pokemones = []
+
 with open("type_names.csv") as nombres_tipos:
     for linea in nombres_tipos:
         linea = linea.rstrip("\n").split(",")
@@ -133,7 +146,6 @@ with open("type_efficacy.csv") as efectividad_tipos:
         if nombre_tipo_target not in fortalezas_tipos:
             fortalezas_tipos[nombre_tipo_target] = {}
         fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
-
 
 pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
@@ -186,8 +198,6 @@ with open("pokemon.csv") as pokemones:
             altura=linea[3],
             peso=linea[4],
             experiencia_base=linea[5],
-            orden=linea[6],
-            es_default=linea[7],
             tipo=pokemon_tipos.get(linea[0], []),
             imagen=f"https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/{linea[0]}.png",
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
@@ -281,6 +291,7 @@ with open("moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
+
 naturalezas_nombres = {}
 with open("nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -313,3 +324,4 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
+

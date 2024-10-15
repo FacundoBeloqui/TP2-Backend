@@ -1,5 +1,5 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon
+from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon, PokemonCreate
 
 
 router = APIRouter()
@@ -63,3 +63,24 @@ def eliminar_pokemon(id):
                 "fortalezas": calcular_fortalezas(pokemon),
             }
     raise HTTPException(status_code=404, detail="Pokemon no encontrado")
+
+
+@router.post("/", response_model=Pokemon, status_code=201)
+def create_pokemon(pokemon: PokemonCreate):
+    pokemon_id = len(lista_pokemones) + 1
+    nuevo_pokemon = Pokemon(
+        id=pokemon_id,
+        identificador=pokemon.identificador,
+        id_especie=pokemon_id,
+        altura=pokemon.altura,
+        peso=pokemon.peso,
+        experiencia_base=pokemon.experiencia_base,
+        imagen=pokemon.imagen,
+        tipo=pokemon.tipo,
+        grupo_de_huevo=pokemon.grupo_de_huevo,
+        estadisticas=pokemon.estadisticas,
+        habilidades=pokemon.habilidades,
+        generaciones=pokemon.generaciones
+    )
+    lista_pokemones.append(nuevo_pokemon)
+    return nuevo_pokemon
