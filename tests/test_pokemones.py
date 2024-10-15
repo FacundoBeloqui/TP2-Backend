@@ -124,3 +124,49 @@ def test_leer_pokemon_no_existente():
 def test_leer_pokemon_con_id_invalido():
     response = client.get("/pokemones/not_a_number")
     assert response.status_code == 422
+
+
+def test_obtener_movimientos_pokemon_existente_con_movimientos():
+    pokemon_id = 1  
+    response = client.get(f"/pokemones/{pokemon_id}/movimientos")
+    
+    assert response.status_code == 200
+    data = response.json()
+    
+    assert "id_pokemon" in data
+    assert data["id_pokemon"] == pokemon_id
+    assert "nombre_pokemon" in data
+    assert "tipos" in data
+    assert "movimientos" in data
+    
+    movimientos = data["movimientos"]
+    assert len(movimientos) > 0  
+    for movimiento in movimientos:
+        assert "id" in movimiento
+        assert "nombre" in movimiento
+        assert "nivel" in movimiento
+        assert "es_evolucionado" in movimiento
+        assert movimiento["id"] in datos_movimientos.movimientos  
+
+
+def test_obtener_movimientos_pokemon_no_existente():
+    pokemon_id = 99999  
+    response = client.get(f"/pokemones/{pokemon_id}/movimientos")
+    
+    assert response.status_code == 404
+    data = response.json()
+    assert data == {"detail": "Pokémon no encontrado"}
+
+
+def test_obtener_movimientos_pokemon_id_invalido():
+    response = client.get("/pokemones/abc/movimientos")
+    
+    assert response.status_code == 422  
+    data = response.json()
+    
+    assert "detail" in data
+    assert "msg" in data["detail"][0]
+    assert "type" in data["detail"][0]
+    
+    assert data["detail"][0]["msg"] == "Input should be a valid integer, unable to parse string as an integer"
+    assert data["detail"][0]["type"] in ["type_error.integer", "int_parsing"]  
