@@ -97,6 +97,7 @@ def obtener_movimientos_pokemon(pokemon_id: int):
         raise HTTPException(status_code=404, detail="Movimientos no encontrados para este Pokémon")
 
     movimientos = datos_movimientos_pokemon[pokemon_id]
+
     lista_movimientos = []
 
     movimientos_vistos = set()
@@ -108,12 +109,7 @@ def obtener_movimientos_pokemon(pokemon_id: int):
             movimientos_vistos.add(id_movimiento)  
             if id_movimiento in datos_movimientos.movimientos:
                 nombre_movimiento = datos_movimientos.movimientos[id_movimiento].nombre
-                lista_movimientos.append({
-                    "id": id_movimiento,
-                    "nombre": nombre_movimiento,
-                    "nivel": nivel_movimiento,
-                    "es_evolucionado": False  
-                })
+                lista_movimientos.append(Movimiento(id=id_movimiento, nombre=nombre_movimiento, nivel=nivel_movimiento, es_evolucionado=False))
 
     tipos = datos_tipos_pokemon.get(pokemon_id, [])
     
@@ -121,5 +117,7 @@ def obtener_movimientos_pokemon(pokemon_id: int):
         "id_pokemon": pokemon.id,
         "nombre_pokemon": pokemon.nombre,
         "tipos": tipos,  
-        "movimientos": lista_movimientos  
+        "movimientos": [movimiento.dict() for movimiento in lista_movimientos]  
     }
+	
+
