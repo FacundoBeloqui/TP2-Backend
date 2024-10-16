@@ -11,9 +11,9 @@ client = TestClient(app)
 @pytest.fixture(autouse=True)
 def reset_lista_equipos():
     global lista_equipos
-    lista_equipos.clear()  # Reiniciar la lista antes de cada prueba
+    lista_equipos.clear()
     yield
-    lista_equipos.clear()  # Limpia después de la prueba
+    lista_equipos.clear()
 
 
 def test_no_hay_equipos():
@@ -70,8 +70,8 @@ def test_pagina_invalida_menor_que_uno():
 
 def test_pagina_no_encontrada():
     global lista_equipos
-    lista_equipos.extend(["Equipo 1", "Equipo 2"])  # Solo 2 equipos para esta prueba
-    response = client.get("/teams", params={"pagina": 2})  # No hay suficientes equipos
+    lista_equipos.extend(["Equipo 1", "Equipo 2"])
+    response = client.get("/teams", params={"pagina": 2})
     assert response.status_code == 404
     assert response.json() == {"detail": "No se encontro la pagina solicitada"}
 
@@ -92,12 +92,10 @@ def test_obtener_equipos_pagina_1():
             "Equipo 10",
             "Equipo 11",
         ]
-    )  # Agregamos 11 equipos para la prueba
+    )
     response = client.get("/teams", params={"pagina": 1})
     assert response.status_code == 200
-    assert (
-        response.json() == lista_equipos[:10]
-    )  # Debería devolver los primeros 10 equipos
+    assert response.json() == lista_equipos[:10]
 
 
 def test_obtener_equipos_pagina_2():
@@ -119,7 +117,7 @@ def test_obtener_equipos_pagina_2():
     )
     response = client.get("/teams", params={"pagina": 2})
     assert response.status_code == 200
-    assert response.json() == lista_equipos[10:]  # Debería devolver el último equipo
+    assert response.json() == lista_equipos[10:]
 
 
 def test_pagina_excesiva():
@@ -139,7 +137,7 @@ def test_pagina_excesiva():
             "Equipo 11",
         ]
     )
-    response = client.get("/teams", params={"pagina": 3})  # Pagina que no existe
+    response = client.get("/teams", params={"pagina": 3})
     assert response.status_code == 404
     assert response.json() == {"detail": "No se encontro la pagina solicitada"}
 
