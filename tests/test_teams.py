@@ -1,59 +1,147 @@
 from fastapi.testclient import TestClient
-from unittest.mock import patch
 from main import app
 from db import lista_naturalezas
+import pytest
+from routes.teams.teams import lista_equipos
 
 
 client = TestClient(app)
 
 
-def test_obtener_todos_los_equipos_vacia():
-    with patch("routes.teams.teams.lista_equipos", new=[]):
-        response = client.get("/teams/?pagina=1")
-        assert response.status_code == 404
-        assert response.json() == {"detail": "No se encontraron equipos creados"}
+@pytest.fixture(autouse=True)
+def reset_lista_equipos():
+    global lista_equipos
+    lista_equipos.clear()  # Reiniciar la lista antes de cada prueba
+    yield
+    lista_equipos.clear()  # Limpia después de la prueba
 
 
-def test_obtener_todos_los_equipos_pagina_existente():
-    with patch(
-        "routes.teams.teams.lista_equipos",
-        new=[f"Equipo {i}" for i in range(1, 26)],
-    ):
-        response = client.get("/teams/?pagina=1")
-        assert response.status_code == 200
-        assert response.json() == [f"Equipo {i}" for i in range(1, 11)]
+def test_no_hay_equipos():
+    response = client.get("/teams")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "No se encontraron equipos creados"}
 
 
-def test_obtener_todos_los_equipos_pagina_no_existente():
-    with patch(
-        "routes.teams.teams.lista_equipos",
-        new=[f"Equipo {i}" for i in range(1, 26)],
-    ):
-        response = client.get("/teams/?pagina=4")
-        assert response.status_code == 404
-        assert response.json() == {"detail": "No se encontro la pagina solicitada"}
+def test_pagina_invalida_cero():
+    lista_equipos.extend(
+        [
+            "Equipo 1",
+            "Equipo 2",
+            "Equipo 3",
+            "Equipo 4",
+            "Equipo 5",
+            "Equipo 6",
+            "Equipo 7",
+            "Equipo 8",
+            "Equipo 9",
+            "Equipo 10",
+            "Equipo 11",
+        ]
+    )
+    response = client.get("/teams", params={"pagina": 0})
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Error en el ingreso. La pagina debe ser un entero mayor a cero"
+    }
 
 
-def test_obtener_todos_los_equipos_pagina_invalida():
-    with patch(
-        "routes.teams.teams.lista_equipos",
-        new=[f"Equipo {i}" for i in range(1, 26)],
-    ):
-        response = client.get("/teams/?pagina=-1")
-        assert response.status_code == 400
-        assert response.json() == {
-            "detail": "Error en el ingreso. La pagina debe ser un entero mayor a cero"
-        }
+def test_pagina_invalida_menor_que_uno():
+    lista_equipos.extend(
+        [
+            "Equipo 1",
+            "Equipo 2",
+            "Equipo 3",
+            "Equipo 4",
+            "Equipo 5",
+            "Equipo 6",
+            "Equipo 7",
+            "Equipo 8",
+            "Equipo 9",
+            "Equipo 10",
+            "Equipo 11",
+        ]
+    )
+    response = client.get("/teams", params={"pagina": -21})
+    assert response.status_code == 400
+    assert response.json() == {
+        "detail": "Error en el ingreso. La pagina debe ser un entero mayor a cero"
+    }
 
 
-def test_obtener_todos_los_equipos_pagina_con_diez():
-    with patch(
-        "routes.teams.teams.lista_equipos",
-        new=[f"Equipo {i}" for i in range(1, 11)],
-    ):
-        response = client.get("/teams/?pagina=1")
-        assert response.status_code == 200
-        assert response.json() == [f"Equipo {i}" for i in range(1, 11)]
+def test_pagina_no_encontrada():
+    global lista_equipos
+    lista_equipos.extend(["Equipo 1", "Equipo 2"])  # Solo 2 equipos para esta prueba
+    response = client.get("/teams", params={"pagina": 2})  # No hay suficientes equipos
+    assert response.status_code == 404
+    assert response.json() == {"detail": "No se encontro la pagina solicitada"}
+
+
+def test_obtener_equipos_pagina_1():
+    global lista_equipos
+    lista_equipos.extend(
+        [
+            "Equipo 1",
+            "Equipo 2",
+            "Equipo 3",
+            "Equipo 4",
+            "Equipo 5",
+            "Equipo 6",
+            "Equipo 7",
+            "Equipo 8",
+            "Equipo 9",
+            "Equipo 10",
+            "Equipo 11",
+        ]
+    )  # Agregamos 11 equipos para la prueba
+    response = client.get("/teams", params={"pagina": 1})
+    assert response.status_code == 200
+    assert (
+        response.json() == lista_equipos[:10]
+    )  # Debería devolver los primeros 10 equipos
+
+
+def test_obtener_equipos_pagina_2():
+    global lista_equipos
+    lista_equipos.extend(
+        [
+            "Equipo 1",
+            "Equipo 2",
+            "Equipo 3",
+            "Equipo 4",
+            "Equipo 5",
+            "Equipo 6",
+            "Equipo 7",
+            "Equipo 8",
+            "Equipo 9",
+            "Equipo 10",
+            "Equipo 11",
+        ]
+    )
+    response = client.get("/teams", params={"pagina": 2})
+    assert response.status_code == 200
+    assert response.json() == lista_equipos[10:]  # Debería devolver el último equipo
+
+
+def test_pagina_excesiva():
+    global lista_equipos
+    lista_equipos.extend(
+        [
+            "Equipo 1",
+            "Equipo 2",
+            "Equipo 3",
+            "Equipo 4",
+            "Equipo 5",
+            "Equipo 6",
+            "Equipo 7",
+            "Equipo 8",
+            "Equipo 9",
+            "Equipo 10",
+            "Equipo 11",
+        ]
+    )
+    response = client.get("/teams", params={"pagina": 3})  # Pagina que no existe
+    assert response.status_code == 404
+    assert response.json() == {"detail": "No se encontro la pagina solicitada"}
 
 
 def test_leer_naturalezas():
