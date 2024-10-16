@@ -67,7 +67,7 @@ def eliminar_pokemon(id):
 
 @router.post("/", response_model=Pokemon, status_code=201)
 def create_pokemon(pokemon: PokemonCreate):
-    pokemon_id = len(lista_pokemones)
+    pokemon_id = len(lista_pokemones) + 1
     nuevo_pokemon = Pokemon(
         id=pokemon_id,
         identificador=pokemon.identificador,
@@ -79,7 +79,8 @@ def create_pokemon(pokemon: PokemonCreate):
         tipo=pokemon.tipo,
         grupo_de_huevo=pokemon.grupo_de_huevo,
         estadisticas=pokemon.estadisticas,
-        habilidades=pokemon.habilidades
+        habilidades=pokemon.habilidades,
+        generaciones=pokemon.generaciones
     )
     lista_pokemones.append(nuevo_pokemon)
     return nuevo_pokemon
