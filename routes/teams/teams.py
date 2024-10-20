@@ -1,5 +1,5 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, Team, TeamCreate
+from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, Team, TeamCreate, lista_movimientos
 
 lista_equipos = []
 
@@ -31,3 +31,36 @@ def obtener_todos_los_equipos(pagina: int):
     if len(lista_equipos) <= 10 and pagina == 1:
         return lista_equipos
     return lista_equipos[10 * (pagina - 1) : 10 * (pagina - 1) + 10]
+
+
+@router.get("/{team_id}", response_model=Team)
+def get_team_by_id(team_id):
+    if not team_id.isdecimal():
+        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
+    team = None
+    for t in lista_equipos:
+        if t.id == team_id:
+            team = t
+            break
+    if team is None: 
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    return team
+
+
+@router.post("/")
+def create_team(team: TeamCreate):
+    lista_generacion_pokemones = []
+    lista_generacion_movimientos = []
+    if team.generacion > 9 or team.generacion < 1:
+        raise HTTPException(status_code=404, detail="No se encontró la generacion")
+    
+    for pokemon in lista_pokemones:
+        if team.generacion in pokemon.generaciones:
+            lista_generacion_pokemones.append(pokemon)
+        
+    for movimiento in lista_movimientos:
+        if team.generacion == movimiento.generacion:
+            lista_generacion_movimientos.append(movimiento)
+
+    return lista_generacion_pokemones, lista_generacion_movimientos
+
