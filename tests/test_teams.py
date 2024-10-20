@@ -188,3 +188,4 @@ def test_eliminar_equipo_no_existente():
     assert response.status_code == 404
     assert response.json() == {"detail": "Equipo con ID 999 no encontrado."}
 
+
