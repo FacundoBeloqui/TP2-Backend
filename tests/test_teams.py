@@ -1,7 +1,7 @@
 from fastapi.testclient import TestClient
 from unittest.mock import patch
 from main import app
-from db import lista_naturalezas
+from db import lista_naturalezas, lista_equpos, Equipo
 
 
 client = TestClient(app)
@@ -82,3 +82,17 @@ def test_leer_naturalezas():
             == lista_naturalezas[0].id_gusto_menos_preferido
         )
         assert primera_naturaleza["indice_juego"] == lista_naturalezas[0].indice_juego
+
+
+def test_eliminar_equipo_existente():
+    equipo_a_eliminar = Equipo(id=1, nombre="Equipo 1", pokemones=["Pokemon 1", "Pokemon 2"])
+    with patch("routes.teams.teams.lista_equipos", new=[equipo_a_eliminar, Equipo(id=2, nombre="Equipo 2", pokemones=["Pokemon 3", "Pokemon 4"])]):
+        response = client.delete("/teams/1")
+        assert response.status_code == 200
+        assert len(response.json()) == 1 
+
+def test_eliminar_equipo_no_existente():
+    with patch("routes.teams.teams.lista_equipos", new=[Equipo(id=1, nombre="Equipo A", pokemones=["Pikachu", "Charizard"])]):
+        response = client.delete("/teams/999")  
+        assert response.status_code == 404
+        assert response.json() == {"detail": "Equipo con ID 999 no encontrado."} 

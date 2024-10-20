@@ -55,6 +55,12 @@ class Naturaleza(BaseModel):
     indice_juego: int
 
 
+class Equipo(BaseModel):
+    id: int
+    nombre: str
+    pokemones: List[str]
+
+
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
@@ -347,3 +353,5 @@ with open("natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
+
+lista_equpos = []
