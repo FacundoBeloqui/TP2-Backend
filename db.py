@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Optional
+from typing import List, Dict, Optional, ClassVar
 
 
 class Pokemon(BaseModel):
@@ -57,15 +57,15 @@ class Naturaleza(BaseModel):
 
 
 class PokemonTeam(BaseModel):
-    info = Pokemon
-    movimientos: list[Movimiento]
-    naturaleza = Naturaleza
+    info: ClassVar[type]  # No se usa como campo
+    movimientos: List[Movimiento]
+    naturaleza: Naturaleza  # Usar la instancia de Naturaleza
 
 
 class Team(BaseModel):
     id: int
     generacion: int
-    pokemones: list[PokemonTeam]
+    pokemones: List[PokemonTeam]
 
 
 pokemon_por_id = {}
