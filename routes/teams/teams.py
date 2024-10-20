@@ -1,5 +1,12 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_naturalezas, lista_pokemones, Pokemon
+from db import (
+    lista_naturalezas,
+    lista_pokemones,
+    PokemonTeam,
+    lista_movimientos,
+    lista_habilidades,
+    Team,
+)
 
 lista_equipos = []
 
@@ -28,5 +35,21 @@ def obtener_todos_los_equipos(pagina: int = 1):
             status_code=404,
             detail="No se encontro la pagina solicitada",
         )
-
     return lista_equipos[10 * (pagina - 1) : 10 * pagina]
+
+
+def normalizar_palabra(palabra):
+    vocales_con_tilde = {"á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u"}
+    palabra = palabra.lower()
+    palabra_normalizada = ""
+    for letra in palabra:
+        if letra in vocales_con_tilde:
+            palabra_normalizada += vocales_con_tilde[letra]
+        else:
+            palabra_normalizada += letra
+    return palabra_normalizada
+
+
+@router.patch("/")
+def actualizar_equipo(team: Team):
+    return team

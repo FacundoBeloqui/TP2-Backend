@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List
+from typing import List, Dict, Optional
 
 
 class Pokemon(BaseModel):
@@ -14,6 +14,8 @@ class Pokemon(BaseModel):
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
+    evoluciones_inmediatas: list
+
 
 class PokemonCreate(BaseModel):
     identificador: str
@@ -26,7 +28,6 @@ class PokemonCreate(BaseModel):
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
-    evoluciones_inmediatas: list
 
 
 class Movimiento(BaseModel):
@@ -53,6 +54,18 @@ class Naturaleza(BaseModel):
     id_gusto_preferido: int
     id_gusto_menos_preferido: int
     indice_juego: int
+
+
+class PokemonTeam(BaseModel):
+    info = Pokemon
+    movimientos: list[Movimiento]
+    naturaleza = Naturaleza
+
+
+class Team(BaseModel):
+    id: int
+    generacion: int
+    pokemones: list[PokemonTeam]
 
 
 pokemon_por_id = {}
@@ -346,4 +359,3 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
-
