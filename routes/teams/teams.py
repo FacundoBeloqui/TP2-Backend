@@ -1,5 +1,5 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, Team, TeamCreate, lista_movimientos
+from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, Team, TeamCreate, lista_movimientos, generaciones_pokemon
 
 lista_equipos = []
 
@@ -14,7 +14,7 @@ def leer_naturalezas():
 
 
 @router.get("/")
-def obtener_todos_los_equipos(pagina: int):
+def obtener_todos_los_equipos(pagina: int = 1):
     if len(lista_equipos) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron equipos creados")
     if pagina <= 0:
@@ -30,7 +30,7 @@ def obtener_todos_los_equipos(pagina: int):
         )
     if len(lista_equipos) <= 10 and pagina == 1:
         return lista_equipos
-    return lista_equipos[10 * (pagina - 1) : 10 * (pagina - 1) + 10]
+    return lista_equipos[10 * (pagina - 1) : 10 * pagina]
 
 
 @router.get("/{team_id}", response_model=Team)
@@ -54,21 +54,23 @@ def create_team(team: TeamCreate):
     if team.generacion > 9 or team.generacion < 1:
         raise HTTPException(status_code=404, detail="No se encontró la generacion")
     
-    for pokemon in lista_pokemones:
-        if team.generacion in pokemon["generaciones"]:
-            lista_generacion_pokemones.append(pokemon)
+    for id_pokemon, generaciones in generaciones_pokemon.items():
+        if team.generacion in generaciones:
+            for pokemon in lista_pokemones:
+                if pokemon.id == int(id_pokemon):
+                    lista_generacion_pokemones.append(pokemon)
         
     for movimiento in lista_movimientos:
-        if team.generacion == movimiento["generacion"]:
+        if team.generacion == movimiento.generacion:
             lista_generacion_movimientos.append(movimiento)
 
     pokemon_elegido = None
     movimiento_elegido = None
     for p in lista_generacion_pokemones:
-        if p["id"] == team.pokemon_id:
+        if p.id == team.pokemon_id:
             pokemon_elegido = p
     for m in lista_generacion_movimientos:
-        if m["id"] == team.movimiento_id:
+        if m.id == team.movimiento_id:
             movimiento_elegido = m
 
     if not pokemon_elegido:
@@ -77,9 +79,14 @@ def create_team(team: TeamCreate):
     if not movimiento_elegido:
         raise HTTPException(status_code=404, detail="Movimiento no encontrado en la generacion")
     
-    nuevo_equipo = {pokemon_elegido, movimiento_elegido}
+    nuevo_equipo = {
+        "pokemon": pokemon_elegido, 
+        "movimiento": movimiento_elegido
+    }
     
     lista_equipos.append(nuevo_equipo)
 
     return nuevo_equipo
 
+
+    

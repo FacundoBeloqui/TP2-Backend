@@ -1,5 +1,5 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon, PokemonCreate
+from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon, PokemonCreate, datos_pokemon, datos_movimientos_pokemon, datos_movimientos, datos_tipos_pokemon, Evolucion, Movimiento
 
 
 router = APIRouter()
@@ -80,7 +80,45 @@ def create_pokemon(pokemon: PokemonCreate):
         grupo_de_huevo=pokemon.grupo_de_huevo,
         estadisticas=pokemon.estadisticas,
         habilidades=pokemon.habilidades,
-        generaciones=pokemon.generaciones
+        generaciones=pokemon.generaciones,
+        evoluciones_inmediatas=pokemon.evoluciones_inmediatas
     )
     lista_pokemones.append(nuevo_pokemon)
     return nuevo_pokemon
+
+
+@router.get("/{pokemon_id}/movimientos")
+def obtener_movimientos_pokemon(pokemon_id: int):
+    if pokemon_id not in datos_pokemon:
+        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
+
+    pokemon = datos_pokemon[pokemon_id]
+    
+    if pokemon_id not in datos_movimientos_pokemon:
+        raise HTTPException(status_code=404, detail="Movimientos no encontrados para este Pokémon")
+
+    movimientos = datos_movimientos_pokemon[pokemon_id]
+
+    lista_movimientos = []
+
+    movimientos_vistos = set()
+    for movimiento in movimientos:
+        id_movimiento = movimiento["id_movimiento"]
+        nivel_movimiento = movimiento["nivel"]
+
+        if id_movimiento not in movimientos_vistos:
+            movimientos_vistos.add(id_movimiento)  
+            if id_movimiento in datos_movimientos.movimientos:
+                nombre_movimiento = datos_movimientos.movimientos[id_movimiento].nombre
+                lista_movimientos.append(Movimiento(id=id_movimiento, nombre=nombre_movimiento, nivel=nivel_movimiento, es_evolucionado=False))
+
+    tipos = datos_tipos_pokemon.get(pokemon_id, [])
+    
+    return {
+        "id_pokemon": pokemon.id,
+        "nombre_pokemon": pokemon.nombre,
+        "tipos": tipos,  
+        "movimientos": [movimiento.dict() for movimiento in lista_movimientos]  
+    }
+	
+

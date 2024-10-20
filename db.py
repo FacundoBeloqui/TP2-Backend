@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from typing import List, Optional
+from typing import List
+from typing import Dict, Optional
 
 
 class Pokemon(BaseModel):
@@ -355,5 +356,78 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
+
+
+class Movimiento(BaseModel):
+    id: int
+    nombre: str
+    nivel: Optional[int] = None
+    es_evolucionado: bool = False
+
+class Pokemon(BaseModel):
+    id: int
+    nombre: str
+    tipos: List[int]
+
+class Evolucion(BaseModel):
+    id_pokemon_base: int
+    id_pokemon_evolucionado: int
+
+class DatosMovimiento(BaseModel):
+    movimientos: Dict[int, Movimiento]
+
+datos_pokemon = {}
+with open("pokemon.csv") as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas[1:]:
+        f = linea.strip().split(",")
+        id_pokemon = int(f[0])
+        nombre_pokemon = f[1]
+        datos_pokemon[id_pokemon] = Pokemon(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
+
+evoluciones = []
+with open("pokemon_evolutions.csv") as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas[1:]:
+        f = linea.strip().split(",")
+        id_base = int(f[0])
+        id_evolucionado = int(f[1])
+        evoluciones.append(Evolucion(id_pokemon_base=id_base, id_pokemon_evolucionado=id_evolucionado))
+
+datos_movimientos_pokemon = {}
+with open("pokemon_moves.csv") as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas[1:]:
+        f = linea.strip().split(",")
+        id_pokemon = int(f[0])
+        id_movimiento = int(f[2])
+        nivel = int(f[4]) if f[4] else None
+        if id_pokemon not in datos_movimientos_pokemon:
+            datos_movimientos_pokemon[id_pokemon] = []
+        datos_movimientos_pokemon[id_pokemon].append({
+            "id_movimiento": id_movimiento,
+            "nivel": nivel
+        })
+
+datos_movimientos = DatosMovimiento(movimientos={})
+with open("moves.csv") as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas[1:]:
+        f = linea.strip().split(",")
+        id_movimiento = int(f[0])
+        nombre_movimiento = f[1]
+        datos_movimientos.movimientos[id_movimiento] = Movimiento(id=id_movimiento, nombre=nombre_movimiento)
+
+datos_tipos_pokemon = {}
+with open("pokemon_types.csv") as archivo:
+    lineas = archivo.readlines()
+    for linea in lineas[1:]:
+        f = linea.strip().split(",")
+        id_pokemon = int(f[0])
+        id_tipo = int(f[1])
+        if id_pokemon not in datos_tipos_pokemon:
+            datos_tipos_pokemon[id_pokemon] = []
+        datos_tipos_pokemon[id_pokemon].append(id_tipo)
+
 
 lista_equipos = []
