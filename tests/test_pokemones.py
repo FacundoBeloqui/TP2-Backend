@@ -56,7 +56,7 @@ def test_leer_pokemon_no_existente():
 
 
 def test_leer_pokemon_con_id_invalido():
-    response = client.get("/pokemones/not_a_number")
+    response = client.get("/pokemones/abc")
     assert response.status_code == 422
 
 
@@ -123,38 +123,6 @@ def test_create_pokemon():
     assert content["habilidades"] == ["Saltar", "Invisible"]
     assert "id" in content
     assert "id_especie" in content
-
-
-def test_leer_pokemon():
-    pokemon_id = 1
-    response = client.get("/pokemones/1")
-
-    assert response.status_code == 200
-
-    data = response.json()
-    assert "id" in data
-    assert "identificador" in data
-    assert "altura" in data
-    assert "peso" in data
-    assert "experiencia_base" in data
-    assert "imagen" in data
-    assert "tipos" in data
-    assert "habilidades" in data
-    assert "estadisticas" in data
-
-    assert data["id"] == pokemon_id
-
-
-def test_leer_pokemon_no_existente():
-    response = client.get("/pokemones/9999")
-
-    assert response.status_code == 404
-    assert response.json() == {"detail": "Pokémon no encontrado"}
-
-
-def test_leer_pokemon_con_id_invalido():
-    response = client.get("/pokemones/not_a_number")
-    assert response.status_code == 422
 
 
 def test_obtener_movimientos_pokemon_existente_con_movimientos():
