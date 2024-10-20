@@ -55,6 +55,29 @@ class Naturaleza(BaseModel):
     id_gusto_menos_preferido: int
     indice_juego: int
 
+class Teams(BaseModel):
+    id: int
+    nombre: str
+    pokemones: List[str]
+
+class Movimiento(BaseModel):
+    id: int
+    nombre: str
+    nivel: Optional[int] = None
+    es_evolucionado: bool = False
+
+class Pokemon(BaseModel):
+    id: int
+    nombre: str
+    tipos: List[int]
+
+class Evolucion(BaseModel):
+    id_pokemon_base: int
+    id_pokemon_evolucionado: int
+
+class DatosMovimiento(BaseModel):
+    movimientos: Dict[int, Movimiento]
+
 
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
@@ -348,24 +371,7 @@ with open("natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-
-class Movimiento(BaseModel):
-    id: int
-    nombre: str
-    nivel: Optional[int] = None
-    es_evolucionado: bool = False
-
-class Pokemon(BaseModel):
-    id: int
-    nombre: str
-    tipos: List[int]
-
-class Evolucion(BaseModel):
-    id_pokemon_base: int
-    id_pokemon_evolucionado: int
-
-class DatosMovimiento(BaseModel):
-    movimientos: Dict[int, Movimiento]
+lista_equipos = []
 
 datos_pokemon = {}
 with open("pokemon.csv") as archivo:
