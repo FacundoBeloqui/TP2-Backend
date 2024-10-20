@@ -14,7 +14,7 @@ def leer_naturalezas():
 
 
 @router.get("/")
-def obtener_todos_los_equipos(pagina: int):
+def obtener_todos_los_equipos(pagina: int = 1):
     if len(lista_equipos) == 0:
         raise HTTPException(status_code=404, detail="No se encontraron equipos creados")
     if pagina <= 0:
@@ -28,6 +28,5 @@ def obtener_todos_los_equipos(pagina: int):
             status_code=404,
             detail="No se encontro la pagina solicitada",
         )
-    if len(lista_equipos) <= 10 and pagina == 1:
-        return lista_equipos
-    return lista_equipos[10 * (pagina - 1) : 10 * (pagina - 1) + 10]
+
+    return lista_equipos[10 * (pagina - 1) : 10 * pagina]

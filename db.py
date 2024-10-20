@@ -27,6 +27,7 @@ class PokemonCreate(BaseModel):
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
+    evoluciones_inmediatas: list
 
 
 class Movimiento(BaseModel):
@@ -185,6 +186,26 @@ with open("pokemon_form_generations.csv") as generaciones_csv:
             generaciones_pokemon[pokemon_id] = []
         generaciones_pokemon[pokemon_id].append(int(generacion))
 
+evoluciones_pokemones = {}
+with open("pokemon_evolutions.csv") as evoluciones_csv:
+    for linea in evoluciones_csv:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "id":
+            continue
+        pokemon_id = int(linea[0])
+        evolucion_id = int(linea[1])
+
+        if pokemon_id not in evoluciones_pokemones:
+            evoluciones_pokemones[pokemon_id] = []
+
+        if evolucion_id not in evoluciones_pokemones:
+            evoluciones_pokemones[evolucion_id] = []
+
+        if pokemon_por_id[str(evolucion_id)] not in evoluciones_pokemones[pokemon_id]:
+            evoluciones_pokemones[pokemon_id].append(pokemon_por_id[str(evolucion_id)])
+        if pokemon_por_id[str(pokemon_id)] not in evoluciones_pokemones[evolucion_id]:
+            evoluciones_pokemones[evolucion_id].append(pokemon_por_id[str(pokemon_id)])
+
 
 lista_pokemones = []
 with open("pokemon.csv") as pokemones:
@@ -205,6 +226,7 @@ with open("pokemon.csv") as pokemones:
             estadisticas=dicc_pokemon_stats.get(linea[0], {}),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
             generaciones=generaciones_pokemon.get(linea[0], ""),
+            evoluciones_inmediatas=evoluciones_pokemones.get(int(linea[0]), []),
         )
         lista_pokemones.append(pokemon)
 
