@@ -50,7 +50,7 @@ class Team(BaseModel):
 class TeamCreate(BaseModel):
     generacion: int
     pokemon_id: Optional[int]
-    movimiento_name: Optional[str]
+    movimiento_id: Optional[int]
 
 
 class Naturaleza(BaseModel):

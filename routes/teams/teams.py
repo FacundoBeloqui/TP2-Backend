@@ -55,12 +55,31 @@ def create_team(team: TeamCreate):
         raise HTTPException(status_code=404, detail="No se encontró la generacion")
     
     for pokemon in lista_pokemones:
-        if team.generacion in pokemon.generaciones:
+        if team.generacion in pokemon["generaciones"]:
             lista_generacion_pokemones.append(pokemon)
         
     for movimiento in lista_movimientos:
-        if team.generacion == movimiento.generacion:
+        if team.generacion == movimiento["generacion"]:
             lista_generacion_movimientos.append(movimiento)
 
-    return lista_generacion_pokemones, lista_generacion_movimientos
+    pokemon_elegido = None
+    movimiento_elegido = None
+    for p in lista_generacion_pokemones:
+        if p["id"] == team.pokemon_id:
+            pokemon_elegido = p
+    for m in lista_generacion_movimientos:
+        if m["id"] == team.movimiento_id:
+            movimiento_elegido = m
+
+    if not pokemon_elegido:
+        raise HTTPException(status_code=404, detail="Pokemon seleccionado no encontrado en la generacion")
+    
+    if not movimiento_elegido:
+        raise HTTPException(status_code=404, detail="Movimiento no encontrado en la generacion")
+    
+    nuevo_equipo = {pokemon_elegido, movimiento_elegido}
+    
+    lista_equipos.append(nuevo_equipo)
+
+    return nuevo_equipo
 
