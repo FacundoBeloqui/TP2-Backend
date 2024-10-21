@@ -71,10 +71,12 @@ class Naturaleza(BaseModel):
     id_gusto_menos_preferido: int
     indice_juego: int
 
+
 class Teams(BaseModel):
     id: int
     nombre: str
     pokemones: List[str]
+
 
 class Movimientomoves(BaseModel):
     id: int
@@ -82,44 +84,41 @@ class Movimientomoves(BaseModel):
     nivel: Optional[int] = None
     es_evolucionado: bool = False
 
+
 class Pokemonmoves(BaseModel):
     id: int
     nombre: str
     tipos: List[int]
 
+
 class Evolucion(BaseModel):
     id_pokemon_base: int
     id_pokemon_evolucionado: int
+
 
 class DatosMovimiento(BaseModel):
     movimientos: Dict[int, Movimiento]
 
 
-class PokemonTeam(BaseModel):
+class PokemonTeamCreate(BaseModel):
     id: int
     nombre: str
-    movimiento_1: Optional[int]
-    movimiento_2: Optional[int]
-    movimiento_3: Optional[int]
-    movimiento_4: Optional[int]
+    movimientos: List[Optional[int]]
     naturaleza_id: int
     stats: dict
 
 
-class Team(BaseModel):
+class TeamDataCreate(BaseModel):
     id: int
+    nombre: str
+    generacion: int
+    pokemones: List[PokemonTeamCreate]
+
+
+class TeamCreate(BaseModel):
     generacion: int
     nombre: str
-    pokemon_1: Optional[PokemonTeam]
-    pokemon_2: Optional[PokemonTeam]
-    pokemon_3: Optional[PokemonTeam]
-    pokemon_4: Optional[PokemonTeam]
-    pokemon_5: Optional[PokemonTeam]
-    pokemon_6: Optional[PokemonTeam]
-
-lista_equipos: List[TeamDataCreate] = [{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}]
-
-#lista_equipos: List[TeamDataCreate] = []
+    pokemones: List[PokemonTeamCreate]
 
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
@@ -414,6 +413,7 @@ with open("natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
+
 datos_pokemon = {}
 with open("pokemon.csv") as archivo:
     lineas = archivo.readlines()
@@ -421,7 +421,9 @@ with open("pokemon.csv") as archivo:
         f = linea.strip().split(",")
         id_pokemon = int(f[0])
         nombre_pokemon = f[1]
-        datos_pokemon[id_pokemon] = Pokemonmoves(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
+        datos_pokemon[id_pokemon] = Pokemonmoves(
+            id=id_pokemon, nombre=nombre_pokemon, tipos=[]
+        )
 
 evoluciones = []
 with open("pokemon_evolutions.csv") as archivo:
@@ -455,7 +457,9 @@ with open("moves.csv") as archivo:
         f = linea.strip().split(",")
         id_movimiento = int(f[0])
         nombre_movimiento = f[1]
-        datos_movimientos.movimientos[id_movimiento] = Movimientomoves(id=id_movimiento, nombre=nombre_movimiento)
+        datos_movimientos.movimientos[id_movimiento] = Movimientomoves(
+            id=id_movimiento, nombre=nombre_movimiento
+        )
 
 
 datos_tipos_pokemon = {}
@@ -468,3 +472,9 @@ with open("pokemon_types.csv") as archivo:
         if id_pokemon not in datos_tipos_pokemon:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
+
+for l in lista_movimientos:
+    if l.id < 10:
+        print(f"id : {l.id} , generacion: {l.generacion}")
+    else:
+        break

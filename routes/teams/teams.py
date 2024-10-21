@@ -1,9 +1,18 @@
 from fastapi import HTTPException, APIRouter
 from typing import List
-from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, lista_movimientos, lista_habilidades, Team, TeamCreate, generaciones_pokemon, pokemon_tipos, TeamDataCreate
+from db import (
+    lista_naturalezas,
+    lista_pokemones,
+    lista_movimientos,
+    lista_habilidades,
+    TeamCreate,
+    TeamDataCreate,
+    generaciones_pokemon,
+    pokemon_tipos)
+
 
 generacion = ""
-
+lista_equipos = []
 router = APIRouter()
 
 
@@ -105,31 +114,81 @@ def normalizar_palabra(palabra):
     return palabra_normalizada
 
 
+@router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
+def actualizar_equipo(
+    id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamCreate
+):
+    if not lista_equipos:
+        raise HTTPException(status_code=404, detail="No hay equipos disponibles")
+
+    if id_team_a_updatear is None:
+
 @router.patch("/{id_team_a_updatear}")
 def actualizar_equipo(id_team_a_updatear: int, team: TeamDataCreate):
-    if not id_team_a_updatear:
+   if not lista_equipos:
+        raise HTTPException(status_code=404, detail="No hay equipos disponibles")
+
+    if id_team_a_updatear is None:
         raise HTTPException(
             status_code=400, detail="Ingrese el id del equipo a modificar"
         )
-    if not lista_equipos:
-        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+
+    if id_pokemon_a_updatear is None:
+        raise HTTPException(status_code=400, detail="Ingrese un pokemon para editar")
+
+
     for equipo in lista_equipos:
         if id_team_a_updatear == equipo.id:
-            equipo.pokemon_1 = team.pokemon_1
-            equipo.pokemon_2 = team.pokemon_2
-            equipo.pokemon_3 = team.pokemon_3
-            equipo.pokemon_4 = team.pokemon_4
-            equipo.pokemon_5 = team.pokemon_5
-            equipo.pokemon_6 = team.pokemon_6
+            for indice in len(equipo.pokemones):
+                if equipo.pokemones[indice].id == id_pokemon_a_updatear:
+                    v_f = False
+                    for id_pokemon, generaciones in generaciones_pokemon.items():
+                        if (
+                            equipo.pokemones[indice].id == int(id_pokemon)
+                            and equipo.generacion in generaciones
+                        ):
+                            v_f = True
+                            break
+                    if not v_f:
+                        raise HTTPException(
+                            status_code=422,
+                            detail=f"El pokemon {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo: {equipo.id}",
+                        )
 
-            return {"message": "Equipo actualizado correctamente", "equipo": equipo}
+                    for movimiento in equipo.pokemones[indice].movimientos:
+                        if len(equipo.pokemones[indice].movimientos) > 4:
+                            raise HTTPException(
+                                status_code=400,
+                                detail="Se pueden asignar solo 4 movimientos",
+                            )
+                        if movimiento != 0:
+                            v_f = False
+                            for mov in lista_movimientos:
+                                if (
+                                    movimiento == mov.id
+                                    and equipo.generacion >= mov.generacion
+                                ):
+                                    v_f = True
+                                    break
+                            if not v_f:
+                                raise HTTPException(
+                                    status_code=422,
+                                    detail=f"El movimiento {movimiento} del pokemon_id {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo {equipo.id}",
+                                )
+                    equipo.pokemones[indice] = team.pokemones
+                    return equipo
+
+            raise HTTPException(
+                status_code=404, detail="Pokemon no encontrado en el equipo"
+            )
+
     raise HTTPException(status_code=404, detail="Equipo no encontrado")
+
 
 @router.delete("/{id}")
 def eliminar_equipo(id: int):
     for equipo in lista_equipos:
         if equipo.id == id:
-            lista_equipos.remove(equipo)  
+            lista_equipos.remove(equipo)
             return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
-    
     raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
