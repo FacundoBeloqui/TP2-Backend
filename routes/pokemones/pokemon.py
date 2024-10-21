@@ -1,5 +1,11 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon, PokemonCreate
+from db import (
+    lista_pokemones,
+    fortalezas_tipos,
+    debilidades_tipos,
+    Pokemon,
+    PokemonCreate,
+)
 
 
 router = APIRouter()
@@ -80,7 +86,7 @@ def create_pokemon(pokemon: PokemonCreate):
         grupo_de_huevo=pokemon.grupo_de_huevo,
         estadisticas=pokemon.estadisticas,
         habilidades=pokemon.habilidades,
-        generaciones=pokemon.generaciones
+        generaciones=pokemon.generaciones,
     )
     lista_pokemones.append(nuevo_pokemon)
     return nuevo_pokemon

@@ -1,15 +1,15 @@
 from fastapi import HTTPException, APIRouter
+from typing import List
 from db import (
     lista_naturalezas,
     lista_pokemones,
-    PokemonTeam,
     lista_movimientos,
     lista_habilidades,
     Team,
+    lista_equipos,
 )
 
-lista_equipos = []
-
+# lista_equipos = []
 generacion = ""
 
 router = APIRouter()
@@ -50,6 +50,22 @@ def normalizar_palabra(palabra):
     return palabra_normalizada
 
 
-@router.patch("/")
-def actualizar_equipo(team: Team):
-    return team
+@router.patch("/{id_team_a_updatear}")
+def actualizar_equipo(id_team_a_updatear, team: Team):
+    if not id_team_a_updatear:
+        raise HTTPException(
+            status_code=400, detail="Ingrese el id del equipo a modificar"
+        )
+    if not lista_equipos:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    for equipo in lista_equipos:
+        if id_team_a_updatear == equipo.id:
+            equipo.pokemon_1 = team.pokemon_1
+            equipo.pokemon_2 = team.pokemon_2
+            equipo.pokemon_3 = team.pokemon_3
+            equipo.pokemon_4 = team.pokemon_4
+            equipo.pokemon_5 = team.pokemon_5
+            equipo.pokemon_6 = team.pokemon_6
+
+            return {"message": "Equipo actualizado correctamente", "equipo": equipo}
+    raise HTTPException(status_code=404, detail="Equipo no encontrado")

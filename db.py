@@ -1,5 +1,5 @@
 from pydantic import BaseModel
-from typing import List, Dict, Optional, ClassVar
+from typing import List, Dict, Optional
 
 
 class Pokemon(BaseModel):
@@ -57,15 +57,77 @@ class Naturaleza(BaseModel):
 
 
 class PokemonTeam(BaseModel):
-    info: ClassVar[type]  # No se usa como campo
-    movimientos: List[Movimiento]
-    naturaleza: Naturaleza  # Usar la instancia de Naturaleza
+    id: int
+    movimiento_1: Optional[int]
+    movimiento_2: Optional[int]
+    movimiento_3: Optional[int]
+    movimiento_4: Optional[int]
+    naturaleza_id: int
+    stats: str
 
 
 class Team(BaseModel):
     id: int
     generacion: int
-    pokemones: List[PokemonTeam]
+    pokemon_1: Optional[PokemonTeam]
+    pokemon_2: Optional[PokemonTeam]
+    pokemon_3: Optional[PokemonTeam]
+    pokemon_4: Optional[PokemonTeam]
+    pokemon_5: Optional[PokemonTeam]
+    pokemon_6: Optional[PokemonTeam]
+
+
+lista_equipos: List[Team] = []
+
+# Crear Pokémon Teams
+pokemon_team_1 = PokemonTeam(
+    id=1,
+    movimiento_1=1,
+    movimiento_2=2,
+    movimiento_3=3,
+    movimiento_4=4,
+    naturaleza_id=1,
+    stats="HP: 50, Atk: 60, Def: 55",
+)
+
+pokemon_team_2 = PokemonTeam(
+    id=2,
+    movimiento_1=2,
+    movimiento_2=3,
+    movimiento_3=4,
+    movimiento_4=None,  # Sin movimiento
+    naturaleza_id=2,
+    stats="HP: 60, Atk: 70, Def: 50",
+)
+
+# Crear equipos y añadir a la lista
+equipo_1 = Team(
+    id=1,
+    generacion=1,
+    pokemon_1=pokemon_team_1,
+    pokemon_2=pokemon_team_2,
+    pokemon_3=None,  # Sin Pokémon
+    pokemon_4=None,
+    pokemon_5=None,
+    pokemon_6=None,
+)
+
+equipo_2 = Team(
+    id=2,
+    generacion=2,
+    pokemon_1=pokemon_team_2,
+    pokemon_2=pokemon_team_1,
+    pokemon_3=None,
+    pokemon_4=None,
+    pokemon_5=None,
+    pokemon_6=None,
+)
+
+# Añadir equipos a la lista
+lista_equipos.append(equipo_1)
+lista_equipos.append(equipo_2)
+
+print(lista_equipos[0].id)
 
 
 pokemon_por_id = {}
@@ -326,6 +388,8 @@ with open("moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
+
+print(lista_movimientos)
 
 naturalezas_nombres = {}
 with open("nature_names.csv") as nombres_naturalezas:
