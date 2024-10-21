@@ -1,17 +1,5 @@
 from fastapi import HTTPException, APIRouter
-from db import (
-    lista_pokemones,
-    fortalezas_tipos,
-    debilidades_tipos,
-    Pokemon,
-    PokemonCreate,
-    datos_pokemon,
-    datos_movimientos_pokemon,
-    datos_movimientos,
-    datos_tipos_pokemon,
-    Evolucion,
-    Movimiento,
-)
+from db import lista_pokemones, fortalezas_tipos, debilidades_tipos, Pokemon, PokemonCreate, datos_pokemon, datos_movimientos_pokemon, datos_movimientos, datos_tipos_pokemon, Evolucion, Movimientomoves
 
 
 router = APIRouter()
@@ -123,14 +111,7 @@ def obtener_movimientos_pokemon(pokemon_id: int):
             movimientos_vistos.add(id_movimiento)
             if id_movimiento in datos_movimientos.movimientos:
                 nombre_movimiento = datos_movimientos.movimientos[id_movimiento].nombre
-                lista_movimientos.append(
-                    Movimiento(
-                        id=id_movimiento,
-                        nombre=nombre_movimiento,
-                        nivel=nivel_movimiento,
-                        es_evolucionado=False,
-                    )
-                )
+                lista_movimientos.append(Movimientomoves(id=id_movimiento, nombre=nombre_movimiento, nivel=nivel_movimiento, es_evolucionado=False))
 
     tipos = datos_tipos_pokemon.get(pokemon_id, [])
 
