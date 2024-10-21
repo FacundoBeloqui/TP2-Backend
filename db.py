@@ -1,6 +1,5 @@
 from pydantic import BaseModel
-from typing import List
-from typing import Dict, Optional
+from typing import List, Dict, Optional
 
 
 class Pokemon(BaseModel):
@@ -45,26 +44,23 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
-class PokemonTeam(BaseModel):
+class PokemonTeamCreate(BaseModel):
     id: int
     nombre: str
     movimientos: List[Optional[int]]
     naturaleza_id: int
     stats: dict
 
-class Team(BaseModel):
+class TeamDataCreate(BaseModel):
     id: int
     nombre: str
     generacion: int
-    pokemones: List[PokemonTeam]
-
+    pokemones: List[PokemonTeamCreate]
 
 class TeamCreate(BaseModel):
     generacion: int
     nombre: str
-    pokemones: List[PokemonTeam]
-
-lista_equipos: List[Team] = [{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}]
+    pokemones: List[PokemonTeamCreate]
 
 class Naturaleza(BaseModel):
     id: int
@@ -75,6 +71,172 @@ class Naturaleza(BaseModel):
     id_gusto_menos_preferido: int
     indice_juego: int
 
+class Teams(BaseModel):
+    id: int
+    nombre: str
+    pokemones: List[str]
+
+class Movimientomoves(BaseModel):
+    id: int
+    nombre: str
+    nivel: Optional[int] = None
+    es_evolucionado: bool = False
+
+class Pokemonmoves(BaseModel):
+    id: int
+    nombre: str
+    tipos: List[int]
+
+class Evolucion(BaseModel):
+    id_pokemon_base: int
+    id_pokemon_evolucionado: int
+
+class DatosMovimiento(BaseModel):
+    movimientos: Dict[int, Movimiento]
+
+
+class PokemonTeam(BaseModel):
+    id: int
+    nombre: str
+    movimiento_1: Optional[int]
+    movimiento_2: Optional[int]
+    movimiento_3: Optional[int]
+    movimiento_4: Optional[int]
+    naturaleza_id: int
+    stats: dict
+
+
+class Team(BaseModel):
+    id: int
+    generacion: int
+    nombre: str
+    pokemon_1: Optional[PokemonTeam]
+    pokemon_2: Optional[PokemonTeam]
+    pokemon_3: Optional[PokemonTeam]
+    pokemon_4: Optional[PokemonTeam]
+    pokemon_5: Optional[PokemonTeam]
+    pokemon_6: Optional[PokemonTeam]
+
+lista_equipos: List[TeamDataCreate] = [{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}]
+
+#lista_equipos: List[TeamDataCreate] = []
+
+# lista_equipos = [
+#     Team(
+#         id=1,
+#         generacion=1,
+#         nombre="hola",
+#         pokemon_1=PokemonTeam(
+#             id=1,
+#             nombre="ssdsadasdd",
+#             movimiento_1=1,
+#             movimiento_2=2,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=1,
+#             stats={"ataque": 50, "defensa": 45},
+#         ),
+#         pokemon_2=PokemonTeam(
+#             id=2,
+#             nombre="sseeeeeeeeeeeeeeed",
+#             movimiento_1=3,
+#             movimiento_2=None,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=2,
+#             stats={"ataque": 55, "defensa": 50},
+#         ),
+#         pokemon_3=None,
+#         pokemon_4=None,
+#         pokemon_5=None,
+#         pokemon_6=None,
+#     ),
+#     Team(
+#         id=2,
+#         generacion=2,
+#         nombre="z",
+#         pokemon_1=PokemonTeam(
+#             id=3,
+#             nombre="aaaaaaaaaaaaaaaaaaaaaaaaassd",
+#             movimiento_1=4,
+#             movimiento_2=5,
+#             movimiento_3=6,
+#             movimiento_4=None,
+#             naturaleza_id=3,
+#             stats={"ataque": 60, "defensa": 55},
+#         ),
+#         pokemon_2=PokemonTeam(
+#             id=4,
+#             nombre="suuuuuuuuuuuusd",
+#             movimiento_1=None,
+#             movimiento_2=None,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=1,
+#             stats={"ataque": 65, "defensa": 60},
+#         ),
+#         pokemon_3=PokemonTeam(
+#             id=5,
+#             nombre="suuuuuuuuuuuuuuusd",
+#             movimiento_1=7,
+#             movimiento_2=8,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=2,
+#             stats={"ataque": 70, "defensa": 65},
+#         ),
+#         pokemon_4=None,
+#         pokemon_5=None,
+#         pokemon_6=None,
+#     ),
+#     Team(
+#         id=3,
+#         generacion=3,
+#         nombre="b",
+#         pokemon_1=PokemonTeam(
+#             id=6,
+#             nombre="sesd",
+#             movimiento_1=None,
+#             movimiento_2=None,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=2,
+#             stats={"ataque": 75, "defensa": 70},
+#         ),
+#         pokemon_2=PokemonTeam(
+#             id=7,
+#             nombre="ssd",
+#             movimiento_1=9,
+#             movimiento_2=None,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=3,
+#             stats={"ataque": 80, "defensa": 75},
+#         ),
+#         pokemon_3=PokemonTeam(
+#             id=8,
+#             nombre="ssd",
+#             movimiento_1=10,
+#             movimiento_2=11,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=1,
+#             stats={"ataque": 85, "defensa": 80},
+#         ),
+#         pokemon_4=PokemonTeam(
+#             id=9,
+#             nombre="ssd",
+#             movimiento_1=None,
+#             movimiento_2=None,
+#             movimiento_3=None,
+#             movimiento_4=None,
+#             naturaleza_id=1,
+#             stats={"ataque": 90, "defensa": 85},
+#         ),
+#         pokemon_5=None,
+#         pokemon_6=None,
+#     ),
+# ]
 
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
@@ -369,25 +531,6 @@ with open("natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-
-class Movimiento(BaseModel):
-    id: int
-    nombre: str
-    nivel: Optional[int] = None
-    es_evolucionado: bool = False
-
-class PokemonR(BaseModel):
-    id: int
-    nombre: str
-    tipos: List[int]
-
-class Evolucion(BaseModel):
-    id_pokemon_base: int
-    id_pokemon_evolucionado: int
-
-class DatosMovimiento(BaseModel):
-    movimientos: Dict[int, Movimiento]
-
 datos_pokemon = {}
 with open("pokemon.csv") as archivo:
     lineas = archivo.readlines()
@@ -395,7 +538,7 @@ with open("pokemon.csv") as archivo:
         f = linea.strip().split(",")
         id_pokemon = int(f[0])
         nombre_pokemon = f[1]
-        datos_pokemon[id_pokemon] = PokemonR(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
+        datos_pokemon[id_pokemon] = Pokemonmoves(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
 
 evoluciones = []
 with open("pokemon_evolutions.csv") as archivo:
@@ -404,7 +547,9 @@ with open("pokemon_evolutions.csv") as archivo:
         f = linea.strip().split(",")
         id_base = int(f[0])
         id_evolucionado = int(f[1])
-        evoluciones.append(Evolucion(id_pokemon_base=id_base, id_pokemon_evolucionado=id_evolucionado))
+        evoluciones.append(
+            Evolucion(id_pokemon_base=id_base, id_pokemon_evolucionado=id_evolucionado)
+        )
 
 datos_movimientos_pokemon = {}
 with open("pokemon_moves.csv") as archivo:
@@ -416,10 +561,9 @@ with open("pokemon_moves.csv") as archivo:
         nivel = int(f[4]) if f[4] else None
         if id_pokemon not in datos_movimientos_pokemon:
             datos_movimientos_pokemon[id_pokemon] = []
-        datos_movimientos_pokemon[id_pokemon].append({
-            "id_movimiento": id_movimiento,
-            "nivel": nivel
-        })
+        datos_movimientos_pokemon[id_pokemon].append(
+            {"id_movimiento": id_movimiento, "nivel": nivel}
+        )
 
 datos_movimientos = DatosMovimiento(movimientos={})
 with open("moves.csv") as archivo:
@@ -428,7 +572,8 @@ with open("moves.csv") as archivo:
         f = linea.strip().split(",")
         id_movimiento = int(f[0])
         nombre_movimiento = f[1]
-        datos_movimientos.movimientos[id_movimiento] = Movimiento(id=id_movimiento, nombre=nombre_movimiento)
+        datos_movimientos.movimientos[id_movimiento] = Movimientomoves(id=id_movimiento, nombre=nombre_movimiento)
+
 
 datos_tipos_pokemon = {}
 with open("pokemon_types.csv") as archivo:
@@ -440,4 +585,3 @@ with open("pokemon_types.csv") as archivo:
         if id_pokemon not in datos_tipos_pokemon:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
-

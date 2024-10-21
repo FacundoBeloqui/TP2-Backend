@@ -1,6 +1,6 @@
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_naturalezas, Team, PokemonTeam, lista_pokemones, lista_movimientos
+from db import lista_naturalezas, Team, PokemonTeam, lista_pokemones, lista_movimientos, lista_equipos, Teams
 import pytest
 from routes.teams.teams import lista_equipos
 
@@ -171,38 +171,6 @@ def test_leer_naturalezas():
         assert primera_naturaleza["indice_juego"] == lista_naturalezas[0].indice_juego
 
 
-# lista_equipos_prueba = [
-#         Team(id=1, name="Equipo A", pokemones_incluidos=[
-#         {
-#             "id": 1,
-#             "identificador": "pikachu",
-#             "id_especie": 25,
-#             "altura": 40,
-#             "peso": 60,
-#             "experiencia_base": 112,
-#             "imagen": "http://example.com/pikachu.png",
-#             "tipo": ["Electrico"],
-#             "grupo_de_huevo": "Grupo 1",
-#             "estadisticas": {"ataque": 55, "defensa": 40},
-#             "habilidades": ["static", "lightning-rod"]
-#         }]),
-#         Team(id=2, name="Equipo B", pokemones_incluidos=[
-#         {
-#             "id": 2,
-#             "identificador": "charmander",
-#             "id_especie": 4,
-#             "altura": 60,
-#             "peso": 85,
-#             "experiencia_base": 62,
-#             "imagen": "http://example.com/charmander.png",
-#             "tipo": ["Fuego"],
-#             "grupo_de_huevo": "Grupo 1",
-#             "estadisticas": {"ataque": 52, "defensa": 43},
-#             "habilidades": ["blaze", "solar-power"]
-#         }
-#         ]),
-# ]
-
 def test_get_team_by_id_empty_list():
     response = client.get("/teams/1") 
     assert response.status_code == 404
@@ -234,19 +202,6 @@ def test_get_team_by_id_invalid():
     response = client.get("/teams/abc")
     assert response.status_code == 400
     assert response.json() == {"detail": "El id debe ser un numero entero"}
-
-# def test_create_team_invalid_generation():
-#     response = client.post("/", json={
-#         "generacion": 10, 
-#         "nombre": "Equipo de Prueba",
-#         "pokemones": [pokemon_1.model_dump()]
-#     })
-#     assert response.status_code == 404
-#     assert response.json().detail == "No se encontró la generacion"
-
-
-
-
 
 
 # def test_create_team_success():
@@ -306,5 +261,22 @@ def test_create_team_invalid_pokemons():
 
 
 
+def test_eliminar_equipo_existente():
+    lista_equipos.extend([
+        Teams(id=1, nombre="Equipo 1", pokemones=["Pokemon 1", "Pokemon 2"]),
+        Teams(id=2, nombre="Equipo 2", pokemones=["Pokemon 3", "Pokemon 4"]),
+    ])
+    response = client.delete("/teams/1")
+    assert response.status_code == 200
+    assert len(response.json()) == 1  
+    assert response.json()[0]["id"] == 2  
+
+def test_eliminar_equipo_no_existente():
+    lista_equipos.extend([
+        Teams(id=1, nombre="Equipo A", pokemones=["Pikachu", "Charizard"]),
+    ])
+    response = client.delete("/teams/999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Equipo con ID 999 no encontrado."}
 
 

@@ -1,5 +1,6 @@
 from fastapi import HTTPException, APIRouter
-from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, Team, TeamCreate, lista_movimientos, generaciones_pokemon, pokemon_tipos, lista_naturalezas
+from typing import List
+from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, lista_movimientos, lista_habilidades, Team, TeamCreate, generaciones_pokemon, pokemon_tipos, TeamDataCreate
 
 generacion = ""
 
@@ -31,7 +32,7 @@ def obtener_todos_los_equipos(pagina: int = 1):
     return lista_equipos[10 * (pagina - 1) : 10 * pagina]
 
 
-@router.get("/{team_id}", response_model=Team)
+@router.get("/{team_id}", response_model=TeamDataCreate)
 def get_team_by_id(team_id):
     if not team_id.isdecimal():
         raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
@@ -92,8 +93,20 @@ def create_team(team: TeamCreate):
     return nuevo_equipo
 
 
+def normalizar_palabra(palabra):
+    vocales_con_tilde = {"á": "a", "é": "e", "í": "i", "ó": "o", "ú": "u", "ü": "u"}
+    palabra = palabra.lower()
+    palabra_normalizada = ""
+    for letra in palabra:
+        if letra in vocales_con_tilde:
+            palabra_normalizada += vocales_con_tilde[letra]
+        else:
+            palabra_normalizada += letra
+    return palabra_normalizada
+
+
 @router.patch("/{id_team_a_updatear}")
-def actualizar_equipo(id_team_a_updatear: int, team: Team):
+def actualizar_equipo(id_team_a_updatear: int, team: TeamDataCreate):
     if not id_team_a_updatear:
         raise HTTPException(
             status_code=400, detail="Ingrese el id del equipo a modificar"
@@ -111,3 +124,12 @@ def actualizar_equipo(id_team_a_updatear: int, team: Team):
 
             return {"message": "Equipo actualizado correctamente", "equipo": equipo}
     raise HTTPException(status_code=404, detail="Equipo no encontrado")
+
+@router.delete("/{id}")
+def eliminar_equipo(id: int):
+    for equipo in lista_equipos:
+        if equipo.id == id:
+            lista_equipos.remove(equipo)  
+            return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
+    
+    raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
