@@ -81,6 +81,7 @@ def create_pokemon(pokemon: PokemonCreate):
         estadisticas=pokemon.estadisticas,
         habilidades=pokemon.habilidades,
         generaciones=pokemon.generaciones,
+        evoluciones_inmediatas=pokemon.evoluciones_inmediatas
     )
     lista_pokemones.append(nuevo_pokemon)
     return nuevo_pokemon

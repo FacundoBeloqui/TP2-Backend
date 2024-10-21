@@ -16,7 +16,6 @@ class Pokemon(BaseModel):
     habilidades: list[str]
     evoluciones_inmediatas: list
 
-
 class PokemonCreate(BaseModel):
     identificador: str
     altura: int
@@ -28,7 +27,7 @@ class PokemonCreate(BaseModel):
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
-
+    evoluciones_inmediatas: list
 
 class Movimiento(BaseModel):
     id: int
@@ -45,6 +44,23 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
+class PokemonTeamCreate(BaseModel):
+    id: int
+    nombre: str
+    movimientos: List[Optional[int]]
+    naturaleza_id: int
+    stats: dict
+
+class TeamDataCreate(BaseModel):
+    id: int
+    nombre: str
+    generacion: int
+    pokemones: List[PokemonTeamCreate]
+
+class TeamCreate(BaseModel):
+    generacion: int
+    nombre: str
+    pokemones: List[PokemonTeamCreate]
 
 class Naturaleza(BaseModel):
     id: int
@@ -196,6 +212,7 @@ with open("type_efficacy.csv") as efectividad_tipos:
         if nombre_tipo_target not in fortalezas_tipos:
             fortalezas_tipos[nombre_tipo_target] = {}
         fortalezas_tipos[nombre_tipo_target][nombre_tipo_daño] = efectividad
+
 
 pokemon_tipos = {}
 with open("pokemon_types.csv") as tipos:
@@ -395,28 +412,6 @@ with open("natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
-
-
-class Movimiento(BaseModel):
-    id: int
-    nombre: str
-    nivel: Optional[int] = None
-    es_evolucionado: bool = False
-
-
-class Pokemon(BaseModel):
-    id: int
-    nombre: str
-    tipos: List[int]
-
-
-class Evolucion(BaseModel):
-    id_pokemon_base: int
-    id_pokemon_evolucionado: int
-
-
-class DatosMovimiento(BaseModel):
-    movimientos: Dict[int, Movimiento]
 
 
 datos_pokemon = {}
