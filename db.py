@@ -55,6 +55,29 @@ class Naturaleza(BaseModel):
     id_gusto_menos_preferido: int
     indice_juego: int
 
+class Teams(BaseModel):
+    id: int
+    nombre: str
+    pokemones: List[str]
+
+class Movimientomoves(BaseModel):
+    id: int
+    nombre: str
+    nivel: Optional[int] = None
+    es_evolucionado: bool = False
+
+class Pokemonmoves(BaseModel):
+    id: int
+    nombre: str
+    tipos: List[int]
+
+class Evolucion(BaseModel):
+    id_pokemon_base: int
+    id_pokemon_evolucionado: int
+
+class DatosMovimiento(BaseModel):
+    movimientos: Dict[int, Movimiento]
+
 
 class PokemonTeam(BaseModel):
     id: int
@@ -487,7 +510,6 @@ with open("natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-
 class Movimiento(BaseModel):
     id: int
     nombre: str
@@ -509,7 +531,6 @@ class Evolucion(BaseModel):
 class DatosMovimiento(BaseModel):
     movimientos: Dict[int, Movimiento]
 
-
 datos_pokemon = {}
 with open("pokemon.csv") as archivo:
     lineas = archivo.readlines()
@@ -517,9 +538,7 @@ with open("pokemon.csv") as archivo:
         f = linea.strip().split(",")
         id_pokemon = int(f[0])
         nombre_pokemon = f[1]
-        datos_pokemon[id_pokemon] = Pokemon(
-            id=id_pokemon, nombre=nombre_pokemon, tipos=[]
-        )
+        datos_pokemon[id_pokemon] = Pokemonmoves(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
 
 evoluciones = []
 with open("pokemon_evolutions.csv") as archivo:
@@ -553,9 +572,8 @@ with open("moves.csv") as archivo:
         f = linea.strip().split(",")
         id_movimiento = int(f[0])
         nombre_movimiento = f[1]
-        datos_movimientos.movimientos[id_movimiento] = Movimiento(
-            id=id_movimiento, nombre=nombre_movimiento
-        )
+        datos_movimientos.movimientos[id_movimiento] = Movimientomoves(id=id_movimiento, nombre=nombre_movimiento)
+
 
 datos_tipos_pokemon = {}
 with open("pokemon_types.csv") as archivo:

@@ -1,15 +1,8 @@
 from fastapi import HTTPException, APIRouter
 from typing import List
-from db import (
-    lista_naturalezas,
-    lista_pokemones,
-    lista_movimientos,
-    lista_habilidades,
-    Team,
-    lista_equipos,
-)
 
-# lista_equipos = []
+from db import lista_naturalezas, lista_pokemones, Pokemon, lista_equipos, lista_movimientos, lista_habilidades, Team
+
 generacion = ""
 
 router = APIRouter()
@@ -69,3 +62,11 @@ def actualizar_equipo(id_team_a_updatear: int, team: Team):
 
             return {"message": "Equipo actualizado correctamente", "equipo": equipo}
     raise HTTPException(status_code=404, detail="Equipo no encontrado")
+@router.delete("/{id}")
+def eliminar_equipo(id: int):
+    for equipo in lista_equipos:
+        if equipo.id == id:
+            lista_equipos.remove(equipo)  
+            return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
+    
+    raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
