@@ -12,7 +12,7 @@ from db import (
     Pokemon,
 )
 
-lista_equipos
+lista_equipos = []
 generacion = ""
 
 router = APIRouter()
@@ -108,6 +108,7 @@ def create_team(team: TeamCreate):
 
     return nuevo_equipo
 
+
 @router.patch("/{id_team_a_updatear}/{id_poken_a_updatear}")
 def actualizar_equipo(
     id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamDataCreate
@@ -170,11 +171,12 @@ def actualizar_equipo(
 
     raise HTTPException(status_code=404, detail="Equipo no encontrado")
 
+
 @router.delete("/{id}")
 def eliminar_equipo(id: int):
     for equipo in lista_equipos:
         if equipo.id == id:
-            lista_equipos.remove(equipo)  
+            lista_equipos.remove(equipo)
             return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
-    
+
     raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
