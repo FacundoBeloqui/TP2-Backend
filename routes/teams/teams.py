@@ -7,9 +7,9 @@ from db import (
     lista_habilidades,
     Team,
     lista_equipos,
+    generaciones_pokemon,
 )
 
-# lista_equipos = []
 generacion = ""
 
 router = APIRouter()
@@ -66,6 +66,52 @@ def actualizar_equipo(id_team_a_updatear: int, team: Team):
             equipo.pokemon_4 = team.pokemon_4
             equipo.pokemon_5 = team.pokemon_5
             equipo.pokemon_6 = team.pokemon_6
+            lista_pokemones = [
+                equipo.pokemon_1,
+                equipo.pokemon_2,
+                equipo.pokemon_3,
+                equipo.pokemon_4,
+                equipo.pokemon_5,
+                equipo.pokemon_6,
+            ]
+            lista_movimientos = []
+
+            for pokemon in lista_pokemones:
+                movimientos = [
+                    pokemon.movimiento_1,
+                    pokemon.movimiento_2,
+                    pokemon.movimiento_3,
+                    pokemon.movimiento_4,
+                ]
+                for id_pokemon, generaciones in generaciones_pokemon.items():
+                    v_f = False
+                    if (
+                        pokemon.id == int(id_pokemon)
+                        and equipo.generacion in generaciones_pokemon[id_pokemon]
+                    ):
+                        v_f = True
+                        break
+                if not v_f:
+                    raise HTTPException(
+                        status_code=422,
+                        detail=f"El pokemon {pokemon.id} no pertenece a la generacion definida en el equipo: {equipo.id}",
+                    )
+                for movimiento in movimientos:
+                    if movimiento != 0:
+                        v_f = False
+                        for mov in lista_movimientos:
+                            if (
+                                movimiento == mov.id
+                                and equipo.generacion >= mov.generacion
+                            ):
+                                v_f = True
+                                break
+
+                        if not v_f:
+                            raise HTTPException(
+                                status_code=422,
+                                detail=f"El movimiento {movimiento} del pokemon_id {pokemon.id} no pertenece a la generacion definida en el equipo {equipo.id}",
+                            )
 
             return {"message": "Equipo actualizado correctamente", "equipo": equipo}
     raise HTTPException(status_code=404, detail="Equipo no encontrado")

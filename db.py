@@ -70,7 +70,7 @@ class PokemonTeam(BaseModel):
 class Team(BaseModel):
     id: int
     generacion: int
-    nombre: str
+    nombre: Optional[str]
     pokemon_1: Optional[PokemonTeam]
     pokemon_2: Optional[PokemonTeam]
     pokemon_3: Optional[PokemonTeam]
@@ -79,11 +79,23 @@ class Team(BaseModel):
     pokemon_6: Optional[PokemonTeam]
 
 
-# Creación de equipos para prueba
+class MostrarTeam(BaseModel):
+    id: int
+    generacion: int
+    nombre: str
+    pokemon_1: Pokemon
+    pokemon_2: Pokemon
+    pokemon_3: Pokemon
+    pokemon_4: Pokemon
+    pokemon_5: Pokemon
+    pokemon_6: Pokemon
+
+
 lista_equipos: List[Team] = [
     Team(
         id=1,
         generacion=1,
+        nombre="team 1",
         pokemon_1=PokemonTeam(
             id=1,
             nombre="ssdsadasdd",
@@ -112,6 +124,7 @@ lista_equipos: List[Team] = [
     Team(
         id=2,
         generacion=2,
+        nombre="team 2",
         pokemon_1=PokemonTeam(
             id=3,
             nombre="aaaaaaaaaaaaaaaaaaaaaaaaassd",
@@ -149,6 +162,7 @@ lista_equipos: List[Team] = [
     Team(
         id=3,
         generacion=3,
+        nombre="team 3",
         pokemon_1=PokemonTeam(
             id=6,
             nombre="sesd",
@@ -452,8 +466,6 @@ with open("moves.csv") as movimientos:
             )
             lista_movimientos.append(movimiento)
 
-print(lista_movimientos)
-
 naturalezas_nombres = {}
 with open("nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -567,3 +579,9 @@ with open("pokemon_types.csv") as archivo:
         if id_pokemon not in datos_tipos_pokemon:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
+
+for l in lista_movimientos:
+    if l.id < 10:
+        print(f"id : {l.id} , generacion: {l.generacion}")
+    else:
+        break
