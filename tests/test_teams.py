@@ -1,12 +1,13 @@
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_naturalezas, lista_equipos, Teams
+from db import lista_naturalezas, Team, PokemonTeam, lista_pokemones, lista_movimientos, lista_equipos, Teams
 import pytest
 from routes.teams.teams import lista_equipos
 
-
 client = TestClient(app)
 
+def test_leer_naturalezas():
+    response = client.get("/teams")
 
 @pytest.fixture(autouse=True)
 def reset_lista_equipos():
@@ -168,6 +169,96 @@ def test_leer_naturalezas():
             == lista_naturalezas[0].id_gusto_menos_preferido
         )
         assert primera_naturaleza["indice_juego"] == lista_naturalezas[0].indice_juego
+
+
+def test_get_team_by_id_empty_list():
+    response = client.get("/teams/1") 
+    assert response.status_code == 404
+    assert response.json()["detail"] == "Equipo no encontrado"
+
+
+def test_get_team_by_id():
+    global lista_equipos
+    lista_equipos.extend([{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}])
+
+    team_id = lista_equipos[0]["id"]
+    print("hola")
+    response = client.get(f"/teams/{team_id}")
+    print("buenas")
+    assert response.status_code == 200
+    content = response.json()
+    assert content["id"] == int(team_id)
+    assert content["nombre"] == "Equipo A"
+    assert len(content["pokemones"]) == 1
+    assert content["pokemones"][0]["nombre"] == "Pikachu"
+
+def test_get_team_by_id_not_found():
+    response = client.get("/teams/99999")
+    assert response.status_code == 404
+    assert response.json() == {"detail": "Equipo no encontrado"}
+
+
+def test_get_team_by_id_invalid():
+    response = client.get("/teams/abc")
+    assert response.status_code == 400
+    assert response.json() == {"detail": "El id debe ser un numero entero"}
+
+
+# def test_create_team_success():
+#     # Supongamos que ya tienes datos de Pokémon y movimientos
+#     lista_pokemones.extend([{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}])
+#     # lista_movimientos.extend([
+#     #     {"id": 1, "nombre": "Rayo", "generacion": 1},
+#     #     {"id": 2, "nombre": "Ascuas", "generacion": 1}
+#     # ])
+#     # generaciones_pokemon = {
+#     #     1: [1],  
+#     #     2: [2],  
+#     # }
+
+#     team_data = {
+#         "nombre": "Equipo A",
+#         "generacion": 1,
+#         "pokemones": [
+#             {"id": 1, "nombre": "Pikachu", "movimientos": [1], "naturaleza_id": 1, "stats": {}}
+#         ]
+#     }
+
+#     response = client.post("/teams", json=team_data)
+#     assert response.status_code == 200
+#     content = response.json()
+#     assert "pokemon" in content
+#     assert len(content["pokemon"]) == 1
+#     assert content["pokemon"][0]["nombre"] == "Pikachu"
+#     assert len(lista_equipos) == 1
+
+
+def test_create_team_invalid_generation():
+    team_data = {
+        "nombre": "Equipo A",
+        "generacion": 10, 
+        "pokemones": [
+            {"id": 1, "nombre": "Pikachu", "movimientos": [1], "naturaleza_id": 1, "stats": {}}
+        ]
+    }
+
+    response = client.post("/teams/", json=team_data)
+    assert response.status_code == 404
+    assert response.json()["detail"] == "No se encontró la generacion"
+
+
+def test_create_team_invalid_pokemons():
+    team_data = {
+        "nombre": "Equipo A",
+        "generacion": 1,
+        "pokemones": [] 
+    }
+
+    response = client.post("/teams/", json=team_data)
+    assert response.status_code == 400
+    assert response.json()["detail"] == "Debe elegir al menos 1 pokemon y no mas de 6 pokemones"
+
+
 
 
 def test_eliminar_equipo_existente():
