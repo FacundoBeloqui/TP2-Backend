@@ -59,10 +59,7 @@ class Naturaleza(BaseModel):
 class PokemonTeam(BaseModel):
     id: int
     nombre: str
-    movimiento_1: Optional[int]
-    movimiento_2: Optional[int]
-    movimiento_3: Optional[int]
-    movimiento_4: Optional[int]
+    movimientos: list[Optional[int]]
     naturaleza_id: int
     stats: dict
 
@@ -71,142 +68,16 @@ class Team(BaseModel):
     id: int
     generacion: int
     nombre: Optional[str]
-    pokemon_1: Optional[PokemonTeam]
-    pokemon_2: Optional[PokemonTeam]
-    pokemon_3: Optional[PokemonTeam]
-    pokemon_4: Optional[PokemonTeam]
-    pokemon_5: Optional[PokemonTeam]
-    pokemon_6: Optional[PokemonTeam]
+    pokemones: List[Optional[PokemonTeam]]
 
 
 class MostrarTeam(BaseModel):
     id: int
     generacion: int
     nombre: str
-    pokemon_1: Pokemon
-    pokemon_2: Pokemon
-    pokemon_3: Pokemon
-    pokemon_4: Pokemon
-    pokemon_5: Pokemon
-    pokemon_6: Pokemon
+    pokemones: list[Pokemon]
 
 
-lista_equipos: List[Team] = [
-    Team(
-        id=1,
-        generacion=1,
-        nombre="team 1",
-        pokemon_1=PokemonTeam(
-            id=1,
-            nombre="ssdsadasdd",
-            movimiento_1=1,
-            movimiento_2=2,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=1,
-            stats={"ataque": 50, "defensa": 45},
-        ),
-        pokemon_2=PokemonTeam(
-            id=2,
-            nombre="sseeeeeeeeeeeeeeed",
-            movimiento_1=3,
-            movimiento_2=None,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=2,
-            stats={"ataque": 55, "defensa": 50},
-        ),
-        pokemon_3=None,
-        pokemon_4=None,
-        pokemon_5=None,
-        pokemon_6=None,
-    ),
-    Team(
-        id=2,
-        generacion=2,
-        nombre="team 2",
-        pokemon_1=PokemonTeam(
-            id=3,
-            nombre="aaaaaaaaaaaaaaaaaaaaaaaaassd",
-            movimiento_1=4,
-            movimiento_2=5,
-            movimiento_3=6,
-            movimiento_4=None,
-            naturaleza_id=3,
-            stats={"ataque": 60, "defensa": 55},
-        ),
-        pokemon_2=PokemonTeam(
-            id=4,
-            nombre="suuuuuuuuuuuusd",
-            movimiento_1=None,
-            movimiento_2=None,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=1,
-            stats={"ataque": 65, "defensa": 60},
-        ),
-        pokemon_3=PokemonTeam(
-            id=5,
-            nombre="suuuuuuuuuuuuuuusd",
-            movimiento_1=7,
-            movimiento_2=8,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=2,
-            stats={"ataque": 70, "defensa": 65},
-        ),
-        pokemon_4=None,
-        pokemon_5=None,
-        pokemon_6=None,
-    ),
-    Team(
-        id=3,
-        generacion=3,
-        nombre="team 3",
-        pokemon_1=PokemonTeam(
-            id=6,
-            nombre="sesd",
-            movimiento_1=None,
-            movimiento_2=None,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=2,
-            stats={"ataque": 75, "defensa": 70},
-        ),
-        pokemon_2=PokemonTeam(
-            id=7,
-            nombre="ssd",
-            movimiento_1=9,
-            movimiento_2=None,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=3,
-            stats={"ataque": 80, "defensa": 75},
-        ),
-        pokemon_3=PokemonTeam(
-            id=8,
-            nombre="ssd",
-            movimiento_1=10,
-            movimiento_2=11,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=1,
-            stats={"ataque": 85, "defensa": 80},
-        ),
-        pokemon_4=PokemonTeam(
-            id=9,
-            nombre="ssd",
-            movimiento_1=None,
-            movimiento_2=None,
-            movimiento_3=None,
-            movimiento_4=None,
-            naturaleza_id=1,
-            stats={"ataque": 90, "defensa": 85},
-        ),
-        pokemon_5=None,
-        pokemon_6=None,
-    ),
-]
 pokemon_por_id = {}
 with open("pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
