@@ -15,6 +15,7 @@ class Pokemon(BaseModel):
     grupo_de_huevo: str
     estadisticas: dict
     habilidades: list[str]
+    evoluciones_inmediatas: list
 
 class PokemonCreate(BaseModel):
     identificador: str
@@ -28,7 +29,6 @@ class PokemonCreate(BaseModel):
     estadisticas: dict
     habilidades: list[str]
     evoluciones_inmediatas: list
-
 
 class Movimiento(BaseModel):
     id: int
@@ -45,14 +45,26 @@ class Movimiento(BaseModel):
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
 
+class PokemonTeam(BaseModel):
+    id: int
+    nombre: str
+    movimientos: List[Optional[int]]
+    naturaleza_id: int
+    stats: dict
+
 class Team(BaseModel):
     id: int
+    nombre: str
+    generacion: int
+    pokemones: List[PokemonTeam]
+
 
 class TeamCreate(BaseModel):
     generacion: int
-    pokemon_id: Optional[int]
-    movimiento_id: Optional[int]
+    nombre: str
+    pokemones: List[PokemonTeam]
 
+lista_equipos: List[Team] = [{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}]
 
 class Naturaleza(BaseModel):
     id: int
@@ -364,7 +376,7 @@ class Movimiento(BaseModel):
     nivel: Optional[int] = None
     es_evolucionado: bool = False
 
-class Pokemon(BaseModel):
+class PokemonR(BaseModel):
     id: int
     nombre: str
     tipos: List[int]
@@ -383,7 +395,7 @@ with open("pokemon.csv") as archivo:
         f = linea.strip().split(",")
         id_pokemon = int(f[0])
         nombre_pokemon = f[1]
-        datos_pokemon[id_pokemon] = Pokemon(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
+        datos_pokemon[id_pokemon] = PokemonR(id=id_pokemon, nombre=nombre_pokemon, tipos=[])
 
 evoluciones = []
 with open("pokemon_evolutions.csv") as archivo:
@@ -429,5 +441,3 @@ with open("pokemon_types.csv") as archivo:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
 
-
-lista_equipos = []

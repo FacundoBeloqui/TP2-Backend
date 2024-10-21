@@ -100,10 +100,11 @@ def test_create_pokemon():
         "experiencia_base": 250,
         "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/numero_id.png",
         "tipo": ["Humo", "Saltar"],
-        "grupo_de_huevo": "huevo",
+        "grupo_de_huevo": "Huevo",
         "estadisticas": {"ATK": 200, "DEF": 250},
-        "habilidades": ["Saltar", "Invisible"],
-        "generaciones": ["Ruby", "Zafiro", "Esmeralda"],
+        "habilidades": ["Salto", "Invisible"],
+        "generaciones": [],
+        "evoluciones_inmediatas": []
     }
     response = client.post("/pokemones", json=data)
     assert response.status_code == 201
@@ -119,8 +120,9 @@ def test_create_pokemon():
     )
     assert content["tipo"] == ["Humo", "Saltar"]
     assert content["grupo_de_huevo"] == "Huevo"
-    assert content["estadisticas"] == {"ATK": 200, "DEF": 200}
+    assert content["estadisticas"] == {"ATK": 200, "DEF": 250}
     assert content["habilidades"] == ["Salto", "Invisible"]
+    assert content["evoluciones_inmediatas"] == []
     assert "id" in content
     assert "id_especie" in content
 
