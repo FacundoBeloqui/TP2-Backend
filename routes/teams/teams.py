@@ -8,7 +8,8 @@ from db import (
     TeamCreate,
     TeamDataCreate,
     generaciones_pokemon,
-    pokemon_tipos)
+    pokemon_tipos,
+)
 
 
 generacion = ""
@@ -50,7 +51,7 @@ def get_team_by_id(team_id):
         if t["id"] == int(team_id):
             team = t
             break
-    if team is None: 
+    if team is None:
         raise HTTPException(status_code=404, detail="Equipo no encontrado")
     return team
 
@@ -63,14 +64,17 @@ def create_team(team: TeamCreate):
         raise HTTPException(status_code=404, detail="No se encontró la generacion")
 
     if len(team.pokemones) < 1 or len(team.pokemones) > 6:
-        raise HTTPException(status_code=400, detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones")
+        raise HTTPException(
+            status_code=400,
+            detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
+        )
 
     for id_pokemon, generaciones in generaciones_pokemon.items():
         if team.generacion in generaciones:
             for pokemon in lista_pokemones:
                 if pokemon.id == int(id_pokemon):
                     lista_generacion_pokemones.append(pokemon)
-        
+
     for movimiento in lista_movimientos:
         if team.generacion == movimiento.generacion:
             lista_generacion_movimientos.append(movimiento)
@@ -86,17 +90,19 @@ def create_team(team: TeamCreate):
             if m.id in movimiento_team.movimientos:
                 movimiento_elegido.append(m)
 
-    if  len(pokemon_elegido) == 0:
-        raise HTTPException(status_code=404, detail="Pokemon seleccionado no encontrado en la generacion")
-    
+    if len(pokemon_elegido) == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="Pokemon seleccionado no encontrado en la generacion",
+        )
+
     if len(movimiento_elegido) == 0:
-        raise HTTPException(status_code=404, detail="Movimiento no encontrado en la generacion")
-    
-    nuevo_equipo = {
-        "pokemon": pokemon_elegido, 
-        "movimiento": movimiento_elegido
-    }
-    
+        raise HTTPException(
+            status_code=404, detail="Movimiento no encontrado en la generacion"
+        )
+
+    nuevo_equipo = {"pokemon": pokemon_elegido, "movimiento": movimiento_elegido}
+
     lista_equipos.append(nuevo_equipo)
 
     return nuevo_equipo
@@ -114,18 +120,11 @@ def normalizar_palabra(palabra):
     return palabra_normalizada
 
 
-@router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
+@router.patch("/{id_team_a_updatear}/{id_poken_a_updatear}")
 def actualizar_equipo(
-    id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamCreate
+    id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamDataCreate
 ):
     if not lista_equipos:
-        raise HTTPException(status_code=404, detail="No hay equipos disponibles")
-
-    if id_team_a_updatear is None:
-
-@router.patch("/{id_team_a_updatear}")
-def actualizar_equipo(id_team_a_updatear: int, team: TeamDataCreate):
-   if not lista_equipos:
         raise HTTPException(status_code=404, detail="No hay equipos disponibles")
 
     if id_team_a_updatear is None:
@@ -135,7 +134,6 @@ def actualizar_equipo(id_team_a_updatear: int, team: TeamDataCreate):
 
     if id_pokemon_a_updatear is None:
         raise HTTPException(status_code=400, detail="Ingrese un pokemon para editar")
-
 
     for equipo in lista_equipos:
         if id_team_a_updatear == equipo.id:
