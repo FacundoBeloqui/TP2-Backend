@@ -51,7 +51,7 @@ def normalizar_palabra(palabra):
 
 
 @router.patch("/{id_team_a_updatear}")
-def actualizar_equipo(id_team_a_updatear, team: Team):
+def actualizar_equipo(id_team_a_updatear: int, team: Team):
     if not id_team_a_updatear:
         raise HTTPException(
             status_code=400, detail="Ingrese el id del equipo a modificar"
