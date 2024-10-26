@@ -161,8 +161,4 @@ cython_debug/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 *.csv
-*alembic.ini
-*env.py
-*README
-script.py.mako
-*idea
+the_coding_stones.db
