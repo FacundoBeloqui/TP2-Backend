@@ -1,14 +1,21 @@
-from fastapi import HTTPException, APIRouter
-from typing import List
+from models import *
+from fastapi import APIRouter, HTTPException, status
+from sqlmodel import select
+
 from db import (
+    SessionDep,
     lista_naturalezas,
     lista_pokemones,
     lista_movimientos,
     lista_habilidades,
-    TeamCreate,
-    TeamDataCreate,
     generaciones_pokemon,
     pokemon_tipos,
+)
+from fastapi import HTTPException, APIRouter
+from typing import List
+from models import (
+    TeamCreate,
+    TeamDataCreate,
     Pokemon,
 )
 
