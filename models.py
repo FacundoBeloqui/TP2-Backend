@@ -70,8 +70,8 @@ class TeamCreate(BaseModel):
     pokemones: List[PokemonTeamCreate]
 
 
-class Naturaleza(BaseModel):
-    id: int
+class Naturaleza(SQLModel, table=True):
+    id: int = Field(primary_key=True)
     nombre: str
     stat_decreciente: str
     stat_creciente: str
