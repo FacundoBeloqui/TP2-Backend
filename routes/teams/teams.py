@@ -1,6 +1,6 @@
 from models import *
 from fastapi import APIRouter, HTTPException, status
-from sqlmodel import select
+
 
 from db import (
     SessionDep,
