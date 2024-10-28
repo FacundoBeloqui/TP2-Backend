@@ -7,8 +7,9 @@ from db import (
     datos_movimientos_pokemon,
     datos_movimientos,
     datos_tipos_pokemon,
+    SessionDep
 )
-from models import Pokemon, PokemonCreate, Evolucion, Movimientomoves
+from models import Pokemon, PokemonCreate, Evolucion, Movimientomoves, PokemonBase
 
 router = APIRouter()
 
@@ -74,25 +75,11 @@ def eliminar_pokemon(id):
 
 
 @router.post("/", response_model=Pokemon, status_code=201)
-def create_pokemon(pokemon: PokemonCreate):
-    pokemon_id = len(lista_pokemones) + 1
-    nuevo_pokemon = Pokemon(
-        id=pokemon_id,
-        identificador=pokemon.identificador,
-        id_especie=pokemon_id,
-        altura=pokemon.altura,
-        peso=pokemon.peso,
-        experiencia_base=pokemon.experiencia_base,
-        imagen=pokemon.imagen,
-        tipo=pokemon.tipo,
-        grupo_de_huevo=pokemon.grupo_de_huevo,
-        estadisticas=pokemon.estadisticas,
-        habilidades=pokemon.habilidades,
-        generaciones=pokemon.generaciones,
-        evoluciones_inmediatas=pokemon.evoluciones_inmediatas,
-    )
-    lista_pokemones.append(nuevo_pokemon)
-    return nuevo_pokemon
+def create_pokemon(session: SessionDep, pokemon: PokemonBase):
+    session.add(pokemon)
+    session.commit()
+    session.refresh(pokemon)
+    return pokemon
 
 
 @router.get("/{pokemon_id}/movimientos")

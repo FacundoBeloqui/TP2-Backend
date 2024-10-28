@@ -1,7 +1,7 @@
 from typing import List, Dict, Optional
 
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel
+from sqlmodel import Field, SQLModel, Relationship
 
 
 class PokemonBase(SQLModel):
@@ -42,25 +42,26 @@ class Movimiento(BaseModel):
     pokemones_grupo_huevo: List[str]
 
 
-class PokemonTeamCreate(BaseModel):
+class PokemonTeamCreate(SQLModel):
     id: int
     nombre: str
     movimientos: List[Optional[int]]
     naturaleza_id: int
     stats: dict
 
-
-class TeamDataCreate(BaseModel):
-    id: int
-    nombre: str
-    generacion: int
-    pokemones: List[PokemonTeamCreate]
-
-
-class TeamCreate(BaseModel):
+class TeamBase(SQLModel):
     generacion: int
     nombre: str
-    pokemones: List[PokemonTeamCreate]
+    pokemones: List[PokemonTeamCreate] = Relationship(back_populates="team")
+
+class TeamDataCreate(TeamBase, table=True):
+    id: int = Field(primary_key=True)
+    # nombre: str
+    # generacion: int
+    # pokemones: List[PokemonTeamCreate]
+
+# class TeamCreate(TeamBase):
+#     pass
 
 
 class Naturaleza(BaseModel):
