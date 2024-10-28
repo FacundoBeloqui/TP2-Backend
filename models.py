@@ -26,7 +26,7 @@ class PokemonCreate(PokemonBase):
     pass
 
 
-class MovimientoBase(SQLModel, table=True):
+class Movimiento(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
     generacion: int
