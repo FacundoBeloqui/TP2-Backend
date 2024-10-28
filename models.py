@@ -26,8 +26,8 @@ class PokemonCreate(PokemonBase):
     pass
 
 
-class Movimiento(BaseModel):
-    id: int
+class Movimiento(SQLModel, table=True):
+    id: int = Field(primary_key=True)
     nombre: str
     generacion: int
     tipo: str
@@ -64,8 +64,8 @@ class TeamDataCreate(TeamBase, table=True):
 #     pass
 
 
-class Naturaleza(BaseModel):
-    id: int
+class Naturaleza(SQLModel, table=True):
+    id: int = Field(primary_key=True)
     nombre: str
     stat_decreciente: str
     stat_creciente: str
