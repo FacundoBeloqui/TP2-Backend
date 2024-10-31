@@ -30,9 +30,9 @@ def upgrade() -> None:
         sa.Column('pp', sa.String),
         sa.Column('categoria', sa.String),
         sa.Column('efecto', sa.Text),
-        sa.Column('pokemones_subida_nivel', sa.ARRAY(sa.String)),
-        sa.Column('pokemones_tm', sa.ARRAY(sa.String)),
-        sa.Column('pokemones_grupo_huevo', sa.ARRAY(sa.String)),
+        sa.Column('pokemones_subida_nivel', sa.BLOB(sa.String)),
+        sa.Column('pokemones_tm', sa.BLOB(sa.String)),
+        sa.Column('pokemones_grupo_huevo', sa.BLOB(sa.String)),
     )
 
 
