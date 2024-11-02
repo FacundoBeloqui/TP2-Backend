@@ -21,11 +21,14 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        'habilidad',
-        sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('nombre', sa.String, nullable=False)
-        sa.Column('pokemon_id', sa.Integer, sa.ForeignKey('pokemon.id'), nullable=False)
+        "habilidad",
+        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("nombre", sa.String, nullable=False),
+        sa.Column(
+            "pokemon_id", sa.Integer, sa.ForeignKey("pokemon.id"), nullable=False
+        ),
     )
 
+
 def downgrade() -> None:
-    op.drop_table('habilidad')
+    op.drop_table("habilidad")
