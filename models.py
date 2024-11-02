@@ -1,7 +1,6 @@
+from typing import List, Dict, Optional
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel, Relationship, Column
-from sqlalchemy import JSON
-
+from sqlmodel import Field, SQLModel, Relationship
 
 class TipoBase(SQLModel):
     nombre: str
@@ -31,54 +30,12 @@ class Evolucion(EvolucionBase, table=True):
     pokemon: "Pokemon" = Relationship(back_populates="evolucion")
 
 
-class PokemonBase(SQLModel):
-    identificador: str
-    altura: int
-    peso: int
-    experiencia_base: int
-    imagen: str
-    grupo_de_huevo: str
-    estadisticas: dict[str, int] = Field(sa_column=Column(JSON))
-
-
-class Pokemon(PokemonBase, table=True):
-    id: int = Field(primary_key=True)
-    id_especie: int
-    evoluciones_inmediatas: list[Evolucion] = Relationship(back_populates="pokemon")
-    habilidades: list[Habilidad] = Relationship(back_populates="pokemon")
-    tipos: list[Tipo] = Relationship(back_populates="pokemon")
-
-
 class PokemonTipo(SQLModel, table=True):
     pokemon_id: int = Field(foreign_key="pokemon.id", primary_key=True)
     tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
     pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
     tipo: Tipo = Relationship(back_populates="pokemones")
 
-
-class PokemonCreate(PokemonBase):
-    pass
-
-
-class Movimiento(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    generacion: int
-    tipo: str
-    poder: str
-    accuracy: str
-    pp: str
-    generacion: int
-    categoria: str
-    efecto: str
-
-    pokemones_subida_nivel: list["PokemonSubidaNivel"] = Relationship(
-        back_populates="movimiento"
-    )
-    pokemones_tm: list["PokemonTM"] = Relationship(back_populates="movimiento")
-    pokemones_grupo_huevo: list["PokemonGrupoHuevo"] = Relationship(
-        back_populates="movimiento"
-    )
 
 
 class PokemonSubidaNivel(SQLModel, table=True):
@@ -163,3 +120,4 @@ class Evolucion(SQLModel):
 
 class DatosMovimiento(SQLModel):
     movimientos: dict[int, Movimiento]
+
