@@ -20,8 +20,13 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    pass
-
+    op.create_table(
+        'evolucion',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('nombre', sa.String, nullable=False),
+        sa.Column('pokemon_id', sa.Integer, sa.ForeignKey('pokemon.id'), nullable=False)
+    )
 
 def downgrade() -> None:
-    pass
+    op.drop_table('evolucion')
+    
