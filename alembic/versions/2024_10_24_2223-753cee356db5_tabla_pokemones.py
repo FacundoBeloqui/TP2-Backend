@@ -21,19 +21,19 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        "pokemon",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("identificador", sa.String, nullable=False),
-        sa.Column("id_especie", sa.Integer, nullable=False),
-        sa.Column("altura", sa.Integer, nullable=False),
-        sa.Column("peso", sa.Integer, nullable=False),
-        sa.Column("experiencia_base", sa.Integer, nullable=False),
-        sa.Column("imagen", sa.String, nullable=False),
-        sa.Column("tipo", sa.String, nullable=False),
-        sa.Column("grupo_de_huevo", sa.String, nullable=False),
-        sa.Column("estadisticas", sa.JSON, nullable=False),
-        sa.Column("habilidades", sa.String, nullable=True),
-        sa.Column("evoluciones_inmediatas", sa.String, nullable=True),
+        'pokemon',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('identificador', sa.String, nullable=False),
+        sa.Column('id_especie', sa.Integer, nullable=False),
+        sa.Column('altura', sa.Integer, nullable=False),
+        sa.Column('peso', sa.Integer, nullable=False),
+        sa.Column('experiencia_base', sa.Integer, nullable=False),
+        sa.Column('imagen', sa.String, nullable=False),
+        sa.Column('tipo', sa.BLOB(sa.String), nullable=False),
+        sa.Column('grupo_de_huevo', sa.String, nullable=False),
+        sa.Column('estadisticas', sa.JSON, nullable=False),
+        sa.Column('habilidades', sa.BLOB(sa.String), nullable=True),
+        sa.Column('evoluciones_inmediatas', sa.BLOB(sa.String), nullable=True),
     )
 
 

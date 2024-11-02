@@ -21,19 +21,19 @@ depends_on: Union[str, Sequence[str], None] = None
 
 def upgrade() -> None:
     op.create_table(
-        "movimiento",
-        sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("nombre", sa.String, nullable=False),
-        sa.Column("generacion", sa.Integer),
-        sa.Column("tipo", sa.String, nullable=False),
-        sa.Column("poder", sa.String),
-        sa.Column("accuracy", sa.String),
-        sa.Column("pp", sa.String),
-        sa.Column("categoria", sa.String),
-        sa.Column("efecto", sa.Text),
-        sa.Column("pokemones_subida_nivel", sa.String),
-        sa.Column("pokemones_tm", sa.String),
-        sa.Column("pokemones_grupo_huevo", sa.String),
+        'movimiento',
+        sa.Column('id', sa.Integer, primary_key=True),
+        sa.Column('nombre', sa.String, nullable=False),
+        sa.Column('generacion', sa.Integer),
+        sa.Column('tipo', sa.String, nullable=False),
+        sa.Column('poder', sa.String),
+        sa.Column('accuracy', sa.String),
+        sa.Column('pp', sa.String),
+        sa.Column('categoria', sa.String),
+        sa.Column('efecto', sa.Text),
+        sa.Column('pokemones_subida_nivel', sa.BLOB(sa.String)),
+        sa.Column('pokemones_tm', sa.BLOB(sa.String)),
+        sa.Column('pokemones_grupo_huevo', sa.BLOB(sa.String)),
     )
 
 
