@@ -36,20 +36,47 @@ class PokemonBase(SQLModel):
     imagen: str
     grupo_de_huevo: str
     estadisticas: dict
-    evoluciones_inmediatas: List[Evolucion] = Relationship(back_populates="pokemon")
+    evoluciones_inmediatas: list[Evolucion] = Relationship(back_populates="pokemon")
+    habilidades: list[Habilidad] = Relationship(back_populates="pokemones")
+    tipos: list[Tipo] = Relationship(back_populates="pokemones")
+
+class PokemonTeamCreate(SQLModel):
+    id: int
+    nombre: str
+    movimientos: List[Optional[int]]
+    naturaleza_id: int
+    stats: dict
+
+
+class TeamBase(SQLModel):
+    generacion: int
+    nombre: str
+    pokemones: list["PokemonTeamCreate"] = Relationship(back_populates="equipo")
+
+
+class TeamDataCreate(TeamBase, table=True):
+    id: int = Field(primary_key=True)
+    # nombre: str
+    # generacion: int
+    # pokemones: List[PokemonTeamCreate]
+
+
+# class TeamCreate(TeamBase):
+#     pass
+
 
 class Pokemon(PokemonBase, table=True):
     id: int = Field(primary_key=True)
     id_especie: int
-    habilidades: List[Habilidad] = Relationship(back_populates="pokemones")
-    tipos: List[Tipo] = Relationship(back_populates="pokemones")
+    equipo_id: int | None = Field(default=None, foreign_key="equipo.id")
+    equipo: TeamDataCreate | None = Relationship(back_populates="pokemones")
 
 
-class PokemonTipo(SQLModel, table=True):
-    pokemon_id: int = Field(foreign_key="pokemon.id", primary_key=True)
-    tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
-    pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
-    tipo: Tipo = Relationship(back_populates="pokemones")
+# class PokemonTipo(SQLModel, table=True):
+#     pokemon_id: int = Field(foreign_key="pokemon.id", primary_key=True)
+#     tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
+#     pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
+#     tipo: Tipo = Relationship(back_populates="pokemones")
 
 
 class PokemonCreate(PokemonBase):
@@ -102,31 +129,6 @@ class PokemonGrupoHuevo(SQLModel, table=True):
     )
 
 
-class PokemonTeamCreate(SQLModel):
-    id: int
-    nombre: str
-    movimientos: List[Optional[int]]
-    naturaleza_id: int
-    stats: dict
-
-
-class TeamBase(SQLModel):
-    generacion: int
-    nombre: str
-    pokemones: List[PokemonTeamCreate] = Relationship(back_populates="team")
-
-
-class TeamDataCreate(TeamBase, table=True):
-    id: int = Field(primary_key=True)
-    # nombre: str
-    # generacion: int
-    # pokemones: List[PokemonTeamCreate]
-
-
-# class TeamCreate(TeamBase):
-#     pass
-
-
 class Naturaleza(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
@@ -163,29 +165,6 @@ class Evolucion(BaseModel):
 
 class DatosMovimiento(BaseModel):
     movimientos: Dict[int, Movimiento]
-
-
-class PokemonTeam(BaseModel):
-    id: int
-    nombre: str
-    movimiento_1: Optional[int]
-    movimiento_2: Optional[int]
-    movimiento_3: Optional[int]
-    movimiento_4: Optional[int]
-    naturaleza_id: int
-    stats: dict
-
-
-class Team(BaseModel):
-    id: int
-    generacion: int
-    nombre: str
-    pokemon_1: Optional[PokemonTeam]
-    pokemon_2: Optional[PokemonTeam]
-    pokemon_3: Optional[PokemonTeam]
-    pokemon_4: Optional[PokemonTeam]
-    pokemon_5: Optional[PokemonTeam]
-    pokemon_6: Optional[PokemonTeam]
 
 
 lista_equipos: List[TeamDataCreate] = [
