@@ -1,35 +1,30 @@
+from typing import List, Dict, Optional
+
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel, Relationship, Column
-from sqlalchemy import JSON
+from sqlmodel import Field, SQLModel, Relationship
 
 
 class TipoBase(SQLModel):
     nombre: str
 
-
 class Tipo(TipoBase, table=True):
     id: int = Field(primary_key=True)
-    pokemones: list["Pokemon"] = Relationship(back_populates="tipos")
-
+    pokemones: List["Pokemon"] = Relationship(back_populates="tipos")
 
 class HabilidadBase(SQLModel):
     nombre: str
 
-
 class Habilidad(HabilidadBase, table=True):
     id: int = Field(primary_key=True)
-    pokemones: list["Pokemon"] = Relationship(back_populates="habilidades")
-
+    pokemones: List["Pokemon"] = Relationship(back_populates="habilidades")
 
 class EvolucionBase(SQLModel):
     nombre: str
 
-
 class Evolucion(EvolucionBase, table=True):
     id: int = Field(primary_key=True)
-    pokemon_id: int = Field(foreign_key="pokemon.id")
+    pokemon_id: int = Field(foreign_key="pokemon.id")  
     pokemon: "Pokemon" = Relationship(back_populates="evoluciones_inmediatas")
-
 
 class PokemonBase(SQLModel):
     identificador: str
@@ -38,15 +33,14 @@ class PokemonBase(SQLModel):
     experiencia_base: int
     imagen: str
     grupo_de_huevo: str
-    estadisticas: dict[str, int] = Field(sa_column=Column(JSON))
-
+    estadisticas: dict
+    evoluciones_inmediatas: List[Evolucion] = Relationship(back_populates="pokemon")
 
 class Pokemon(PokemonBase, table=True):
     id: int = Field(primary_key=True)
     id_especie: int
-    evoluciones_inmediatas: list[Evolucion] = Relationship(back_populates="pokemon")
-    habilidades: list[Habilidad] = Relationship(back_populates="pokemon")
-    tipos: list[Tipo] = Relationship(back_populates="pokemon")
+    habilidades: List[Habilidad] = Relationship(back_populates="pokemones")
+    tipos: List[Tipo] = Relationship(back_populates="pokemones")
 
 
 class PokemonCreate(PokemonBase):
@@ -78,42 +72,46 @@ class PokemonSubidaNivel(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
     movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_subida_nivel")
+    movimiento: Optional[Movimiento] = Relationship(
+        back_populates="pokemones_subida_nivel"
+    )
 
 
 class PokemonTM(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
     movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_tm")
+    movimiento: Optional[Movimiento] = Relationship(back_populates="pokemones_tm")
 
 
 class PokemonGrupoHuevo(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
     movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_grupo_huevo")
+    movimiento: Optional[Movimiento] = Relationship(
+        back_populates="pokemones_grupo_huevo"
+    )
 
 
 class PokemonTeamCreate(SQLModel):
     id: int
     nombre: str
-    movimientos: list[int] = Field(sa_column=Column(JSON))
+    movimientos: List[Optional[int]]
     naturaleza_id: int
-    stats: dict[str, int] = Field(sa_column=Column(JSON))
+    stats: dict
 
 
 class TeamBase(SQLModel):
     generacion: int
     nombre: str
-    pokemones: list["PokemonTeamCreate"] = Relationship(back_populates="team")
+    pokemones: List[PokemonTeamCreate] = Relationship(back_populates="team")
 
 
-# class TeamDataCreate(TeamBase, table=True):
-#   id: int = Field(primary_key=True)
-# nombre: str
-# generacion: int
-# pokemones: list[PokemonTeamCreate]
+class TeamDataCreate(TeamBase, table=True):
+    id: int = Field(primary_key=True)
+    # nombre: str
+    # generacion: int
+    # pokemones: List[PokemonTeamCreate]
 
 
 # class TeamCreate(TeamBase):
@@ -130,29 +128,86 @@ class Naturaleza(SQLModel, table=True):
     indice_juego: int
 
 
-class Teams(SQLModel):
+class Teams(BaseModel):
     id: int
     nombre: str
-    pokemones: list["Pokemon"] = Relationship(back_populates="teams")
+    pokemones: List[str]
 
 
-class Movimientomoves(SQLModel):
+class Movimientomoves(BaseModel):
     id: int
     nombre: str
-    nivel: int = None
+    nivel: Optional[int] = None
     es_evolucionado: bool = False
 
 
-class Pokemonmoves(SQLModel):
+class Pokemonmoves(BaseModel):
     id: int
     nombre: str
-    tipos: list["Tipo"] = Relationship(back_populates="pokemon_moves")
+    tipos: List[int]
 
 
-class Evolucion(SQLModel):
+class Evolucion(BaseModel):
     id_pokemon_base: int
     id_pokemon_evolucionado: int
 
 
-class DatosMovimiento(SQLModel):
-    movimientos: dict[int, Movimiento]
+class DatosMovimiento(BaseModel):
+    movimientos: Dict[int, Movimiento]
+
+
+class PokemonTeam(BaseModel):
+    id: int
+    nombre: str
+    movimiento_1: Optional[int]
+    movimiento_2: Optional[int]
+    movimiento_3: Optional[int]
+    movimiento_4: Optional[int]
+    naturaleza_id: int
+    stats: dict
+
+
+class Team(BaseModel):
+    id: int
+    generacion: int
+    nombre: str
+    pokemon_1: Optional[PokemonTeam]
+    pokemon_2: Optional[PokemonTeam]
+    pokemon_3: Optional[PokemonTeam]
+    pokemon_4: Optional[PokemonTeam]
+    pokemon_5: Optional[PokemonTeam]
+    pokemon_6: Optional[PokemonTeam]
+
+
+lista_equipos: List[TeamDataCreate] = [
+    {
+        "id": 1,
+        "nombre": "Equipo A",
+        "generacion": 1,
+        "pokemones": [
+            {
+                "id": 1,
+                "nombre": "Pikachu",
+                "movimientos": [1, 2],
+                "naturaleza_id": 1,
+                "stats": {},
+            }
+        ],
+    },
+    {
+        "id": 2,
+        "nombre": "Equipo B",
+        "generacion": 2,
+        "pokemones": [
+            {
+                "id": 2,
+                "nombre": "Charmander",
+                "movimientos": [2],
+                "naturaleza_id": 1,
+                "stats": {},
+            }
+        ],
+    },
+]
+
+# lista_equipos: List[TeamDataCreate] = []
