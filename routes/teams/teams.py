@@ -116,7 +116,7 @@ def create_team(team: TeamCreate):
     return nuevo_equipo
 
 
-@router.patch("/{id_team_a_updatear}/{id_poken_a_updatear}")
+@router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
 def actualizar_equipo(
     id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamDataCreate
 ):
