@@ -1,4 +1,4 @@
-"""crear tabla evoluciones inmediatas
+"""crear tabla habilidad
 
 Revision ID: e17c2bcb269e
 Revises: 753cee356db5, bff31a12b5ab
@@ -24,6 +24,7 @@ def upgrade() -> None:
         'habilidad',
         sa.Column('id', sa.Integer, primary_key=True),
         sa.Column('nombre', sa.String, nullable=False)
+        sa.Column('pokemon_id', sa.Integer, sa.ForeignKey('pokemon.id'), nullable=False)
     )
 
 def downgrade() -> None:
