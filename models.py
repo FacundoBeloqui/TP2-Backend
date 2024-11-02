@@ -9,7 +9,7 @@ class TipoBase(SQLModel):
 
 class Tipo(TipoBase, table=True):
     id: int = Field(primary_key=True)
-    pokemones: list["Pokemon"] = Relationship(back_populates="tipos")
+    pokemones: list["Pokemon"] = Relationship(back_populates="tipo")
 
 
 class HabilidadBase(SQLModel):
@@ -18,7 +18,7 @@ class HabilidadBase(SQLModel):
 
 class Habilidad(HabilidadBase, table=True):
     id: int = Field(primary_key=True)
-    pokemones: list["Pokemon"] = Relationship(back_populates="habilidades")
+    pokemones: list["Pokemon"] = Relationship(back_populates="habilidad")
 
 
 class EvolucionBase(SQLModel):
@@ -28,7 +28,7 @@ class EvolucionBase(SQLModel):
 class Evolucion(EvolucionBase, table=True):
     id: int = Field(primary_key=True)
     pokemon_id: int = Field(foreign_key="pokemon.id")
-    pokemon: "Pokemon" = Relationship(back_populates="evoluciones_inmediatas")
+    pokemon: "Pokemon" = Relationship(back_populates="evolucion")
 
 
 class PokemonBase(SQLModel):
@@ -47,6 +47,13 @@ class Pokemon(PokemonBase, table=True):
     evoluciones_inmediatas: list[Evolucion] = Relationship(back_populates="pokemon")
     habilidades: list[Habilidad] = Relationship(back_populates="pokemon")
     tipos: list[Tipo] = Relationship(back_populates="pokemon")
+
+
+class PokemonTipo(SQLModel, table=True):
+    pokemon_id: int = Field(foreign_key="pokemon.id", primary_key=True)
+    tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
+    pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
+    tipo: Tipo = Relationship(back_populates="pokemones")
 
 
 class PokemonCreate(PokemonBase):
