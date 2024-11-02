@@ -4,22 +4,43 @@ from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, Relationship
 
 
+class TipoBase(SQLModel):
+    nombre: str
+
+class Tipo(TipoBase, table=True):
+    id: int = Field(primary_key=True)
+    pokemones: List["Pokemon"] = Relationship(back_populates="tipos")
+
+class HabilidadBase(SQLModel):
+    nombre: str
+
+class Habilidad(HabilidadBase, table=True):
+    id: int = Field(primary_key=True)
+    pokemones: List["Pokemon"] = Relationship(back_populates="habilidades")
+
+class EvolucionBase(SQLModel):
+    nombre: str
+
+class Evolucion(EvolucionBase, table=True):
+    id: int = Field(primary_key=True)
+    pokemon_id: int = Field(foreign_key="pokemon.id")  
+    pokemon: "Pokemon" = Relationship(back_populates="evoluciones_inmediatas")
+
 class PokemonBase(SQLModel):
     identificador: str
     altura: int
     peso: int
     experiencia_base: int
     imagen: str
-    tipo: list[str]
     grupo_de_huevo: str
     estadisticas: dict
-    habilidades: list[str]
-    evoluciones_inmediatas: list
-
+    evoluciones_inmediatas: List[Evolucion] = Relationship(back_populates="pokemon")
 
 class Pokemon(PokemonBase, table=True):
     id: int = Field(primary_key=True)
     id_especie: int
+    habilidades: List[Habilidad] = Relationship(back_populates="pokemones")
+    tipos: List[Tipo] = Relationship(back_populates="pokemones")
 
 
 class PokemonCreate(PokemonBase):
