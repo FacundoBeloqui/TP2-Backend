@@ -1,4 +1,3 @@
-from pydantic import BaseModel
 from typing import List, Dict, Optional
 from sqlmodel import create_engine, Session
 from fastapi import Depends
@@ -27,7 +26,7 @@ def get_db():
 SessionDep = Annotated[Session, Depends(get_db)]
 
 pokemon_por_id = {}
-with open("pokemon.csv") as archivo_pokemon:
+with open("csv/pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -39,7 +38,7 @@ dicc_stats = {}
 pokemon_habilidades = []
 pokemon_estadisticas = []
 
-with open("stats.csv") as f:
+with open("csv/stats.csv") as f:
     for i, linea in enumerate(f):
         if i == 0:
             continue
@@ -52,7 +51,7 @@ with open("stats.csv") as f:
             dicc_stats[id_stat] = nombre_stat
 
 dicc_pokemon_stats = {}
-with open("pokemon_stats.csv") as pokemon_stats:
+with open("csv/pokemon_stats.csv") as pokemon_stats:
     for i, linea in enumerate(pokemon_stats):
         lista_habilidades = []
         if i == 0:
@@ -67,7 +66,7 @@ with open("pokemon_stats.csv") as pokemon_stats:
         dicc_pokemon_stats[pokemon_id][stat_nombre] = base_stat
 
 nombres_habilidades = {}
-with open("ability_names.csv") as ability_names:
+with open("csv/ability_names.csv") as ability_names:
     for i, linea in enumerate(ability_names):
         if i == 0:
             continue
@@ -77,7 +76,7 @@ with open("ability_names.csv") as ability_names:
 
 
 habilidades_de_cada_pokemon = {}
-with open("pokemon_abilities.csv") as pokemon_abilities:
+with open("csv/pokemon_abilities.csv") as pokemon_abilities:
     for i, linea in enumerate(pokemon_abilities):
         if i == 0:
             continue
@@ -94,7 +93,7 @@ pokemon_tipos = {}
 evoluciones_pokemones = {}
 lista_pokemones = []
 
-with open("type_names.csv") as nombres_tipos:
+with open("csv/type_names.csv") as nombres_tipos:
     for linea in nombres_tipos:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
@@ -102,7 +101,7 @@ with open("type_names.csv") as nombres_tipos:
 
 debilidades_tipos = {}
 fortalezas_tipos = {}
-with open("type_efficacy.csv") as efectividad_tipos:
+with open("csv/type_efficacy.csv") as efectividad_tipos:
     for linea in efectividad_tipos:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "damage_type_id":
@@ -121,7 +120,7 @@ with open("type_efficacy.csv") as efectividad_tipos:
 
 
 pokemon_tipos = {}
-with open("pokemon_types.csv") as tipos:
+with open("csv/pokemon_types.csv") as tipos:
     for linea in tipos:
         linea = linea.rstrip("\n").split(",")
         pokemon_id = linea[0]
@@ -133,12 +132,12 @@ with open("pokemon_types.csv") as tipos:
 
 tipo_huevo = {}
 huevos_nombres = {}
-with open("pokemon_egg_groups.csv") as grupo_huevo:
+with open("csv/pokemon_egg_groups.csv") as grupo_huevo:
     for linea in grupo_huevo:
         linea = linea.rstrip("\n").split(",")
         tipo_huevo[linea[0]] = linea[1]
 
-with open("egg_group_prose.csv") as nombres_huevo:
+with open("csv/egg_group_prose.csv") as nombres_huevo:
     for linea in nombres_huevo:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
@@ -146,7 +145,7 @@ with open("egg_group_prose.csv") as nombres_huevo:
 
 
 generaciones_pokemon = {}
-with open("pokemon_form_generations.csv") as generaciones_csv:
+with open("csv/pokemon_form_generations.csv") as generaciones_csv:
     for linea in generaciones_csv:
         linea = linea.rstrip("\n").split(",")
         pokemon_id = linea[0]
@@ -158,7 +157,7 @@ with open("pokemon_form_generations.csv") as generaciones_csv:
         generaciones_pokemon[pokemon_id].append(int(generacion))
 
 evoluciones_pokemones = {}
-with open("pokemon_evolutions.csv") as evoluciones_csv:
+with open("csv/pokemon_evolutions.csv") as evoluciones_csv:
     for linea in evoluciones_csv:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -179,7 +178,7 @@ with open("pokemon_evolutions.csv") as evoluciones_csv:
 
 
 lista_pokemones = []
-with open("pokemon.csv") as pokemones:
+with open("csv/pokemon.csv") as pokemones:
     for linea in pokemones:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -204,13 +203,13 @@ with open("pokemon.csv") as pokemones:
 
 dicc_categorias = {}
 dicc_efectos = {}
-with open("move_damage_class_prose.csv") as categorias:
+with open("csv/move_damage_class_prose.csv") as categorias:
     for linea in categorias:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             dicc_categorias[linea[0]] = linea[2]
 
-with open("move_effect_prose.csv") as efectos:
+with open("csv/move_effect_prose.csv") as efectos:
     for linea in efectos:
         linea = linea.rstrip("\n").split(",")
         if len(linea) > 2:
@@ -221,13 +220,13 @@ dicc_metodos = {}
 movimientos_subida_nivel = {}
 movimientos_tm = {}
 movimientos_grupo_huevo = {}
-with open("pokemon_move_method_prose.csv") as metodos:
+with open("csv/pokemon_move_method_prose.csv") as metodos:
     for linea in metodos:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             dicc_metodos[linea[0]] = linea[2]
 
-with open("pokemon_moves.csv") as movimientos_pokemon:
+with open("csv/pokemon_moves.csv") as movimientos_pokemon:
     for linea in movimientos_pokemon:
         linea = linea.rstrip("\n").split(",")
         pokemon_id = linea[0]
@@ -258,7 +257,7 @@ with open("pokemon_moves.csv") as movimientos_pokemon:
 
 
 lista_movimientos = []
-with open("moves.csv") as movimientos:
+with open("csv/moves.csv") as movimientos:
     for linea in movimientos:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -287,19 +286,19 @@ with open("moves.csv") as movimientos:
             lista_movimientos.append(movimiento)
 
 naturalezas_nombres = {}
-with open("nature_names.csv") as nombres_naturalezas:
+with open("csv/nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             naturalezas_nombres[linea[0]] = linea[2]
 dicc_estadisticas = {}
-with open("stats.csv") as estadisticas:
+with open("csv/stats.csv") as estadisticas:
     for linea in estadisticas:
         linea = linea.rstrip("\n").split(",")
         dicc_estadisticas[linea[0]] = linea[2]
 
 lista_naturalezas = []
-with open("natures.csv") as naturalezas:
+with open("csv/natures.csv") as naturalezas:
     for linea in naturalezas:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -320,7 +319,7 @@ with open("natures.csv") as naturalezas:
             lista_naturalezas.append(naturaleza)
 
 datos_pokemon = {}
-with open("pokemon.csv") as archivo:
+with open("csv/pokemon.csv") as archivo:
     lineas = archivo.readlines()
     for linea in lineas[1:]:
         f = linea.strip().split(",")
@@ -331,7 +330,7 @@ with open("pokemon.csv") as archivo:
         )
 
 evoluciones = []
-with open("pokemon_evolutions.csv") as archivo:
+with open("csv/pokemon_evolutions.csv") as archivo:
     lineas = archivo.readlines()
     for linea in lineas[1:]:
         f = linea.strip().split(",")
@@ -342,7 +341,7 @@ with open("pokemon_evolutions.csv") as archivo:
         )
 
 datos_movimientos_pokemon = {}
-with open("pokemon_moves.csv") as archivo:
+with open("csv/pokemon_moves.csv") as archivo:
     lineas = archivo.readlines()
     for linea in lineas[1:]:
         f = linea.strip().split(",")
@@ -356,7 +355,7 @@ with open("pokemon_moves.csv") as archivo:
         )
 
 datos_movimientos = DatosMovimiento(movimientos={})
-with open("moves.csv") as archivo:
+with open("csv/moves.csv") as archivo:
     lineas = archivo.readlines()
     for linea in lineas[1:]:
         f = linea.strip().split(",")
@@ -368,7 +367,7 @@ with open("moves.csv") as archivo:
 
 
 datos_tipos_pokemon = {}
-with open("pokemon_types.csv") as archivo:
+with open("csv/pokemon_types.csv") as archivo:
     lineas = archivo.readlines()
     for linea in lineas[1:]:
         f = linea.strip().split(",")
