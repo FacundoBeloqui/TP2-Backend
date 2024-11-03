@@ -1,7 +1,7 @@
 from models import *
 from fastapi import APIRouter, HTTPException, status
 
-
+from sqlmodel import select
 from db import (
     SessionDep,
     lista_naturalezas,
@@ -51,69 +51,80 @@ def obtener_todos_los_equipos(pagina: int = 1):
 
 
 @router.get("/{team_id}", response_model=TeamDataCreate)
-def get_team_by_id(team_id):
-    if not team_id.isdecimal():
-        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
-    team = None
-    for t in lista_equipos:
-        if t["id"] == int(team_id):
-            team = t
-            break
-    if team is None:
-        raise HTTPException(status_code=404, detail="Equipo no encontrado")
-    return team
+def get_team_by_id(session: SessionDep, team_id: int):
+    equipo = session.exec(select(TeamDataCreate).where(TeamDataCreate.id == team_id)).first()
+    if equipo: 
+        return equipo
+    raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    # if not team_id.isdecimal():
+    #     raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
+    # team = None
+    # for t in lista_equipos:
+    #     if t["id"] == int(team_id):
+    #         team = t
+    #         break
+    # if team is None:
+    #     raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    # return team
 
 
 @router.post("/")
-def create_team(team: TeamCreate):
-    lista_generacion_pokemones = []
-    lista_generacion_movimientos = []
+def create_team(session: SessionDep, team: TeamBase):
     if team.generacion > 9 or team.generacion < 1:
         raise HTTPException(status_code=404, detail="No se encontró la generacion")
+    equipo = TeamDataCreate(**team.model_dump())
+    session.add(equipo)
+    session.commit()
+    session.refresh(equipo)
+    return equipo
+    # lista_generacion_pokemones = []
+    # lista_generacion_movimientos = []
+    # if team.generacion > 9 or team.generacion < 1:
+    #     raise HTTPException(status_code=404, detail="No se encontró la generacion")
 
-    if len(team.pokemones) < 1 or len(team.pokemones) > 6:
-        raise HTTPException(
-            status_code=400,
-            detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
-        )
+    # if len(team.pokemones) < 1 or len(team.pokemones) > 6:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
+    #     )
 
-    for id_pokemon, generaciones in generaciones_pokemon.items():
-        if team.generacion in generaciones:
-            for pokemon in lista_pokemones:
-                if pokemon.id == int(id_pokemon):
-                    lista_generacion_pokemones.append(pokemon)
+    # for id_pokemon, generaciones in generaciones_pokemon.items():
+    #     if team.generacion in generaciones:
+    #         for pokemon in lista_pokemones:
+    #             if pokemon.id == int(id_pokemon):
+    #                 lista_generacion_pokemones.append(pokemon)
 
-    for movimiento in lista_movimientos:
-        if team.generacion == movimiento.generacion:
-            lista_generacion_movimientos.append(movimiento)
+    # for movimiento in lista_movimientos:
+    #     if team.generacion == movimiento.generacion:
+    #         lista_generacion_movimientos.append(movimiento)
 
-    pokemon_elegido = []
-    movimiento_elegido = []
-    for pokemon_team in team.pokemones:
-        for p in lista_generacion_pokemones:
-            if p.id == pokemon_team.id:
-                pokemon_elegido.append(p)
-    for movimiento_team in team.pokemones:
-        for m in lista_generacion_movimientos:
-            if m.id in movimiento_team.movimientos:
-                movimiento_elegido.append(m)
+    # pokemon_elegido = []
+    # movimiento_elegido = []
+    # for pokemon_team in team.pokemones:
+    #     for p in lista_generacion_pokemones:
+    #         if p.id == pokemon_team.id:
+    #             pokemon_elegido.append(p)
+    # for movimiento_team in team.pokemones:
+    #     for m in lista_generacion_movimientos:
+    #         if m.id in movimiento_team.movimientos:
+    #             movimiento_elegido.append(m)
 
-    if len(pokemon_elegido) == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="Pokemon seleccionado no encontrado en la generacion",
-        )
+    # if len(pokemon_elegido) == 0:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Pokemon seleccionado no encontrado en la generacion",
+    #     )
 
-    if len(movimiento_elegido) == 0:
-        raise HTTPException(
-            status_code=404, detail="Movimiento no encontrado en la generacion"
-        )
+    # if len(movimiento_elegido) == 0:
+    #     raise HTTPException(
+    #         status_code=404, detail="Movimiento no encontrado en la generacion"
+    #     )
 
-    nuevo_equipo = {"pokemon": pokemon_elegido, "movimiento": movimiento_elegido}
+    # nuevo_equipo = {"pokemon": pokemon_elegido, "movimiento": movimiento_elegido}
 
-    lista_equipos.append(nuevo_equipo)
+    # lista_equipos.append(nuevo_equipo)
 
-    return nuevo_equipo
+    # return nuevo_equipo
 
 
 @router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
