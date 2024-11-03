@@ -1,8 +1,8 @@
 """Crear tabla tipos
 
-Revision ID: 459bfcb5a180
-Revises: 6c4d4b91eb55
-Create Date: 2024-11-01 21:52:34.626127
+Revision ID: 2a59a35d2fed
+Revises: 32a2d05b7351
+Create Date: 2024-11-03 13:05:23.066173
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "459bfcb5a180"
-down_revision: Union[str, None] = "6c4d4b91eb55"
+revision: str = "2a59a35d2fed"
+down_revision: Union[str, None] = "32a2d05b7351"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

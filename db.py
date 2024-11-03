@@ -1,10 +1,8 @@
-from typing import List, Dict, Optional
+"""from typing import List, Dict, Optional
 from sqlmodel import create_engine, Session
 from fastapi import Depends
 from typing import Annotated
 from models import (
-    Pokemon,
-    Movimiento,
     PokemonSubidaNivel,
     PokemonTM,
     PokemonGrupoHuevo,
@@ -14,18 +12,7 @@ from models import (
     Movimientomoves,
 )
 from naturaleza import Naturaleza
-
-SQLITE_FILE_PATH = "the_coding_stones.db"
-
-engine = create_engine(f"sqlite:///{SQLITE_FILE_PATH}")
-
-
-def get_db():
-    with Session(engine) as session:
-        yield session
-
-
-SessionDep = Annotated[Session, Depends(get_db)]
+from pokemon import Pokemon
 
 pokemon_por_id = {}
 with open("csv/pokemon.csv") as archivo_pokemon:
@@ -378,3 +365,4 @@ with open("csv/pokemon_types.csv") as archivo:
         if id_pokemon not in datos_tipos_pokemon:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
+"""

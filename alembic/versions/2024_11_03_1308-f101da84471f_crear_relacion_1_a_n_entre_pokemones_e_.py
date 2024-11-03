@@ -1,8 +1,8 @@
-"""Creo relacion 1:N pokemon-integrante
+"""Crear relacion 1 a n entre pokemones e integrantes
 
-Revision ID: 6ab9d3914c7f
-Revises: 380c98cbfce1
-Create Date: 2024-11-02 18:13:01.899149
+Revision ID: f101da84471f
+Revises: e79e95fe8fc8
+Create Date: 2024-11-03 13:08:51.184447
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "6ab9d3914c7f"
-down_revision: Union[str, None] = "380c98cbfce1"
+revision: str = "f101da84471f"
+down_revision: Union[str, None] = "e79e95fe8fc8"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

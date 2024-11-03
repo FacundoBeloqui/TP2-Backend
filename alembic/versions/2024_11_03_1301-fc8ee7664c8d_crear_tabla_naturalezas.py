@@ -1,10 +1,11 @@
 """Crear tabla equipos
 
-Revision ID: bff31a12b5ab
-Revises: 8809acf2faed
-Create Date: 2024-10-26 19:13:21.655082
+Revision ID: fc8ee7664c8d
+Revises: dfa545eded31
+Create Date: 2024-11-03 13:01:52.472232
 
 """
+
 from typing import Sequence, Union
 
 from alembic import op
@@ -12,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = 'bff31a12b5ab'
-down_revision: Union[str, None] = '8809acf2faed'
+revision: str = "fc8ee7664c8d"
+down_revision: Union[str, None] = "dfa545eded31"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -24,7 +25,6 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer, primary_key=True),
         sa.Column("nombre", sa.Text, nullable=False),
         sa.Column("generación", sa.Integer, nullable=False),
-        sa.Column("pokemon", sa.Integer, nullable=False)
     )
 
 

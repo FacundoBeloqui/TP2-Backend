@@ -1,6 +1,5 @@
 from typing import List, Dict, Optional
 from sqlmodel import Field, SQLModel, Relationship
-from integrante import Integrante
 
 
 class Naturaleza(SQLModel, table=True):

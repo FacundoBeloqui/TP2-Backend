@@ -1,4 +1,4 @@
-from fastapi import HTTPException, APIRouter
+"""from fastapi import HTTPException, APIRouter
 from db import lista_movimientos
 
 
@@ -13,3 +13,4 @@ def leer_movimiento_id(id):
         if movimiento.id == int(id):
             return movimiento
     raise HTTPException(status_code=404, detail="Movimiento no encontrado")
+"""
