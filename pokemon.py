@@ -17,7 +17,6 @@ class Pokemon(PokemonBase, table=True):
     id: int = Field(primary_key=True)
     id_especie: int
     integrantes: List["Integrante"] = Relationship(back_populates="pokemon")
-
     habilidades: Optional[List[str]] = Field(default=None, sa_column=sa.Column(JSON))
     evoluciones_inmediatas: Optional[List[str]] = Field(
         default=None, sa_column=sa.Column(JSON)

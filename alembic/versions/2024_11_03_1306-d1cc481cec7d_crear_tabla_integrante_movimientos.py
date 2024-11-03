@@ -1,8 +1,8 @@
-"""Creo tabla integrante_movimiento
+"""Crear tabla integrante_movimientos
 
-Revision ID: 3228fb0ce46e
-Revises: ee05e0b44995
-Create Date: 2024-11-02 12:34:47.339156
+Revision ID: d1cc481cec7d
+Revises: bd83c5f7bcf1
+Create Date: 2024-11-03 13:06:55.255702
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "3228fb0ce46e"
-down_revision: Union[str, None] = "ee05e0b44995"
+revision: str = "d1cc481cec7d"
+down_revision: Union[str, None] = "bd83c5f7bcf1"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

@@ -1,8 +1,8 @@
-"""Crear relacion N a M entre Pokemon y tipo
+"""Crear relacion n a m entre pokemones y tipos
 
-Revision ID: 0665c92e41be
-Revises: e17c2bcb269e, b280a736c728
-Create Date: 2024-11-02 13:50:15.766486
+Revision ID: b9e4c5d5677e
+Revises: d1cc481cec7d
+Create Date: 2024-11-03 13:07:31.911382
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "0665c92e41be"
-down_revision: Union[str, None] = ("e17c2bcb269e", "b280a736c728")
+revision: str = "b9e4c5d5677e"
+down_revision: Union[str, None] = "d1cc481cec7d"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -27,7 +27,9 @@ def upgrade() -> None:
         ),
         sa.Column("tipo_id", sa.Integer, sa.ForeignKey("tipo.id"), primary_key=True),
     )
+    pass
 
 
 def downgrade() -> None:
     op.drop_table("pokemon_tipo")
+    pass

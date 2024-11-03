@@ -1,3 +1,4 @@
+"""
 from models import *
 from fastapi import APIRouter, HTTPException, status
 
@@ -187,3 +188,4 @@ def eliminar_equipo(id: int):
             return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
 
     raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
+"""

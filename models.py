@@ -1,8 +1,5 @@
 from typing import List, Dict, Optional
-from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, Relationship, Column, JSON
-from pokemon import Pokemon
-from movimiento import Movimiento
 
 
 class TipoBase(SQLModel):
@@ -36,7 +33,7 @@ class Evolucion(EvolucionBase, table=True):
 class PokemonTipo(SQLModel, table=True):
     pokemon_id: int = Field(foreign_key="pokemon.id", primary_key=True)
     tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
-    pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
+    pokemon: "Pokemon" = Relationship(back_populates="pokemones_tipo")
     tipo: Tipo = Relationship(back_populates="pokemones")
 
 
@@ -111,4 +108,4 @@ class Evolucion(SQLModel):
 
 
 class DatosMovimiento(SQLModel):
-    movimientos: dict[int, Movimiento]
+    movimientos: dict[int, "Movimiento"]
