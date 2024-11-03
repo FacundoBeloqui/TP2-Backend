@@ -6,20 +6,11 @@ from typing import Annotated
 from db import lista_naturalezas
 from naturaleza import Naturaleza
 from database import engine
+import logging
 
 
 app = FastAPI()
 app.include_router(api_router)
 
-
-def seed():
-    with Session(engine) as session:
-        if session.exec(select(Naturaleza)).first():
-            logger.info("NOT loading seeds")
-            return
-
-        logger.info("Loading seeds...")
-
-        session.add_all(lista_naturalezas)
-        session.commit()
-        logger.info("Seeds loaded on Db")
+logger = logging.getLogger(__name__)
+logging.basicConfig(level=logging.INFO)

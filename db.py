@@ -308,7 +308,7 @@ with open("csv/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-print(lista_naturalezas)
+print(lista_naturalezas[0])
 """
 datos_pokemon = {}
 with open("csv/pokemon.csv") as archivo:
