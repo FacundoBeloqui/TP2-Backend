@@ -18,7 +18,7 @@ class Movimiento(SQLModel, table=True):
     pokemones_subida_nivel: List[str]
     pokemones_tm: List[str]
     pokemones_grupo_huevo: List[str]
-    integrantes: List["Integrante"] = Relationship(
+    integrantes: list["Integrante"] = Relationship(
         back_populates="movimientos",
         link_model=IntegranteMovimiento,
     )

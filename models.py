@@ -1,6 +1,8 @@
 from typing import List, Dict, Optional
 from pydantic import BaseModel
 from sqlmodel import Field, SQLModel, Relationship
+from pokemon import Pokemon
+from movimiento import Movimiento
 
 class TipoBase(SQLModel):
     nombre: str
@@ -25,49 +27,6 @@ class Evolucion(EvolucionBase, table=True):
     id: int = Field(primary_key=True)
     pokemon_id: int = Field(foreign_key="pokemon.id")
     pokemon: "Pokemon" = Relationship(back_populates="evolucion")
-
-class PokemonBase(SQLModel):
-    identificador: str
-    altura: int
-    peso: int
-    experiencia_base: int
-    imagen: str
-    grupo_de_huevo: str
-    estadisticas: dict
-    evoluciones_inmediatas: list[Evolucion] = Relationship(back_populates="pokemon")
-    habilidades: list[Habilidad] = Relationship(back_populates="pokemones")
-    tipos: list[Tipo] = Relationship(back_populates="pokemones")
-
-class PokemonTeamCreate(SQLModel):
-    id: int
-    nombre: str
-    movimientos: List[Optional[int]]
-    naturaleza_id: int
-    stats: dict
-
-
-class TeamBase(SQLModel):
-    generacion: int
-    nombre: str
-    pokemones: list["PokemonTeamCreate"] = Relationship(back_populates="equipo")
-
-
-class TeamDataCreate(TeamBase, table=True):
-    id: int = Field(primary_key=True)
-    # nombre: str
-    # generacion: int
-    # pokemones: List[PokemonTeamCreate]
-
-
-# class TeamCreate(TeamBase):
-#     pass
-
-
-class Pokemon(PokemonBase, table=True):
-    id: int = Field(primary_key=True)
-    id_especie: int
-    equipo_id: int | None = Field(default=None, foreign_key="equipo.id")
-    equipo: TeamDataCreate | None = Relationship(back_populates="pokemones")
 
 
 # class PokemonTipo(SQLModel, table=True):
@@ -141,36 +100,36 @@ class DatosMovimiento(BaseModel):
     movimientos: Dict[int, Movimiento]
 
 
-lista_equipos: List[TeamDataCreate] = [
-    {
-        "id": 1,
-        "nombre": "Equipo A",
-        "generacion": 1,
-        "pokemones": [
-            {
-                "id": 1,
-                "nombre": "Pikachu",
-                "movimientos": [1, 2],
-                "naturaleza_id": 1,
-                "stats": {},
-            }
-        ],
-    },
-    {
-        "id": 2,
-        "nombre": "Equipo B",
-        "generacion": 2,
-        "pokemones": [
-            {
-                "id": 2,
-                "nombre": "Charmander",
-                "movimientos": [2],
-                "naturaleza_id": 1,
-                "stats": {},
-            }
-        ],
-    },
-]
+# lista_equipos: List[TeamDataCreate] = [
+#     {
+#         "id": 1,
+#         "nombre": "Equipo A",
+#         "generacion": 1,
+#         "pokemones": [
+#             {
+#                 "id": 1,
+#                 "nombre": "Pikachu",
+#                 "movimientos": [1, 2],
+#                 "naturaleza_id": 1,
+#                 "stats": {},
+#             }
+#         ],
+#     },
+#     {
+#         "id": 2,
+#         "nombre": "Equipo B",
+#         "generacion": 2,
+#         "pokemones": [
+#             {
+#                 "id": 2,
+#                 "nombre": "Charmander",
+#                 "movimientos": [2],
+#                 "naturaleza_id": 1,
+#                 "stats": {},
+#             }
+#         ],
+#     },
+# ]
 
 # lista_equipos: List[TeamDataCreate] = []
 class DatosMovimiento(SQLModel):
