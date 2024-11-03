@@ -1,5 +1,17 @@
-from typing import List, Dict, Optional
-from sqlmodel import Field, SQLModel, Relationship, Column, JSON
+"""from typing import List, Dict, Optional, Annotated
+from sqlmodel import (
+    Field,
+    SQLModel,
+    Relationship,
+    Column,
+    JSON,
+    create_engine,
+    Session,
+    select,
+)
+from fastapi import Depends, logger
+
+
 
 
 class TipoBase(SQLModel):
@@ -37,25 +49,7 @@ class PokemonTipo(SQLModel, table=True):
     tipo: Tipo = Relationship(back_populates="pokemones")
 
 
-class PokemonSubidaNivel(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_subida_nivel")
 
-
-class PokemonTM(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_tm")
-
-
-class PokemonGrupoHuevo(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_grupo_huevo")
 
 
 class PokemonTeamCreate(SQLModel):
@@ -109,3 +103,5 @@ class Evolucion(SQLModel):
 
 class DatosMovimiento(SQLModel):
     movimientos: dict[int, "Movimiento"]
+
+"""
