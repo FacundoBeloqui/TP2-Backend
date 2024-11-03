@@ -4,17 +4,16 @@ from fastapi import Depends
 from typing import Annotated
 from models import (
     Pokemon,
-    PokemonCreate,
     Movimiento,
     PokemonSubidaNivel,
     PokemonTM,
     PokemonGrupoHuevo,
-    Naturaleza,
     Pokemonmoves,
     Evolucion,
     DatosMovimiento,
     Movimientomoves,
 )
+from naturaleza import Naturaleza
 
 SQLITE_FILE_PATH = "the_coding_stones.db"
 

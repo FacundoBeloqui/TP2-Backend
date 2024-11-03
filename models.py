@@ -1,6 +1,9 @@
 from typing import List, Dict, Optional
 from pydantic import BaseModel
-from sqlmodel import Field, SQLModel, Relationship
+from sqlmodel import Field, SQLModel, Relationship, Column, JSON
+from pokemon import Pokemon
+from movimiento import Movimiento
+
 
 class TipoBase(SQLModel):
     nombre: str
@@ -48,7 +51,6 @@ class PokemonTipo(SQLModel, table=True):
     tipo_id: int = Field(foreign_key="tipo.id", primary_key=True)
     pokemon: Pokemon = Relationship(back_populates="pokemones_tipo")
     tipo: Tipo = Relationship(back_populates="pokemones")
-
 
 
 class PokemonSubidaNivel(SQLModel, table=True):
@@ -101,17 +103,7 @@ class TeamDataCreate(TeamBase, table=True):
 #     pass
 
 
-class Naturaleza(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    stat_decreciente: str
-    stat_creciente: str
-    id_gusto_preferido: int
-    id_gusto_menos_preferido: int
-    indice_juego: int
-
-
-class Teams(BaseModel):
+class Teams(SQLModel):
     id: int
     nombre: str
     pokemones: List[str]
@@ -196,4 +188,3 @@ lista_equipos: List[TeamDataCreate] = [
 # lista_equipos: List[TeamDataCreate] = []
 class DatosMovimiento(SQLModel):
     movimientos: dict[int, Movimiento]
-
