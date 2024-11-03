@@ -24,9 +24,16 @@ def upgrade() -> None:
         sa.Column("id", sa.Integer, primary_key=True),
         sa.Column("nombre", sa.Text, nullable=False),
         sa.Column("generación", sa.Integer, nullable=False),
-        sa.Column("pokemon", sa.Integer, nullable=False)
     )
 
 
 def downgrade() -> None:
     op.drop_table("equipo")
+
+
+# def upgrade() -> None:
+#     op.drop_column("equipo", "pokemon")
+
+
+# def downgrade() -> None:
+#     op.add_column("equipo", sa.Column("pokemon", sa.Integer, nullable=False))

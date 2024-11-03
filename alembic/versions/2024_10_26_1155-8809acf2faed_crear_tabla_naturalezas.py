@@ -1,7 +1,7 @@
 """Crear tabla Naturalezas
 
 Revision ID: 8809acf2faed
-Revises: 
+Revises: a38d114d6cc5
 Create Date: 2024-10-26 11:55:53.574029
 
 """
