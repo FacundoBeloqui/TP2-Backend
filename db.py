@@ -1,19 +1,22 @@
-from naturaleza import Naturaleza
+from modelos import Naturaleza, Pokemon, Movimiento
 
-"""from typing import List, Dict, Optional
+from typing import List, Dict, Optional
 from sqlmodel import create_engine, Session
 from fastapi import Depends
 from typing import Annotated
-from models import (
-    PokemonSubidaNivel,
-    PokemonTM,
-    PokemonGrupoHuevo,
-    Pokemonmoves,
-    Evolucion,
-    DatosMovimiento,
-    Movimientomoves,
-)
-from pokemon import Pokemon
+
+# from models import (
+# PokemonSubidaNivel,
+# PokemonTM,
+# PokemonGrupoHuevo,
+# Pokemonmoves,
+# Evolucion,
+# DatosMovimiento,
+# Movimientomoves,
+# )
+
+# from pokemon import Pokemon
+
 
 pokemon_por_id = {}
 with open("csv/pokemon.csv") as archivo_pokemon:
@@ -190,7 +193,6 @@ with open("csv/pokemon.csv") as pokemones:
         )
         lista_pokemones.append(pokemon)
 
-
 dicc_categorias = {}
 dicc_efectos = {}
 with open("csv/move_damage_class_prose.csv") as categorias:
@@ -274,7 +276,7 @@ with open("csv/moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
-"""
+print(lista_movimientos[0])
 naturalezas_nombres = {}
 with open("csv/nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -308,7 +310,6 @@ with open("csv/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-print(lista_naturalezas[0])
 """
 datos_pokemon = {}
 with open("csv/pokemon.csv") as archivo:

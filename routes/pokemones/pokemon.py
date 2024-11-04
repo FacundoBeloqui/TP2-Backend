@@ -1,16 +1,24 @@
-"""from fastapi import HTTPException, APIRouter
-
+from fastapi import APIRouter, HTTPException, status
+from sqlmodel import select
+from database import SessionDep
 from db import (
-    lista_pokemones,
-    fortalezas_tipos,
-    debilidades_tipos,
-    datos_pokemon,
-    datos_movimientos_pokemon,
-    datos_movimientos,
-    datos_tipos_pokemon,
-    SessionDep
+    # SessionDep,
+    lista_naturalezas,
+    # lista_pokemones,
+    # lista_movimientos,
+    # lista_habilidades,
+    # generaciones_pokemon,
+    # pokemon_tipos,
 )
-from models import Pokemon, PokemonCreate, Evolucion, Movimientomoves, PokemonBase
+from fastapi import HTTPException, APIRouter
+from typing import List
+
+# from models import (
+#     TeamCreate,
+#     TeamDataCreate,
+#     Pokemon,
+# )
+from modelos import Pokemon
 
 router = APIRouter()
 
@@ -36,10 +44,13 @@ def calcular_fortalezas(pokemon):
 
 
 @router.get("/")
-def leer_pokemones():
-    return lista_pokemones
+def get_pokemones(session: SessionDep) -> list[Pokemon]:
+    query = select(Pokemon)
+    pokemones = session.exec(query)
+    return pokemones
 
 
+"""
 @router.get("/{pokemon_id}")
 def leer_pokemon(pokemon_id: int):
     pokemon = None

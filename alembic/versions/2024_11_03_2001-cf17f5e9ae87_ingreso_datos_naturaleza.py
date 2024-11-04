@@ -9,7 +9,7 @@ Create Date: 2024-11-03 20:01:07.678459
 from typing import Sequence, Union
 from alembic import op
 import sqlalchemy as sa
-from naturaleza import Naturaleza
+from modelos import Naturaleza
 from db import lista_naturalezas
 
 # revision identifiers, used by Alembic.

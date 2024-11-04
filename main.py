@@ -4,7 +4,7 @@ from sqlmodel import create_engine, Session, select
 from fastapi import Depends, logger
 from typing import Annotated
 from db import lista_naturalezas
-from naturaleza import Naturaleza
+from modelos import Naturaleza
 from database import engine
 import logging
 
