@@ -1,8 +1,8 @@
-"""crear tabla habilidad
+"""Crear tabla evoluciones inmediatas
 
-Revision ID: e17c2bcb269e
-Revises: 753cee356db5, bff31a12b5ab
-Create Date: 2024-11-01 21:55:18.995914
+Revision ID: bd83c5f7bcf1
+Revises: d27e896a01a4
+Create Date: 2024-11-03 13:06:20.501925
 
 """
 
@@ -13,15 +13,15 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "e17c2bcb269e"
-down_revision: Union[str, None] = ("753cee356db5", "bff31a12b5ab")
+revision: str = "bd83c5f7bcf1"
+down_revision: Union[str, None] = "d27e896a01a4"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
     op.create_table(
-        "habilidad",
+        "evolucion",
         sa.Column("id", sa.Integer, primary_key=True),
         sa.Column("nombre", sa.String, nullable=False),
         sa.Column(
@@ -31,4 +31,4 @@ def upgrade() -> None:
 
 
 def downgrade() -> None:
-    op.drop_table("habilidad")
+    op.drop_table("evolucion")

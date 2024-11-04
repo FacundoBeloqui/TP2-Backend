@@ -1,7 +1,7 @@
 """Creo relacion 1 N entre equipo e integrante
 
 Revision ID: 2b8f51d19c16
-Revises: 0665c92e41be
+Revises: f101da84471f
 Create Date: 2024-11-02 18:02:09.653366
 
 """
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = '2b8f51d19c16'
-down_revision: Union[str, None] = '0665c92e41be'
+down_revision: Union[str, None] = 'f101da84471f'
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

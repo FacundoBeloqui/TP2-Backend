@@ -1,8 +1,8 @@
-"""Crear tabla Naturalezas
+"""Crear tabla naturalezas
 
-Revision ID: 8809acf2faed
-Revises: a38d114d6cc5
-Create Date: 2024-10-26 11:55:53.574029
+Revision ID: dfa545eded31
+Revises: dd51193fb8b2
+Create Date: 2024-11-03 13:00:33.234578
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "8809acf2faed"
-down_revision: Union[str, None] = None
+revision: str = "dfa545eded31"
+down_revision: Union[str, None] = "dd51193fb8b2"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

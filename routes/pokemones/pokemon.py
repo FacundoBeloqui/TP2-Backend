@@ -1,4 +1,5 @@
-from fastapi import HTTPException, APIRouter
+"""from fastapi import HTTPException, APIRouter
+
 from db import (
     lista_pokemones,
     fortalezas_tipos,
@@ -124,3 +125,4 @@ def obtener_movimientos_pokemon(pokemon_id: int):
         "tipos": tipos,
         "movimientos": [movimiento.dict() for movimiento in lista_movimientos],
     }
+"""

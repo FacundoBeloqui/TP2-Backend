@@ -1,8 +1,8 @@
-"""Crear relacion N a M entre Pokemon y tipo
+"""Crear relacion n a m entre pokemones y tipos
 
-Revision ID: 0665c92e41be
-Revises: e17c2bcb269e, b280a736c728
-Create Date: 2024-11-02 13:50:15.766486
+Revision ID: b9e4c5d5677e
+Revises: d1cc481cec7d
+Create Date: 2024-11-03 13:07:31.911382
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "0665c92e41be"
-down_revision: Union[str, None] = ("e17c2bcb269e", "b280a736c728")
+revision: str = "b9e4c5d5677e"
+down_revision: Union[str, None] = "d1cc481cec7d"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
@@ -34,13 +34,9 @@ def upgrade() -> None:
         sa.ForeignKeyConstraint(["tipo_id"], ["tipo.id"]),
         sa.ForeignKeyConstraint(["pokemon_id"], ["pokemon.id"])
     )
-    # with op.batch_alter_table("pokemon") as batch_op:
-    #     batch_op.add_column(sa.Column("tipo_id", sa.Integer))
-    #     batch_op.create_foreign_key("fk_pokemon_tipo", "tipo", ["tipo_id"], ["id"])
+    pass
 
 
 def downgrade() -> None:
     op.drop_table("pokemon_tipo")
-    # with op.batch_alter_table("pokemon") as batch_op:
-    #     batch_op.drop_constraint("fk_pokemon_tipo", type_="foreignkey")
-    #     batch_op.drop_column("tipo_id")
+    pass
