@@ -19,7 +19,7 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from naturaleza import Naturaleza
+from modelos import Naturaleza
 
 lista_equipos = []
 generacion = ""
@@ -28,7 +28,7 @@ router = APIRouter()
 
 
 @router.get("/nature")
-def list(session: SessionDep) -> list[Naturaleza]:
+def get_naturalezas(session: SessionDep) -> list[Naturaleza]:
     query = select(Naturaleza)
     naturalezas = session.exec(query)
     return naturalezas

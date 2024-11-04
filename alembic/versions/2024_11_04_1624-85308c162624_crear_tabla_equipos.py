@@ -1,8 +1,8 @@
-"""Crear tabla tipos
+"""Crear tabla equipos
 
-Revision ID: 2a59a35d2fed
-Revises: 32a2d05b7351
-Create Date: 2024-11-03 13:05:23.066173
+Revision ID: 85308c162624
+Revises: f0ad080f88fd
+Create Date: 2024-11-04 16:24:34.917416
 
 """
 
@@ -13,20 +13,20 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "2a59a35d2fed"
-down_revision: Union[str, None] = "32a2d05b7351"
+revision: str = "85308c162624"
+down_revision: Union[str, None] = "f0ad080f88fd"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
     op.create_table(
-        "tipo",
+        "equipo",
         sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column("nombre", sa.String, nullable=False),
-        sa.Column("pokemon_id", sa.String, nullable=False),
+        sa.Column("nombre", sa.Text, nullable=False),
+        sa.Column("generación", sa.Integer, nullable=False),
     )
 
 
 def downgrade() -> None:
-    op.drop_table("tipo")
+    op.drop_table("equipo")

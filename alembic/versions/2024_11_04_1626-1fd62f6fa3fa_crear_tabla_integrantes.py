@@ -1,8 +1,8 @@
 """Crear tabla integrantes
 
-Revision ID: 32a2d05b7351
-Revises: 0c6c0b31ecbf
-Create Date: 2024-11-03 13:04:38.057442
+Revision ID: 1fd62f6fa3fa
+Revises: 8a514caf11c2
+Create Date: 2024-11-04 16:26:26.552202
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "32a2d05b7351"
-down_revision: Union[str, None] = "0c6c0b31ecbf"
+revision: str = "1fd62f6fa3fa"
+down_revision: Union[str, None] = "8a514caf11c2"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

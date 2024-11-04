@@ -1,8 +1,8 @@
 """Crear tabla pokemones
 
-Revision ID: dd51193fb8b2
+Revision ID: f0ad080f88fd
 Revises: 
-Create Date: 2024-11-03 12:59:14.024944
+Create Date: 2024-11-04 16:24:01.663155
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "dd51193fb8b2"
+revision: str = "f0ad080f88fd"
 down_revision: Union[str, None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
