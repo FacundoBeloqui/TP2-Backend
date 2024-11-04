@@ -1,6 +1,6 @@
 from models import *
 from fastapi import APIRouter, HTTPException, status
-from sqlalchemy import select
+from sqlmodel import select
 from database import SessionDep
 from db import (
     # SessionDep,
@@ -30,8 +30,8 @@ router = APIRouter()
 @router.get("/nature")
 def list(session: SessionDep) -> list[Naturaleza]:
     query = select(Naturaleza)
-    alumnos = session.exec(query)
-    return alumnos
+    naturalezas = session.exec(query)
+    return naturalezas
 
 
 """
