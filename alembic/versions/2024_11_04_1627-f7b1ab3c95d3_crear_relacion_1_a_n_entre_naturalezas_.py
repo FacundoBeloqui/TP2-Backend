@@ -1,8 +1,8 @@
 """Crear relacion 1 a n entre naturalezas e integrantes
 
-Revision ID: e79e95fe8fc8
-Revises: b9e4c5d5677e
-Create Date: 2024-11-03 13:08:11.923483
+Revision ID: f7b1ab3c95d3
+Revises: c38c663938c5
+Create Date: 2024-11-04 16:27:05.328358
 
 """
 
@@ -13,8 +13,8 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "e79e95fe8fc8"
-down_revision: Union[str, None] = "b9e4c5d5677e"
+revision: str = "f7b1ab3c95d3"
+down_revision: Union[str, None] = "c38c663938c5"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 

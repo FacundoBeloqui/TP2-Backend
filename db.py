@@ -276,7 +276,6 @@ with open("csv/moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
-print(lista_movimientos[0])
 naturalezas_nombres = {}
 with open("csv/nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -309,7 +308,6 @@ with open("csv/natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
-
 """
 datos_pokemon = {}
 with open("csv/pokemon.csv") as archivo:

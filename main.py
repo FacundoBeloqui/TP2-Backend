@@ -30,7 +30,7 @@ def main() -> None:
     logger.info("Service finished initializing")
     seed_pokemon()
     seed_movimiento()
-    seed_naturaleza
+    seed_naturaleza()
 
 
 app = FastAPI()
