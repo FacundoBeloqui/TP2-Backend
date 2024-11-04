@@ -1,9 +1,18 @@
-from typing import List, Dict, Optional
-from sqlmodel import Field, SQLModel, Relationship, Column, JSON
-#from pokemon import Pokemon
-#from movimiento import Movimiento
-from sqlmodel import Field, SQLModel, Relationship, JSON
-import sqlalchemy as sa
+"""from typing import List, Dict, Optional, Annotated
+from sqlmodel import (
+    Field,
+    SQLModel,
+    Relationship,
+    Column,
+    JSON,
+    create_engine,
+    Session,
+    select,
+)
+from fastapi import Depends, logger
+
+
+
 
 class TipoBase(SQLModel):
     nombre: str
@@ -105,6 +114,8 @@ class PokemonGrupoHuevo(SQLModel, table=True):
     )
 
 
+
+
 # class PokemonTeamCreate(SQLModel):
 #     id: int
 #     nombre: str
@@ -194,11 +205,7 @@ class DatosMovimiento(SQLModel):
     movimientos: dict[int, "Movimiento"]
 
 
-
-
-
-
-
+    
 
 
 
@@ -284,3 +291,4 @@ class TeamDataCreate(TeamBase, table=True):
 
 # class TeamCreate(TeamBase):
 #     pass
+"""

@@ -1,24 +1,30 @@
-"""
 from models import *
 from fastapi import APIRouter, HTTPException, status
+<<<<<<< HEAD
 
 from sqlmodel import select
+=======
+from sqlalchemy import select
+from database import SessionDep
+>>>>>>> Parte_2
 from db import (
-    SessionDep,
+    # SessionDep,
     lista_naturalezas,
-    lista_pokemones,
-    lista_movimientos,
-    lista_habilidades,
-    generaciones_pokemon,
-    pokemon_tipos,
+    # lista_pokemones,
+    # lista_movimientos,
+    # lista_habilidades,
+    # generaciones_pokemon,
+    # pokemon_tipos,
 )
 from fastapi import HTTPException, APIRouter
 from typing import List
-from models import (
-    TeamCreate,
-    TeamDataCreate,
-    Pokemon,
-)
+
+# from models import (
+#     TeamCreate,
+#     TeamDataCreate,
+#     Pokemon,
+# )
+from naturaleza import Naturaleza
 
 lista_equipos = []
 generacion = ""
@@ -27,10 +33,13 @@ router = APIRouter()
 
 
 @router.get("/nature")
-def leer_naturalezas():
-    return lista_naturalezas
+def list(session: SessionDep) -> list[Naturaleza]:
+    query = select(Naturaleza)
+    alumnos = session.exec(query)
+    return alumnos
 
 
+"""
 @router.get("/")
 def obtener_todos_los_equipos(pagina: int = 1):
     if len(lista_equipos) == 0:
@@ -67,7 +76,6 @@ def get_team_by_id(session: SessionDep, team_id: int):
     # if team is None:
     #     raise HTTPException(status_code=404, detail="Equipo no encontrado")
     # return team
-
 
 @router.post("/")
 def create_team(session: SessionDep, team: TeamBase):

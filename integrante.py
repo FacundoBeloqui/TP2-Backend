@@ -17,3 +17,6 @@
 #         back_populates="integrantes",
 #         link_model=IntegranteMovimiento,
 #     )
+# from naturaleza import Naturaleza
+# from pokemon import Pokemon
+# from movimiento import Movimiento

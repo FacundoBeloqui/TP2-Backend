@@ -1,4 +1,6 @@
-from typing import List, Dict, Optional
+from naturaleza import Naturaleza
+
+"""from typing import List, Dict, Optional
 from sqlmodel import create_engine, Session
 from fastapi import Depends
 from typing import Annotated
@@ -11,7 +13,6 @@ from models import (
     DatosMovimiento,
     Movimientomoves,
 )
-from naturaleza import Naturaleza
 from pokemon import Pokemon
 
 pokemon_por_id = {}
@@ -273,21 +274,21 @@ with open("csv/moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
-
+"""
 naturalezas_nombres = {}
-with open("csv/nature_names.csv") as nombres_naturalezas:
+with open("nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
         linea = linea.rstrip("\n").split(",")
         if linea[1] == "7":
             naturalezas_nombres[linea[0]] = linea[2]
 dicc_estadisticas = {}
-with open("csv/stats.csv") as estadisticas:
+with open("stats.csv") as estadisticas:
     for linea in estadisticas:
         linea = linea.rstrip("\n").split(",")
         dicc_estadisticas[linea[0]] = linea[2]
 
 lista_naturalezas = []
-with open("csv/natures.csv") as naturalezas:
+with open("natures.csv") as naturalezas:
     for linea in naturalezas:
         linea = linea.rstrip("\n").split(",")
         if linea[0] == "id":
@@ -307,6 +308,8 @@ with open("csv/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
+print(lista_naturalezas[0])
+"""
 datos_pokemon = {}
 with open("csv/pokemon.csv") as archivo:
     lineas = archivo.readlines()
@@ -366,3 +369,4 @@ with open("csv/pokemon_types.csv") as archivo:
             datos_tipos_pokemon[id_pokemon] = []
         datos_tipos_pokemon[id_pokemon].append(id_tipo)
 
+"""
