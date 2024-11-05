@@ -22,8 +22,7 @@ from modelos import Pokemon
 
 router = APIRouter()
 
-
-def calcular_debilidades(pokemon):
+"""def calcular_debilidades(pokemon):
     debilidades_totales = {}
     for tipo in pokemon.tipo:
         for debilidad, efect in debilidades_tipos.get(tipo, {}).items():
@@ -41,6 +40,7 @@ def calcular_fortalezas(pokemon):
                 fortalezas_totales[fortaleza] = 1
             fortalezas_totales[fortaleza] *= int(efect) / 100
     return fortalezas_totales
+"""
 
 
 @router.get("/")

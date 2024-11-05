@@ -2,24 +2,9 @@ from models import *
 from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
-from db import (
-    # SessionDep,
-    lista_naturalezas,
-    # lista_pokemones,
-    # lista_movimientos,
-    # lista_habilidades,
-    # generaciones_pokemon,
-    # pokemon_tipos,
-)
 from fastapi import HTTPException, APIRouter
 from typing import List
-
-# from models import (
-#     TeamCreate,
-#     TeamDataCreate,
-#     Pokemon,
-# )
-from modelos import Naturaleza
+from modelos import Naturaleza, Integrante, Team
 
 lista_equipos = []
 generacion = ""
@@ -118,77 +103,36 @@ def create_team(team: TeamCreate):
     lista_equipos.append(nuevo_equipo)
 
     return nuevo_equipo
+"""
 
 
-@router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
-def actualizar_equipo(
-    id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamDataCreate
-):
-    if not lista_equipos:
-        raise HTTPException(status_code=404, detail="No hay equipos disponibles")
+def buscar_equipo(session: SessionDep, grupo_id: int) -> Team:
+    query = select(Team).where(Team.id == grupo_id)
+    grupo = session.exec(query).first()
 
-    if id_team_a_updatear is None:
-        raise HTTPException(
-            status_code=400, detail="Ingrese el id del equipo a modificar"
-        )
+    if grupo:
+        return grupo
+    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo not found")
 
-    if id_pokemon_a_updatear is None:
-        raise HTTPException(status_code=400, detail="Ingrese un pokemon para editar")
 
-    for equipo in lista_equipos:
-        if id_team_a_updatear == equipo.id:
-            for indice in len(equipo.pokemones):
-                if equipo.pokemones[indice].id == id_pokemon_a_updatear:
-                    v_f = False
-                    for id_pokemon, generaciones in generaciones_pokemon.items():
-                        if (
-                            equipo.pokemones[indice].id == int(id_pokemon)
-                            and equipo.generacion in generaciones
-                        ):
-                            v_f = True
-                            break
-                    if not v_f:
-                        raise HTTPException(
-                            status_code=422,
-                            detail=f"El pokemon {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo: {equipo.id}",
-                        )
-
-                    for movimiento in equipo.pokemones[indice].movimientos:
-                        if len(equipo.pokemones[indice].movimientos) > 4:
-                            raise HTTPException(
-                                status_code=400,
-                                detail="Se pueden asignar solo 4 movimientos",
-                            )
-                        if movimiento != 0:
-                            v_f = False
-                            for mov in lista_movimientos:
-                                if (
-                                    movimiento == mov.id
-                                    and equipo.generacion >= mov.generacion
-                                ):
-                                    v_f = True
-                                    break
-                            if not v_f:
-                                raise HTTPException(
-                                    status_code=422,
-                                    detail=f"El movimiento {movimiento} del pokemon_id {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo {equipo.id}",
-                                )
-                    equipo.pokemones[indice] = team.pokemones
-                    return equipo
-
-            raise HTTPException(
-                status_code=404, detail="Pokemon no encontrado en el equipo"
-            )
-
-    raise HTTPException(status_code=404, detail="Equipo no encontrado")
+# @router.put("/{id}")
+# def update(session: SessionDep, id: int, equipo_nuevo: Team) -> Team:
+#     equipo = buscar_equipo(session, id)
+#     equipo. = equipo_nuevo.
+#     equipo. = equipo_nuevo.
+#     equipo. = equipo_nuevo.
+#     session.add()
+#     session.commit()
+#     session.refresh(equipo)
+#     return equipo
 
 
 @router.delete("/{id}")
-def eliminar_equipo(id: int):
-    for equipo in lista_equipos:
-        if equipo.id == id:
-            lista_equipos.remove(equipo)
-            return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
+def delete(session: SessionDep, id: int) -> Team:
+    equipo = buscar_equipo(session, id)
+    session.delete(equipo)
+    session.commit()
+    return equipo
 
-    raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
-"""
+
+raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")

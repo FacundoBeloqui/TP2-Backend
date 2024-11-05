@@ -2,7 +2,17 @@ from sqlmodel import Field, SQLModel, Relationship, JSON
 from typing import List, Dict, Optional
 import sqlalchemy as sa
 
-"""
+
+class TeamBase(SQLModel):
+    generacion: int
+    nombre: str
+    pokemones: List["Integrante"] = Relationship(back_populates="nombre")
+
+
+class Team(TeamBase, table=True):
+    id: int = Field(primary_key=True)
+
+
 class PokemonSubidaNivel(SQLModel, table=True):
     id: int = Field(primary_key=True)
     nombre: str
@@ -22,7 +32,6 @@ class PokemonGrupoHuevo(SQLModel, table=True):
     nombre: str
     movimiento_id: int = Field(foreign_key="movimiento.id")
     movimiento: "Movimiento" = Relationship(back_populates="pokemones_grupo_huevo")
-"""
 
 
 class Naturaleza(SQLModel, table=True):
@@ -98,9 +107,8 @@ class Movimiento(SQLModel, table=True):
 
 
 class Integrante(SQLModel, table=True):
-
     nombre: str = Field(primary_key=True, nullable=False)
-    id_equipo: int
+    id_equipo: "Team" = Relationship(back_populates="pokemones")
     id_pokemon: Optional[int] = Field(default=None, foreign_key="pokemon.id")
     pokemon: Pokemon = Relationship(back_populates="integrantes")
     id_naturaleza: Optional[int] = Field(default=None, foreign_key="naturaleza.id")
@@ -109,3 +117,13 @@ class Integrante(SQLModel, table=True):
         back_populates="integrantes",
         link_model=IntegranteMovimiento,
     )
+
+
+class TeamBase(SQLModel):
+    generacion: int
+    nombre: str
+    pokemones: list[Integrante] = Relationship(back_populates="id_equipo")
+
+
+class Team(TeamBase, table=True):
+    id: int = Field(primary_key=True)
