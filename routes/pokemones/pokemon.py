@@ -50,27 +50,18 @@ def get_pokemones(session: SessionDep) -> list[Pokemon]:
     return pokemones
 
 
+@router.get("/{id}")
+def show(session: SessionDep, id: int) -> Pokemon:
+    pokemon = session.exec(select(Pokemon).where(Pokemon.id == id)).first()
+
+    if pokemon:
+        return pokemon
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon not found"
+    )
+
+
 """
-@router.get("/{pokemon_id}")
-def leer_pokemon(pokemon_id: int):
-    pokemon = None
-    for p in lista_pokemones:
-        if p.id == pokemon_id:
-            pokemon = p
-            debilidades = calcular_debilidades(pokemon)
-            fortalezas = calcular_fortalezas(pokemon)
-            break
-
-    if pokemon is None:
-        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
-
-    return {
-        "pokemon": pokemon,
-        "debilidades": debilidades,
-        "fortalezas": fortalezas,
-    }
-
-
 @router.delete("/{id}")
 def eliminar_pokemon(id):
     if not id.isdecimal():
