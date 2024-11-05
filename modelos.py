@@ -2,27 +2,26 @@ from sqlmodel import Field, SQLModel, Relationship, JSON
 from typing import List, Dict, Optional
 import sqlalchemy as sa
 
-"""
-class PokemonSubidaNivel(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_subida_nivel")
+
+# class PokemonSubidaNivel(SQLModel, table=True):
+#     id: int = Field(primary_key=True)
+#     nombre: str
+#     movimiento_id: int = Field(foreign_key="movimiento.id")
+#     movimiento: "Movimiento" = Relationship(back_populates="pokemones_subida_nivel")
 
 
-class PokemonTM(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_tm")
+# class PokemonTM(SQLModel, table=True):
+#     id: int = Field(primary_key=True)
+#     nombre: str
+#     movimiento_id: int = Field(foreign_key="movimiento.id")
+#     movimiento: "Movimiento" = Relationship(back_populates="pokemones_tm")
 
 
-class PokemonGrupoHuevo(SQLModel, table=True):
-    id: int = Field(primary_key=True)
-    nombre: str
-    movimiento_id: int = Field(foreign_key="movimiento.id")
-    movimiento: "Movimiento" = Relationship(back_populates="pokemones_grupo_huevo")
-"""
+# class PokemonGrupoHuevo(SQLModel, table=True):
+#     id: int = Field(primary_key=True)
+#     nombre: str
+#     movimiento_id: int = Field(foreign_key="movimiento.id")
+#     movimiento: "Movimiento" = Relationship(back_populates="pokemones_grupo_huevo")
 
 
 class Naturaleza(SQLModel, table=True):
@@ -106,10 +105,17 @@ class Movimiento(SQLModel, table=True):
     )
 
 
-class Integrante(SQLModel, table=True):
+class Team(SQLModel, table=True):
+    id: int = Field(primary_key=True)
+    generacion: int
+    nombre: str
+    integrantes: List["Integrante"] = Relationship(back_populates="equipo")
 
+
+class Integrante(SQLModel, table=True):
     nombre: str = Field(primary_key=True, nullable=False)
-    id_equipo: int
+    equipo_id: Optional[int] = Field(default=None, foreign_key="team.id")
+    equipo: Optional["Team"] = Relationship(back_populates="integrantes")
     id_pokemon: Optional[int] = Field(default=None, foreign_key="pokemon.id")
     pokemon: Pokemon = Relationship(back_populates="integrantes")
     id_naturaleza: Optional[int] = Field(default=None, foreign_key="naturaleza.id")
@@ -118,3 +124,6 @@ class Integrante(SQLModel, table=True):
         back_populates="integrantes",
         link_model=IntegranteMovimiento,
     )
+
+
+# class Team(TeamBase, table=True):
