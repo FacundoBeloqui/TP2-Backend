@@ -20,7 +20,7 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from modelos import Pokemon, PokemonPublic
+from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations
 import routes.utils as utils
 
 router = APIRouter()
@@ -54,14 +54,25 @@ def get_pokemones(session: SessionDep) -> list[PokemonPublic]:
 
 
 @router.get("/{id}")
-def show(session: SessionDep, id: int) -> Pokemon:
+def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
     pokemon = session.exec(select(Pokemon).where(Pokemon.id == id)).first()
 
     if pokemon:
-        return pokemon
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon not found"
-    )
+        pokemon_public_data = {
+            "id": pokemon.id,
+            "identificador": pokemon.identificador,
+            "altura": pokemon.altura,
+            "peso": pokemon.peso,
+            "experiencia_base": pokemon.experiencia_base,
+            "imagen": pokemon.imagen,
+            "grupo_de_huevo": pokemon.grupo_de_huevo,
+        }
+
+        return PokemonPublicWithRelations(
+            **pokemon_public_data,
+            debilidades=calcular_debilidades(pokemon),
+            fortalezas=calcular_fortalezas(pokemon),
+        )
 
 
 @router.delete("/{id}")

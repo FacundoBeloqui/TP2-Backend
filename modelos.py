@@ -68,8 +68,8 @@ class PokemonPublic(PokemonBase):
 
 
 class PokemonPublicWithRelations(PokemonPublic):
-    debilidades: dict[str, int]
-    fortalezas: dict[str, int]
+    debilidades: dict[str, float]
+    fortalezas: dict[str, float]
 
 
 class IntegranteMovimiento(SQLModel, table=True):
