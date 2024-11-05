@@ -106,15 +106,15 @@ def create_team(team: TeamCreate):
 """
 
 
-# @router.put("/{id}")
-# def update(session: SessionDep, id: int, equipo_nuevo: Team) -> Team:
-#     equipo = utils.buscar_equipo(session, id)
-#     equipo.nombre = equipo_nuevo.nombre
-#     equipo.pokemones = equipo_nuevo.pokemones
-#     session.add()
-#     session.commit()
-#     session.refresh(equipo)
-#     return equipo
+@router.put("/{id}")
+def update(session: SessionDep, id: int, equipo_nuevo: Integrante) -> list[Integrante]:
+    equipo = utils.buscar_equipo(session, id)
+    equipo.nombre = equipo_nuevo.nombre
+    equipo.pokemones = equipo_nuevo.pokemones
+    session.add()
+    session.commit()
+    session.refresh(equipo)
+    return equipo
 
 
 @router.delete("/{id}")
