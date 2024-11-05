@@ -24,5 +24,5 @@ def show(session: SessionDep, id: int) -> Movimiento:
     if movimiento:
         return movimiento
     raise HTTPException(
-        status_code=status.HTTP_NOT_FOUND, detail="Movimiento not found"
+        status_code=status.HTTP_404_NOT_FOUND, detail="Movimiento not found"
     )
