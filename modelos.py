@@ -43,12 +43,6 @@ class PokemonBase(SQLModel):
     experiencia_base: int
     imagen: str
     grupo_de_huevo: str
-
-
-class Pokemon(PokemonBase, table=True):
-    id: int = Field(primary_key=True)
-    id_especie: int
-    integrantes: List["Integrante"] = Relationship(back_populates="pokemon")
     habilidades: Optional[List[str]] = Field(default=None, sa_column=sa.Column(JSON))
     evoluciones_inmediatas: Optional[List[str]] = Field(
         default=None, sa_column=sa.Column(JSON)
@@ -59,6 +53,12 @@ class Pokemon(PokemonBase, table=True):
     )
 
 
+class Pokemon(PokemonBase, table=True):
+    id: int = Field(primary_key=True)
+    id_especie: int
+    integrantes: List["Integrante"] = Relationship(back_populates="pokemon")
+
+
 class PokemonCreate(PokemonBase):
     pass
 
@@ -67,7 +67,7 @@ class PokemonPublic(PokemonBase):
     id: int
 
 
-class PokemonPublicWithRelations(PokemonPublic):
+class PokemonPublicWithRelations(PokemonBase):
     debilidades: dict[str, float]
     fortalezas: dict[str, float]
 
