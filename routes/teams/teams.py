@@ -1,10 +1,10 @@
-from models import *
 from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
 from fastapi import HTTPException, APIRouter
 from typing import List
 from modelos import Naturaleza, Integrante, Team
+import routes.utils as utils
 
 lista_equipos = []
 generacion = ""
@@ -106,21 +106,11 @@ def create_team(team: TeamCreate):
 """
 
 
-def buscar_equipo(session: SessionDep, grupo_id: int) -> Team:
-    query = select(Team).where(Team.id == grupo_id)
-    grupo = session.exec(query).first()
-
-    if grupo:
-        return grupo
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo not found")
-
-
 # @router.put("/{id}")
 # def update(session: SessionDep, id: int, equipo_nuevo: Team) -> Team:
-#     equipo = buscar_equipo(session, id)
-#     equipo. = equipo_nuevo.
-#     equipo. = equipo_nuevo.
-#     equipo. = equipo_nuevo.
+#     equipo = utils.buscar_equipo(session, id)
+#     equipo.nombre = equipo_nuevo.nombre
+#     equipo.pokemones = equipo_nuevo.pokemones
 #     session.add()
 #     session.commit()
 #     session.refresh(equipo)
@@ -129,10 +119,7 @@ def buscar_equipo(session: SessionDep, grupo_id: int) -> Team:
 
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> Team:
-    equipo = buscar_equipo(session, id)
+    equipo = utils.buscar_equipo(session, id)
     session.delete(equipo)
     session.commit()
     return equipo
-
-
-raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
