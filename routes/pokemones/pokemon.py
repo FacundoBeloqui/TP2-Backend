@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
 from db import (
+    debilidades_tipos,
+    fortalezas_tipos,
     # SessionDep,
     lista_naturalezas,
     # lista_pokemones,
@@ -18,7 +20,8 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from modelos import Pokemon
+from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations
+import routes.utils as utils
 
 router = APIRouter()
 
@@ -44,39 +47,43 @@ def calcular_fortalezas(pokemon):
 
 
 @router.get("/")
-def get_pokemones(session: SessionDep) -> list[Pokemon]:
+def get_pokemones(session: SessionDep) -> list[PokemonPublic]:
     query = select(Pokemon)
     pokemones = session.exec(query)
     return pokemones
 
 
 @router.get("/{id}")
-def show(session: SessionDep, id: int) -> Pokemon:
+def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
     pokemon = session.exec(select(Pokemon).where(Pokemon.id == id)).first()
 
     if pokemon:
-        return pokemon
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon not found"
-    )
+        pokemon_public_data = {
+            "id": pokemon.id,
+            "identificador": pokemon.identificador,
+            "altura": pokemon.altura,
+            "peso": pokemon.peso,
+            "experiencia_base": pokemon.experiencia_base,
+            "imagen": pokemon.imagen,
+            "grupo_de_huevo": pokemon.grupo_de_huevo,
+        }
+
+        return PokemonPublicWithRelations(
+            **pokemon_public_data,
+            debilidades=calcular_debilidades(pokemon),
+            fortalezas=calcular_fortalezas(pokemon),
+        )
+
+
+@router.delete("/{id}")
+def delete(session: SessionDep, id: int) -> PokemonPublic:
+    pokemon = utils.buscar_pokemon(session, id)
+    session.delete(pokemon)
+    session.commit()
+    return pokemon
 
 
 """
-@router.delete("/{id}")
-def eliminar_pokemon(id):
-    if not id.isdecimal():
-        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
-    for pokemon in lista_pokemones:
-        if pokemon.id == int(id):
-            lista_pokemones.remove(pokemon)
-            return {
-                "pokemon": pokemon,
-                "debilidades": calcular_debilidades(pokemon),
-                "fortalezas": calcular_fortalezas(pokemon),
-            }
-    raise HTTPException(status_code=404, detail="Pokemon no encontrado")
-
-
 @router.post("/", response_model=Pokemon, status_code=201)
 def create_pokemon(session: SessionDep, pokemon: PokemonBase):
     session.add(pokemon)

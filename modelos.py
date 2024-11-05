@@ -72,6 +72,15 @@ class PokemonCreate(PokemonBase):
     pass
 
 
+class PokemonPublic(PokemonBase):
+    id: int
+
+
+class PokemonPublicWithRelations(PokemonPublic):
+    debilidades: dict[str, float]
+    fortalezas: dict[str, float]
+
+
 class IntegranteMovimiento(SQLModel, table=True):
     integrante_id: int = Field(
         nullable=False, foreign_key="integrante.nombre", primary_key=True
