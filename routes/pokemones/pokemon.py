@@ -47,7 +47,7 @@ def calcular_fortalezas(pokemon):
 
 
 @router.get("/")
-def get_pokemones(session: SessionDep) -> list[PokemonPublic]:
+def get_pokemones(session: SessionDep) -> list[Pokemon]:
     query = select(Pokemon)
     pokemones = session.exec(query)
     return pokemones
@@ -61,11 +61,16 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
         pokemon_public_data = {
             "id": pokemon.id,
             "identificador": pokemon.identificador,
+            "id_especie": pokemon.id_especie,
             "altura": pokemon.altura,
             "peso": pokemon.peso,
             "experiencia_base": pokemon.experiencia_base,
             "imagen": pokemon.imagen,
             "grupo_de_huevo": pokemon.grupo_de_huevo,
+            "tipo": pokemon.tipo,
+            "estadisticas": pokemon.estadisticas,
+            "habilidades": pokemon.habilidades,
+            "evoluciones_inmediatas": pokemon.evoluciones_inmediatas,
         }
 
         return PokemonPublicWithRelations(
