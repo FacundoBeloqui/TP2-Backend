@@ -22,7 +22,7 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations
+from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
 import routes.utils as utils
 
 router = APIRouter()
@@ -82,6 +82,7 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
         )
 
 
+"""
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> PokemonPublic:
     pokemon = utils.buscar_pokemon(session, id)
@@ -91,15 +92,31 @@ def delete(session: SessionDep, id: int) -> PokemonPublic:
 
 
 """
+
 @router.post("/", response_model=Pokemon, status_code=201)
-def create_pokemon(session: SessionDep, pokemon: PokemonBase):
+def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
+    pokemon = Pokemon(
+        id_especie=pokemon_create.id_especie,
+        identificador=pokemon_create.identificador,
+        altura=pokemon_create.altura,
+        peso=pokemon_create.peso,
+        experiencia_base=pokemon_create.experiencia_base,
+        imagen=pokemon_create.imagen,
+        tipo=pokemon_create.tipo,
+        grupo_de_huevo=pokemon_create.grupo_de_huevo,
+        estadisticas=pokemon_create.estadisticas,
+        habilidades=pokemon_create.habilidades,
+        generacion=pokemon_create.generacion,
+        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas
+    )
     session.add(pokemon)
     session.commit()
+    #pokemon.id_especie = pokemon.id
     session.refresh(pokemon)
     return pokemon
 """
 
-
+"""
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
     pokemon = movimientos_aprendibles_por_pokemon[str(pokemon_id)]

@@ -33,6 +33,7 @@ def upgrade() -> None:
         sa.Column("grupo_de_huevo", sa.String, nullable=False),
         sa.Column("estadisticas", sa.JSON, nullable=False),
         sa.Column("habilidades", sa.BLOB(sa.String), nullable=True),
+        sa.Column("generacion", sa.Integer, nullable=False),
         sa.Column("evoluciones_inmediatas", sa.BLOB(sa.String), nullable=True),
     )
 

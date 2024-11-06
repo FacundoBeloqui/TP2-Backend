@@ -309,6 +309,8 @@ with open("csv/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
+lista_equipos = []
+
 movimientos_aprendibles_por_pokemon = {}
 with open("csv/pokemon_moves.csv") as archivo:
     for linea in archivo:

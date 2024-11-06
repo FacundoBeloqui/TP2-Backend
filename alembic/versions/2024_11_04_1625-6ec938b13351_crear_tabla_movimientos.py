@@ -1,7 +1,7 @@
 """Crear tabla movimientos
 
 Revision ID: 6ec938b13351
-Revises: 85308c162624
+Revises: f0ad080f88fd
 Create Date: 2024-11-04 16:25:30.192344
 
 """
@@ -14,7 +14,7 @@ import sqlalchemy as sa
 
 # revision identifiers, used by Alembic.
 revision: str = "6ec938b13351"
-down_revision: Union[str, None] = "85308c162624"
+down_revision: Union[str, None] = "f0ad080f88fd"
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
 
