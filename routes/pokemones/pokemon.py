@@ -80,6 +80,12 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
             debilidades=calcular_debilidades(pokemon),
             fortalezas=calcular_fortalezas(pokemon),
         )
+    else:
+        raise (
+            HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
+            )
+        )
 
 
 """
@@ -92,6 +98,7 @@ def delete(session: SessionDep, id: int) -> PokemonPublic:
 
 
 """
+
 
 @router.post("/", response_model=Pokemon, status_code=201)
 def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
@@ -107,16 +114,20 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
         estadisticas=pokemon_create.estadisticas,
         habilidades=pokemon_create.habilidades,
         generacion=pokemon_create.generacion,
-        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas
+        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas,
     )
     session.add(pokemon)
     session.commit()
-    #pokemon.id_especie = pokemon.id
+    # pokemon.id_especie = pokemon.id
     session.refresh(pokemon)
     return pokemon
+
+
 """
 
 """
+
+
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
     pokemon = movimientos_aprendibles_por_pokemon[str(pokemon_id)]

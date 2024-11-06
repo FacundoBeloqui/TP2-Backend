@@ -104,14 +104,14 @@ def test_get_pokemones_vacio(client: TestClient) -> None:
     assert len(content) == 0
 
 
-"""
-def test_leer_pokemon_no_existente():
+def test_leer_pokemon_no_existente(client: TestClient) -> None:
     response = client.get("/pokemones/9999")
 
     assert response.status_code == 404
-    assert response.json() == {"detail": "Pokémon no encontrado"}
+    assert response.json() == {"detail": "Pokemon no encontrado"}
 
 
+"""
 def test_leer_pokemon_con_id_invalido():
     response = client.get("/pokemones/abc")
     assert response.status_code == 422
