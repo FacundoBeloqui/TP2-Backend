@@ -7,7 +7,7 @@ from routes.pokemones.pokemon import (
     calcular_fortalezas,
     obtener_movimientos_pokemon,
 )
-from sqlmodel import Session, SQLModel, create_engine
+from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 from modelos import Pokemon
 from database import get_db
@@ -43,6 +43,7 @@ def test_leer_pokemones(session: Session, client: TestClient) -> None:
         experiencia_base=1,
         imagen="asdada",
         grupo_de_huevo="dasdad",
+        generacion=[1, 2],
         habilidades=["comer", "dormir"],
         evoluciones_inmediatas=["pokemon2"],
         tipo=["fuego", "piedra"],
@@ -69,6 +70,7 @@ def test_leer_pokemon_id(session: Session, client: TestClient) -> None:
         experiencia_base=1,
         imagen="asdada",
         grupo_de_huevo="dasdad",
+        generacion=[1, 2],
         habilidades=["comer", "dormir"],
         evoluciones_inmediatas=["pokemon2"],
         tipo=["fuego", "piedra"],
@@ -88,6 +90,7 @@ def test_leer_pokemon_id(session: Session, client: TestClient) -> None:
     assert content["experiencia_base"] == pok1.experiencia_base
     assert content["imagen"] == pok1.imagen
     assert content["grupo_de_huevo"] == pok1.grupo_de_huevo
+    assert content["generacion"] == pok1.generacion
     assert content["habilidades"] == pok1.habilidades
     assert content["evoluciones_inmediatas"] == pok1.evoluciones_inmediatas
     assert content["tipo"] == pok1.tipo
@@ -111,26 +114,43 @@ def test_leer_pokemon_no_existente(client: TestClient) -> None:
     assert response.json() == {"detail": "Pokemon no encontrado"}
 
 
-"""
-def test_leer_pokemon_con_id_invalido():
+def test_leer_pokemon_con_id_invalido(client: TestClient) -> None:
     response = client.get("/pokemones/abc")
     assert response.status_code == 422
 
 
-def test_eliminar_pokemon_existente():
-    largo_lista_pokemones_original = len(lista_pokemones)
-    primer_pokemon = lista_pokemones[0]
-    response = client.delete("/pokemones/1")
+def test_eliminar_pokemon_existente(session: Session, client: TestClient) -> None:
+    pok1 = Pokemon(
+        identificador="Nombre1",
+        altura=111,
+        peso=2,
+        experiencia_base=1,
+        imagen="asdada",
+        grupo_de_huevo="dasdad",
+        generacion=[1, 2],
+        habilidades=["comer", "dormir"],
+        evoluciones_inmediatas=["pokemon2"],
+        tipo=["fuego", "piedra"],
+        estadisticas={"ataque": 2, "defensa": 3},
+        id_especie=5,
+    )
+    session.add(pok1)
+    session.commit()
+
+    largo_lista_pokemones_original = len(session.exec(select(Pokemon)).all())
+
+    response = client.delete(f"/pokemones/{pok1.id}")
+
     assert response.status_code == 200
-    assert response.json() == {
-        "pokemon": primer_pokemon.model_dump(),
-        "debilidades": calcular_debilidades(primer_pokemon),
-        "fortalezas": calcular_fortalezas(primer_pokemon),
-    }
-    assert len(lista_pokemones) == largo_lista_pokemones_original - 1
-    assert lista_pokemones[0].id == 2
+
+    largo_lista_pokemones_actual = len(session.exec(select(Pokemon)).all())
+    assert largo_lista_pokemones_actual == largo_lista_pokemones_original - 1
+
+    pokemon_eliminado = session.get(Pokemon, pok1.id)
+    assert pokemon_eliminado is None
 
 
+"""
 def test_eliminar_pokemon_ya_eliminado():
     response = client.delete("/pokemones/1")
     assert response.status_code == 404

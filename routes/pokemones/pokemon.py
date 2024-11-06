@@ -69,6 +69,7 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
             "experiencia_base": pokemon.experiencia_base,
             "imagen": pokemon.imagen,
             "grupo_de_huevo": pokemon.grupo_de_huevo,
+            "generacion": pokemon.generacion,
             "tipo": pokemon.tipo,
             "estadisticas": pokemon.estadisticas,
             "habilidades": pokemon.habilidades,
@@ -88,16 +89,12 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
         )
 
 
-"""
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> PokemonPublic:
     pokemon = utils.buscar_pokemon(session, id)
     session.delete(pokemon)
     session.commit()
     return pokemon
-
-
-"""
 
 
 @router.post("/", response_model=Pokemon, status_code=201)
@@ -111,9 +108,9 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
         imagen=pokemon_create.imagen,
         tipo=pokemon_create.tipo,
         grupo_de_huevo=pokemon_create.grupo_de_huevo,
+        generacion=pokemon_create.generacion,
         estadisticas=pokemon_create.estadisticas,
         habilidades=pokemon_create.habilidades,
-        generacion=pokemon_create.generacion,
         evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas,
     )
     session.add(pokemon)
@@ -121,11 +118,6 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
     # pokemon.id_especie = pokemon.id
     session.refresh(pokemon)
     return pokemon
-
-
-"""
-
-"""
 
 
 @router.get("/{pokemon_id}/movimientos")
