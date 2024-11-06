@@ -5,19 +5,6 @@ from sqlmodel import create_engine, Session
 from fastapi import Depends
 from typing import Annotated
 
-# from models import (
-# PokemonSubidaNivel,
-# PokemonTM,
-# PokemonGrupoHuevo,
-# Pokemonmoves,
-# Evolucion,
-# DatosMovimiento,
-# Movimientomoves,
-# )
-
-# from pokemon import Pokemon
-
-
 pokemon_por_id = {}
 with open("csv/pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
@@ -228,7 +215,6 @@ with open("csv/pokemon_moves.csv") as movimientos_pokemon:
             metodo_nombre = dicc_metodos[metodo_id]
             if pokemon_id in pokemon_por_id:
                 pokemon_nombre = pokemon_por_id[pokemon_id]
-
                 if metodo_nombre.lower() == "nivel":
                     if linea[2] not in movimientos_subida_nivel:
                         movimientos_subida_nivel[linea[2]] = []
@@ -276,6 +262,7 @@ with open("csv/moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
+
 naturalezas_nombres = {}
 with open("csv/nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -308,63 +295,24 @@ with open("csv/natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
-"""
-datos_pokemon = {}
-with open("csv/pokemon.csv") as archivo:
-    lineas = archivo.readlines()
-    for linea in lineas[1:]:
-        f = linea.strip().split(",")
-        id_pokemon = int(f[0])
-        nombre_pokemon = f[1]
-        datos_pokemon[id_pokemon] = Pokemonmoves(
-            id=id_pokemon, nombre=nombre_pokemon, tipos=[]
-        )
 
-evoluciones = []
-with open("csv/pokemon_evolutions.csv") as archivo:
-    lineas = archivo.readlines()
-    for linea in lineas[1:]:
-        f = linea.strip().split(",")
-        id_base = int(f[0])
-        id_evolucionado = int(f[1])
-        evoluciones.append(
-            Evolucion(id_pokemon_base=id_base, id_pokemon_evolucionado=id_evolucionado)
-        )
-
-datos_movimientos_pokemon = {}
-with open("csv/pokemon_moves.csv") as archivo:
-    lineas = archivo.readlines()
-    for linea in lineas[1:]:
-        f = linea.strip().split(",")
-        id_pokemon = int(f[0])
-        id_movimiento = int(f[2])
-        nivel = int(f[4]) if f[4] else None
-        if id_pokemon not in datos_movimientos_pokemon:
-            datos_movimientos_pokemon[id_pokemon] = []
-        datos_movimientos_pokemon[id_pokemon].append(
-            {"id_movimiento": id_movimiento, "nivel": nivel}
-        )
-
-datos_movimientos = DatosMovimiento(movimientos={})
+nombres_movimientos = {}
 with open("csv/moves.csv") as archivo:
-    lineas = archivo.readlines()
-    for linea in lineas[1:]:
-        f = linea.strip().split(",")
-        id_movimiento = int(f[0])
-        nombre_movimiento = f[1]
-        datos_movimientos.movimientos[id_movimiento] = Movimientomoves(
-            id=id_movimiento, nombre=nombre_movimiento
-        )
+    for linea in archivo:
+        linea = linea.rstrip("\n").split(",")
+        nombres_movimientos[linea[0]] = linea[1]
 
-
-datos_tipos_pokemon = {}
-with open("csv/pokemon_types.csv") as archivo:
-    lineas = archivo.readlines()
-    for linea in lineas[1:]:
-        f = linea.strip().split(",")
-        id_pokemon = int(f[0])
-        id_tipo = int(f[1])
-        if id_pokemon not in datos_tipos_pokemon:
-            datos_tipos_pokemon[id_pokemon] = []
-        datos_tipos_pokemon[id_pokemon].append(id_tipo)
-"""
+movimientos_aprendibles_por_pokemon = {}
+with open("csv/pokemon_moves.csv") as archivo:
+    for linea in archivo:
+        linea = linea.rstrip("\n").split(",")
+        if linea[0] == "pokemon_id":
+            continue
+        id_pokemon = linea[0]
+        id_movimiento = linea[2]
+        nombre_movimiento = nombres_movimientos.get(id_movimiento)
+        if id_pokemon not in movimientos_aprendibles_por_pokemon:
+            movimientos_aprendibles_por_pokemon[id_pokemon] = []
+        if nombre_movimiento in movimientos_aprendibles_por_pokemon[id_pokemon]:
+            continue
+        movimientos_aprendibles_por_pokemon[id_pokemon].append(nombre_movimiento)
