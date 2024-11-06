@@ -14,11 +14,11 @@ from modelos import (
 )
 import routes.utils as utils
 from sqlalchemy.orm import selectinload
+import sqlalchemy.future
 
 generacion = ""
 
 router = APIRouter()
-lista_equipos = []
 
 
 @router.get("/nature")
@@ -50,31 +50,45 @@ def create_team(session: SessionDep, team_create: TeamCreate):
 
     integrantes = []
     for integrante_data in team_create.integrantes:
+        pokemon = session.get(Pokemon, integrante_data.id_pokemon)
+        naturaleza = session.get(Naturaleza, integrante_data.id_naturaleza)
+
+        if not pokemon:
+            raise HTTPException(status_code=404, detail="Pokemon no encontrado.")
+        if not naturaleza:
+            raise HTTPException(status_code=404, detail="Naturaleza no encontrada.")
+
         integrante = Integrante(
             nombre=integrante_data.nombre,
             id_equipo=team.id,
-            id_pokemon=integrante_data.id_pokemon,
-            id_naturaleza=integrante_data.id_naturaleza,
-            # movimientos=integrante_data.movimientos  # Si es necesario
+            id_pokemon=pokemon.id,
+            id_naturaleza=naturaleza.id,
         )
-        # if integrante_data.movimientos:
-        #     for movimiento_id in integrante_data.movimientos:
-        #         # Aquí asumimos que los movimientos ya están en la base de datos
-        #         # Debes validar si el movimiento existe antes de asociarlo
-        #         movimiento = session.get(Movimiento, movimiento_id)
-        #         if movimiento:
-        #             integrante.movimientos.append(movimiento)
-        #         else:
-        #             raise HTTPException(status_code=404, detail=f"Movimiento con id {movimiento_id} no encontrado.")
+
+        if integrante_data.movimientos:
+            for movimiento_id in integrante_data.movimientos:
+                movimiento = session.get(Movimiento, movimiento_id)
+                if movimiento:
+                    integrante.movimientos.append(movimiento)
+                else:
+                    raise HTTPException(
+                        status_code=404,
+                        detail=f"Movimiento con id {movimiento_id} no encontrado.",
+                    )
+
         integrantes.append(integrante)
 
     session.add_all(integrantes)
     session.commit()
     session.refresh(team)
-    # query = select(Team).where(Team.id == team.id).options(selectinload(Team.integrantes))
-    # team_with_integrantes = session.exec(query).first()
-    equipos = session.exec(select(Team).options(selectinload(Team.integrantes))).all()
-    return equipos
+
+    equipo_con_integrantes = session.exec(
+        sqlalchemy.future.select(Team)
+        .options(selectinload(Team.integrantes))
+        .where(Team.id == team.id)
+    ).scalar_one()
+
+    return equipo_con_integrantes
 
 
 @router.put("/{id}")
