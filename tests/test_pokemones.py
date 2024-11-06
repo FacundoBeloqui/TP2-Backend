@@ -61,29 +61,50 @@ def test_leer_pokemones(session: Session, client: TestClient) -> None:
     assert len(content) == 1
 
 
-"""
-def test_leer_pokemon_id():
-    response = client.get("/pokemones/1")
+def test_leer_pokemon_id(session: Session, client: TestClient) -> None:
+    pok1 = Pokemon(
+        identificador="Nombre1",
+        altura=111,
+        peso=2,
+        experiencia_base=1,
+        imagen="asdada",
+        grupo_de_huevo="dasdad",
+        habilidades=["comer", "dormir"],
+        evoluciones_inmediatas=["pokemon2"],
+        tipo=["fuego", "piedra"],
+        estadisticas={"ataque": 2, "defensa": 3},
+        id_especie=5,
+    )
+    session.add(pok1)
+    session.commit()
+
+    response = client.get(f"/pokemones/{pok1.id}")
 
     assert response.status_code == 200
-
-    data = response.json()["pokemon"]
-
-    assert "id" in data
-    assert "identificador" in data
-    assert "id_especie" in data
-    assert "altura" in data
-    assert "peso" in data
-    assert "experiencia_base" in data
-    assert "tipo" in data
-    assert "imagen" in data
-    assert "grupo_de_huevo" in data
-    assert "estadisticas" in data
-    assert "habilidades" in data
-
-    assert data["id"] == 1
+    content = response.json()
+    assert content["identificador"] == pok1.identificador
+    assert content["altura"] == pok1.altura
+    assert content["peso"] == pok1.peso
+    assert content["experiencia_base"] == pok1.experiencia_base
+    assert content["imagen"] == pok1.imagen
+    assert content["grupo_de_huevo"] == pok1.grupo_de_huevo
+    assert content["habilidades"] == pok1.habilidades
+    assert content["evoluciones_inmediatas"] == pok1.evoluciones_inmediatas
+    assert content["tipo"] == pok1.tipo
+    assert content["estadisticas"] == pok1.estadisticas
+    assert content["id_especie"] == pok1.id_especie
 
 
+def test_get_pokemones_vacio(client: TestClient) -> None:
+    response = client.get(
+        "/pokemones/",
+    )
+    assert response.status_code == 200
+    content = response.json()
+    assert len(content) == 0
+
+
+"""
 def test_leer_pokemon_no_existente():
     response = client.get("/pokemones/9999")
 
