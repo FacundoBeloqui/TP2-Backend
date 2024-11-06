@@ -308,6 +308,9 @@ with open("csv/natures.csv") as naturalezas:
                 indice_juego=int(linea[6]),
             )
             lista_naturalezas.append(naturaleza)
+
+lista_equipos = []
+
 """
 datos_pokemon = {}
 with open("csv/pokemon.csv") as archivo:

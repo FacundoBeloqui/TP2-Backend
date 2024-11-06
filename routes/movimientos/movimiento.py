@@ -1,6 +1,5 @@
 from fastapi import HTTPException, APIRouter, status
 from database import SessionDep
-from db import lista_movimientos
 from modelos import Movimiento
 from sqlmodel import select
 

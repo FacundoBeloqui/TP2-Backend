@@ -1,27 +1,11 @@
-from models import *
 from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
-from db import (
-    # SessionDep,
-    lista_naturalezas,
-    # lista_pokemones,
-    # lista_movimientos,
-    # lista_habilidades,
-    # generaciones_pokemon,
-    # pokemon_tipos,
-)
 from fastapi import HTTPException, APIRouter
 from typing import List
+from modelos import Naturaleza, Integrante, Team, Pokemon, Movimiento, TeamBase, TeamCreate
+import routes.utils as utils
 
-# from models import (
-#     TeamCreate,
-#     TeamDataCreate,
-#     Pokemon,
-# )
-from modelos import Naturaleza, Pokemon, Movimiento
-
-lista_equipos = []
 generacion = ""
 
 router = APIRouter()
@@ -54,38 +38,95 @@ def obtener_todos_los_equipos(pagina: int = 1):
         return lista_equipos
     return lista_equipos[10 * (pagina - 1) : 10 * pagina]
 
+"""
 
-@router.get("/{team_id}", response_model=TeamDataCreate)
-def get_team_by_id(team_id):
-    if not team_id.isdecimal():
-        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
-    team = None
-    for t in lista_equipos:
-        if t["id"] == int(team_id):
-            team = t
-            break
-    if team is None:
-        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+@router.get("/")
+def obtener_equipos(session: SessionDep):
+    query = select(Team)
+    equipos = session.exec(query)
+    return equipos
+
+
+# @router.get("/{team_id}")
+# def get_team_by_id(session:SessionDep, team_id: int):
+#     return utils.buscar_equipo(session, team_id)
+
+"""
+@router.post("/", response_model=Team)
+def create_team(session:SessionDep, team_create: TeamBase):
+    team = Team(
+        nombre=team_create.nombre,
+        generacion=team_create.generacion
+    )
+    
+    session.add(team)
+    session.commit()  # Asegúrate de hacer commit aquí para que el equipo obtenga un id
+    
+    # Crear y agregar los integrantes
+    integrantes = []
+    for integrante_data in team.integrantes:
+        integrante = Integrante(
+            nombre=integrante_data.nombre,
+            equipo_id=team.id,  # Asociar al equipo recién creado
+            id_pokemon=integrante_data.id_pokemon,
+            id_naturaleza=integrante_data.id_naturaleza,
+            movimientos=integrante_data.movimientos  # Si es necesario
+        )
+        integrantes.append(integrante)
+    
+    session.add_all(integrantes)
+    session.commit()  # Commit para los integrantes
+    
+    # Retornar el equipo con los integrantes
+    session.refresh(team)
     return team
 """
-"""
-@router.post("/")
-def create_team(session:SessionDep, team: TeamBase):
-    # lista_generacion_pokemones = []
-    # lista_generacion_movimientos = []
-    if team.generacion > 9 or team.generacion < 1:
-        raise HTTPException(status_code=404, detail="No se encontró la generacion")
+    # if team.generacion > 9 or team.generacion < 1:
+    #     raise HTTPException(status_code=404, detail="No se encontró la generacion")
 
-    if len(team.pokemones) < 1 or len(team.pokemones) > 6:
-        raise HTTPException(
-            status_code=400,
-            detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
-        )
+    # if len(team.integrantes) < 1 or len(team.integrantes) > 6:
+    #     raise HTTPException(
+    #         status_code=400,
+    #         detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
+    #     )
 
-    pokemon = session.exec(select(Pokemon).where(Pokemon.generacion == team.generacion))
-    movimiento = session.exec(select(Movimiento).where(Movimiento.generacion == team.generacion))
+   # pokemones_generacion = session.exec(select(Pokemon).where(Pokemon.generacion == team.generacion))
+    #movimientos_generacion = session.exec(select(Movimiento).where(Movimiento.generacion == team.generacion))
 
-    
+    #pokemones_elegidos = session.exec(select(Pokemon).where(pokemon.id == ))
+
+    # pokemon_elegido = []
+    # for pokemon_team in team.integrantes:
+    #     for p in pokemones_generacion:
+    #         if p.id == pokemon_team.id:
+    #             pokemon_elegido.append(p)
+    #         else:
+    #             raise HTTPException(
+    #                 status_code=404,
+    #                 detail=f"Pokemon {pokemon_team.id} no encontrado en la generación {team.generacion}",
+    #             )
+
+    # nuevo_equipo = Team(
+    #     generacion=team.generacion,
+    #     nombre=team.nombre
+    # )
+
+    # session.add(nuevo_equipo)
+    # session.commit()
+
+    # for pokemon in pokemon_elegido:
+    #     integrante = Integrante(
+    #         nombre=pokemon.identificador,
+    #         id_equipo=nuevo_equipo.id,
+    #         id_pokemon=pokemon.id
+    #     )
+    #     session.add(integrante)
+
+    # session.commit()
+
+    # session.refresh(nuevo_equipo)
+    # return nuevo_equipo
+
     
 
     # for id_pokemon, generaciones in generaciones_pokemon.items():
@@ -109,94 +150,40 @@ def create_team(session:SessionDep, team: TeamBase):
     #         if m.id in movimiento_team.movimientos:
     #             movimiento_elegido.append(m)
 
-    if len(pokemon_elegido) == 0:
-        raise HTTPException(
-            status_code=404,
-            detail="Pokemon seleccionado no encontrado en la generacion",
-        )
+    # if len(pokemon_elegido) == 0:
+    #     raise HTTPException(
+    #         status_code=404,
+    #         detail="Pokemon seleccionado no encontrado en la generacion",
+    #     )
 
-    if len(movimiento_elegido) == 0:
-        raise HTTPException(
-            status_code=404, detail="Movimiento no encontrado en la generacion"
-        )
+    # if len(movimiento_elegido) == 0:
+    #     raise HTTPException(
+    #         status_code=404, detail="Movimiento no encontrado en la generacion"
+    #     )
 
-    nuevo_equipo = {"pokemon": pokemon_elegido, "movimiento": movimiento_elegido}
+    # nuevo_equipo = {"pokemon": pokemon_elegido, "movimiento": movimiento_elegido}
 
-    lista_equipos.append(nuevo_equipo)
+    # lista_equipos.append(nuevo_equipo)
 
-    return nuevo_equipo
+    # return nuevo_equipo
+
 
 """
-"""
-@router.patch("/{id_team_a_updatear}/{id_pokemon_a_updatear}")
-def actualizar_equipo(
-    id_team_a_updatear: int, id_pokemon_a_updatear: int, team: TeamDataCreate
-):
-    if not lista_equipos:
-        raise HTTPException(status_code=404, detail="No hay equipos disponibles")
-
-    if id_team_a_updatear is None:
-        raise HTTPException(
-            status_code=400, detail="Ingrese el id del equipo a modificar"
-        )
-
-    if id_pokemon_a_updatear is None:
-        raise HTTPException(status_code=400, detail="Ingrese un pokemon para editar")
-
-    for equipo in lista_equipos:
-        if id_team_a_updatear == equipo.id:
-            for indice in len(equipo.pokemones):
-                if equipo.pokemones[indice].id == id_pokemon_a_updatear:
-                    v_f = False
-                    for id_pokemon, generaciones in generaciones_pokemon.items():
-                        if (
-                            equipo.pokemones[indice].id == int(id_pokemon)
-                            and equipo.generacion in generaciones
-                        ):
-                            v_f = True
-                            break
-                    if not v_f:
-                        raise HTTPException(
-                            status_code=422,
-                            detail=f"El pokemon {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo: {equipo.id}",
-                        )
-
-                    for movimiento in equipo.pokemones[indice].movimientos:
-                        if len(equipo.pokemones[indice].movimientos) > 4:
-                            raise HTTPException(
-                                status_code=400,
-                                detail="Se pueden asignar solo 4 movimientos",
-                            )
-                        if movimiento != 0:
-                            v_f = False
-                            for mov in lista_movimientos:
-                                if (
-                                    movimiento == mov.id
-                                    and equipo.generacion >= mov.generacion
-                                ):
-                                    v_f = True
-                                    break
-                            if not v_f:
-                                raise HTTPException(
-                                    status_code=422,
-                                    detail=f"El movimiento {movimiento} del pokemon_id {equipo.pokemones[indice].id} no pertenece a la generacion definida en el equipo {equipo.id}",
-                                )
-                    equipo.pokemones[indice] = team.pokemones
-                    return equipo
-
-            raise HTTPException(
-                status_code=404, detail="Pokemon no encontrado en el equipo"
-            )
-
-    raise HTTPException(status_code=404, detail="Equipo no encontrado")
+@router.put("/{id}")
+def update(session: SessionDep, id: int, equipo_nuevo: Integrante) -> list[Integrante]:
+    equipo = utils.buscar_equipo(session, id)
+    equipo.nombre = equipo_nuevo.nombre
+    equipo.pokemones = equipo_nuevo.pokemones
+    session.add()
+    session.commit()
+    session.refresh(equipo)
+    return equipo
 
 
 @router.delete("/{id}")
-def eliminar_equipo(id: int):
-    for equipo in lista_equipos:
-        if equipo.id == id:
-            lista_equipos.remove(equipo)
-            return {"detail": f"Equipo con ID {id} eliminado exitosamente."}
-
-    raise HTTPException(status_code=404, detail=f"Equipo con ID {id} no encontrado.")
+def delete(session: SessionDep, id: int) -> Team:
+    equipo = utils.buscar_equipo(session, id)
+    session.delete(equipo)
+    session.commit()
+    return equipo
 """

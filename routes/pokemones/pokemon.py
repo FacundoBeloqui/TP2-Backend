@@ -2,6 +2,8 @@ from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
 from db import (
+    debilidades_tipos,
+    fortalezas_tipos,
     # SessionDep,
     lista_naturalezas,
     # lista_pokemones,
@@ -18,7 +20,8 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from modelos import Pokemon
+from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
+import routes.utils as utils
 
 router = APIRouter()
 
@@ -51,40 +54,66 @@ def get_pokemones(session: SessionDep) -> list[Pokemon]:
 
 
 @router.get("/{id}")
-def show(session: SessionDep, id: int) -> Pokemon:
+def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
     pokemon = session.exec(select(Pokemon).where(Pokemon.id == id)).first()
 
     if pokemon:
-        return pokemon
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon not found"
-    )
+        pokemon_public_data = {
+            "id": pokemon.id,
+            "identificador": pokemon.identificador,
+            "id_especie": pokemon.id_especie,
+            "altura": pokemon.altura,
+            "peso": pokemon.peso,
+            "experiencia_base": pokemon.experiencia_base,
+            "imagen": pokemon.imagen,
+            "grupo_de_huevo": pokemon.grupo_de_huevo,
+            "tipo": pokemon.tipo,
+            "estadisticas": pokemon.estadisticas,
+            "habilidades": pokemon.habilidades,
+            "evoluciones_inmediatas": pokemon.evoluciones_inmediatas,
+        }
+
+        return PokemonPublicWithRelations(
+            **pokemon_public_data,
+            debilidades=calcular_debilidades(pokemon),
+            fortalezas=calcular_fortalezas(pokemon),
+        )
 
 
 """
 @router.delete("/{id}")
-def eliminar_pokemon(id):
-    if not id.isdecimal():
-        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
-    for pokemon in lista_pokemones:
-        if pokemon.id == int(id):
-            lista_pokemones.remove(pokemon)
-            return {
-                "pokemon": pokemon,
-                "debilidades": calcular_debilidades(pokemon),
-                "fortalezas": calcular_fortalezas(pokemon),
-            }
-    raise HTTPException(status_code=404, detail="Pokemon no encontrado")
-
-
-@router.post("/", response_model=Pokemon, status_code=201)
-def create_pokemon(session: SessionDep, pokemon: PokemonBase):
-    session.add(pokemon)
+def delete(session: SessionDep, id: int) -> PokemonPublic:
+    pokemon = utils.buscar_pokemon(session, id)
+    session.delete(pokemon)
     session.commit()
-    session.refresh(pokemon)
     return pokemon
 
 
+"""
+
+@router.post("/", response_model=Pokemon, status_code=201)
+def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
+    pokemon = Pokemon(
+        id_especie=pokemon_create.id_especie,
+        identificador=pokemon_create.identificador,
+        altura=pokemon_create.altura,
+        peso=pokemon_create.peso,
+        experiencia_base=pokemon_create.experiencia_base,
+        imagen=pokemon_create.imagen,
+        tipo=pokemon_create.tipo,
+        grupo_de_huevo=pokemon_create.grupo_de_huevo,
+        estadisticas=pokemon_create.estadisticas,
+        habilidades=pokemon_create.habilidades,
+        generacion=pokemon_create.generacion,
+        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas
+    )
+    session.add(pokemon)
+    session.commit()
+    #pokemon.id_especie = pokemon.id
+    session.refresh(pokemon)
+    return pokemon
+
+"""
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
     if pokemon_id not in datos_pokemon:
