@@ -316,3 +316,5 @@ with open("csv/pokemon_moves.csv") as archivo:
         if nombre_movimiento in movimientos_aprendibles_por_pokemon[id_pokemon]:
             continue
         movimientos_aprendibles_por_pokemon[id_pokemon].append(nombre_movimiento)
+
+lista_equipos = []

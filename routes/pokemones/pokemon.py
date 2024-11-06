@@ -4,6 +4,8 @@ from database import SessionDep
 from db import (
     debilidades_tipos,
     fortalezas_tipos,
+    lista_pokemones,
+    movimientos_aprendibles_por_pokemon,
     # SessionDep,
     lista_naturalezas,
     # lista_pokemones,
@@ -20,7 +22,7 @@ from typing import List
 #     TeamDataCreate,
 #     Pokemon,
 # )
-from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations
+from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
 import routes.utils as utils
 
 router = APIRouter()
@@ -80,6 +82,7 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
         )
 
 
+"""
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> PokemonPublic:
     pokemon = utils.buscar_pokemon(session, id)
@@ -89,54 +92,39 @@ def delete(session: SessionDep, id: int) -> PokemonPublic:
 
 
 """
+
 @router.post("/", response_model=Pokemon, status_code=201)
-def create_pokemon(session: SessionDep, pokemon: PokemonBase):
+def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
+    pokemon = Pokemon(
+        id_especie=pokemon_create.id_especie,
+        identificador=pokemon_create.identificador,
+        altura=pokemon_create.altura,
+        peso=pokemon_create.peso,
+        experiencia_base=pokemon_create.experiencia_base,
+        imagen=pokemon_create.imagen,
+        tipo=pokemon_create.tipo,
+        grupo_de_huevo=pokemon_create.grupo_de_huevo,
+        estadisticas=pokemon_create.estadisticas,
+        habilidades=pokemon_create.habilidades,
+        generacion=pokemon_create.generacion,
+        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas
+    )
     session.add(pokemon)
     session.commit()
+    #pokemon.id_especie = pokemon.id
     session.refresh(pokemon)
     return pokemon
+"""
 
-
+"""
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
-    if pokemon_id not in datos_pokemon:
-        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
-
-    pokemon = datos_pokemon[pokemon_id]
-
-    if pokemon_id not in datos_movimientos_pokemon:
-        raise HTTPException(
-            status_code=404, detail="Movimientos no encontrados para este Pokémon"
+    pokemon = movimientos_aprendibles_por_pokemon[str(pokemon_id)]
+    if not pokemon:
+        raise (
+            HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
+            )
         )
-
-    movimientos = datos_movimientos_pokemon[pokemon_id]
-
-    lista_movimientos = []
-
-    movimientos_vistos = set()
-    for movimiento in movimientos:
-        id_movimiento = movimiento["id_movimiento"]
-        nivel_movimiento = movimiento["nivel"]
-
-        if id_movimiento not in movimientos_vistos:
-            movimientos_vistos.add(id_movimiento)
-            if id_movimiento in datos_movimientos.movimientos:
-                nombre_movimiento = datos_movimientos.movimientos[id_movimiento].nombre
-                lista_movimientos.append(
-                    Movimientomoves(
-                        id=id_movimiento,
-                        nombre=nombre_movimiento,
-                        nivel=nivel_movimiento,
-                        es_evolucionado=False,
-                    )
-                )
-
-    tipos = datos_tipos_pokemon.get(pokemon_id, [])
-
-    return {
-        "id_pokemon": pokemon.id,
-        "nombre_pokemon": pokemon.nombre,
-        "tipos": tipos,
-        "movimientos": [movimiento.dict() for movimiento in lista_movimientos],
-    }
-"""
+    else:
+        return pokemon

@@ -7,7 +7,7 @@ from db import lista_naturalezas
 from modelos import Naturaleza
 from database import engine
 import logging
-from database import seed_pokemon, seed_naturaleza, seed_movimiento
+from database import seed_naturaleza, seed_movimiento, seed_pokemon, seed_equipo
 from sqlalchemy import Engine
 
 logging.basicConfig(level=logging.INFO)
@@ -31,6 +31,7 @@ def main() -> None:
     seed_pokemon()
     seed_movimiento()
     seed_naturaleza()
+    seed_equipo()
 
 
 app = FastAPI()
