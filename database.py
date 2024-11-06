@@ -68,17 +68,17 @@ def seed_movimiento():
 
         logger.info("Seeds loaded on Db")
 
-# def seed_equipo():
-#     with Session(engine) as session:
-#         # Do no seed if there's data present in the DB
-#         if session.exec(select(Team)).first():
-#             logger.info("NOT loading seeds")
-#             return
+def seed_equipo():
+    with Session(engine) as session:
+        # Do no seed if there's data present in the DB
+        if session.exec(select(Team)).first():
+            logger.info("NOT loading seeds")
+            return
         
-#         logger.info("Loading seeds...")
+        logger.info("Loading seeds...")
 
-#         session.add_all(lista_equipos)
+        session.add_all(lista_equipos)
 
-#         session.commit()
+        session.commit()
 
-#         logger.info("Seeds loaded on Db")
+        logger.info("Seeds loaded on Db")
