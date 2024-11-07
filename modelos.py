@@ -54,7 +54,9 @@ class PokemonBase(SQLModel):
     id_especie: int
 
 class Pokemon(PokemonBase, table=True):
+    __tablename__= "pokemon"
     id: int = Field(primary_key=True)
+    #id_especie: int
     integrantes: List["Integrante"] = Relationship(back_populates="pokemon")
 
 

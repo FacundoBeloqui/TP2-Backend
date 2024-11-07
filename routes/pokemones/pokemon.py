@@ -113,6 +113,7 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
     session.commit()
     #pokemon.id_especie = pokemon.id
     session.refresh(pokemon)
+    pokemon.id_especie = pokemon.id
     return pokemon
 """
 
