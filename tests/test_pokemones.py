@@ -168,7 +168,6 @@ def test_eliminar_pokemon_id_invalido(client: TestClient) -> None:
     assert response.json() == {"detail": "El id debe ser un numero entero positivo"}
 
 
-"""
 def test_create_pokemon(client: TestClient) -> None:
     data = {
         "identificador": "Test",
@@ -176,14 +175,15 @@ def test_create_pokemon(client: TestClient) -> None:
         "peso": 19,
         "experiencia_base": 250,
         "imagen": "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/numero_id.png",
-        "tipo": ["Humo", "Saltar"],
         "grupo_de_huevo": "Huevo",
-        "estadisticas": {"ATK": 200, "DEF": 250},
+        "generacion": [],
         "habilidades": ["Salto", "Invisible"],
-        "generaciones": [],
         "evoluciones_inmediatas": [],
+        "tipo": ["Humo", "Saltar"],
+        "estadisticas": {"ATK": 200, "DEF": 250},
+        "id_especie": 0,
     }
-    response = client.post("/pokemones", json=data)
+    response = client.post("/pokemones/", json=data)
     assert response.status_code == 201
     content = response.json()
     assert isinstance(content, dict)
@@ -195,14 +195,18 @@ def test_create_pokemon(client: TestClient) -> None:
         content["imagen"]
         == "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/numero_id.png"
     )
-    assert content["tipo"] == ["Humo", "Saltar"]
     assert content["grupo_de_huevo"] == "Huevo"
-    assert content["estadisticas"] == {"ATK": 200, "DEF": 250}
+    assert content["generacion"] == []
     assert content["habilidades"] == ["Salto", "Invisible"]
     assert content["evoluciones_inmediatas"] == []
+    assert content["tipo"] == ["Humo", "Saltar"]
+    assert content["estadisticas"] == {"ATK": 200, "DEF": 250}
+    assert content["id_especie"] == 0
     assert "id" in content
     assert "id_especie" in content
 
+
+"""
 def test_obtener_movimientos_pokemon_existente_con_movimientos():
     pokemon_id = 1
     response = client.get(f"/pokemones/{pokemon_id}/movimientos")
