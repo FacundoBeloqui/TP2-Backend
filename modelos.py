@@ -125,7 +125,7 @@ class Team(TeamBase, table=True):
     integrantes: List["Integrante"] = Relationship(back_populates="equipo")
 
 class TeamCreate(TeamBase):
-    integrantes: List["IntegranteCreate"] 
+    integrantes: List["IntegranteCreate"] = []
 
 class Integrante(SQLModel, table=True):
     nombre: str = Field(primary_key=True, nullable=False)
