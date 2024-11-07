@@ -1,7 +1,7 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_pokemones
+from db import lista_pokemones, lista_movimientos
 from routes.pokemones.pokemon import (
     calcular_debilidades,
     calcular_fortalezas,
@@ -206,31 +206,34 @@ def test_create_pokemon(client: TestClient) -> None:
     assert "id_especie" in content
 
 
-"""
-def test_obtener_movimientos_pokemon_existente_con_movimientos():
-    pokemon_id = 1
-    response = client.get(f"/pokemones/{pokemon_id}/movimientos")
+def test_obtener_movimientos_pokemon_existente_con_movimientos(
+    session: Session, client: TestClient
+) -> None:
+    pok1 = Pokemon(
+        identificador="Nombre1",
+        altura=111,
+        peso=2,
+        experiencia_base=1,
+        imagen="asdada",
+        grupo_de_huevo="dasdad",
+        generacion=[1, 2],
+        habilidades=["comer", "dormir"],
+        evoluciones_inmediatas=["pokemon2"],
+        tipo=["fuego", "piedra"],
+        estadisticas={"ataque": 2, "defensa": 3},
+        id_especie=5,
+    )
+    session.add(pok1)
+    session.commit()
+
+    response = client.get(f"/pokemones/{pok1.id}/movimientos")
 
     assert response.status_code == 200
-    data = response.json()
-
-    assert "id_pokemon" in data
-    assert data["id_pokemon"] == pokemon_id
-    assert "nombre_pokemon" in data
-    assert "tipos" in data
-    assert "movimientos" in data
-
-    movimientos = data["movimientos"]
-    assert len(movimientos) > 0
-    for movimiento in movimientos:
-        assert "id" in movimiento
-        assert "nombre" in movimiento
-        assert "nivel" in movimiento
-        assert "es_evolucionado" in movimiento
-        assert movimiento["id"] in datos_movimientos.movimientos
+    content = response.json()
+    assert len(content) > 0
 
 
-def test_obtener_movimientos_pokemon_no_existente():
+def test_obtener_movimientos_pokemon_no_existente(client: TestClient):
     pokemon_id = 99999
     response = client.get(f"/pokemones/{pokemon_id}/movimientos")
 
@@ -239,19 +242,7 @@ def test_obtener_movimientos_pokemon_no_existente():
     assert data == {"detail": "Pokémon no encontrado"}
 
 
-def test_obtener_movimientos_pokemon_id_invalido():
-    response = client.get("/pokemones/abc/movimientos")
+def test_obtener_movimientos_pokemon_id_invalido(client: TestClient):
+    response = client.get(f"/pokemones/abc/movimientos")
 
     assert response.status_code == 422
-    data = response.json()
-
-    assert "detail" in data
-    assert "msg" in data["detail"][0]
-    assert "type" in data["detail"][0]
-
-    assert (
-        data["detail"][0]["msg"]
-        == "Input should be a valid integer, unable to parse string as an integer"
-    )
-    assert data["detail"][0]["type"] in ["type_error.integer", "int_parsing"]
-"""

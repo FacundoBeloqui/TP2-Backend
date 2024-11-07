@@ -128,12 +128,10 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
 
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
-    pokemon = movimientos_aprendibles_por_pokemon[str(pokemon_id)]
-    if not pokemon:
-        raise (
-            HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
-            )
+    pokemon_id_str = str(pokemon_id)
+    movimientos = movimientos_aprendibles_por_pokemon.get(pokemon_id_str)
+    if not movimientos:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Pokémon no encontrado"
         )
-    else:
-        return pokemon
+    return movimientos
