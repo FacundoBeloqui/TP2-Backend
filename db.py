@@ -188,7 +188,7 @@ with open("csv/pokemon.csv") as pokemones:
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
             estadisticas=dicc_pokemon_stats.get(linea[0], {}),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
-            generaciones=generaciones_pokemon.get(linea[0], ""),
+            generacion=generaciones_pokemon.get(linea[0], ""),
             evoluciones_inmediatas=evoluciones_pokemones.get(int(linea[0]), []),
         )
         lista_pokemones.append(pokemon)
