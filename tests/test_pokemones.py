@@ -150,26 +150,26 @@ def test_eliminar_pokemon_existente(session: Session, client: TestClient) -> Non
     assert pokemon_eliminado is None
 
 
-"""
-def test_eliminar_pokemon_ya_eliminado():
+def test_eliminar_pokemon_ya_eliminado(client: TestClient) -> None:
     response = client.delete("/pokemones/1")
     assert response.status_code == 404
-    assert response.json() == {"detail": "Pokemon no encontrado"}
+    assert response.json() == {"detail": "Pokémon no encontrado"}
 
 
-def test_eliminar_pokemon_no_existente():
+def test_eliminar_pokemon_no_existente(client: TestClient) -> None:
     response = client.delete("/pokemones/999")
     assert response.status_code == 404
-    assert response.json() == {"detail": "Pokemon no encontrado"}
+    assert response.json() == {"detail": "Pokémon no encontrado"}
 
 
-def test_eliminar_pokemon_id_invalido():
+def test_eliminar_pokemon_id_invalido(client: TestClient) -> None:
     response = client.delete("/pokemones/-1")
     assert response.status_code == 400
-    assert response.json() == {"detail": "El id debe ser un numero entero"}
+    assert response.json() == {"detail": "El id debe ser un numero entero positivo"}
 
 
-def test_create_pokemon():
+"""
+def test_create_pokemon(client: TestClient) -> None:
     data = {
         "identificador": "Test",
         "altura": 25,
@@ -202,7 +202,6 @@ def test_create_pokemon():
     assert content["evoluciones_inmediatas"] == []
     assert "id" in content
     assert "id_especie" in content
-
 
 def test_obtener_movimientos_pokemon_existente_con_movimientos():
     pokemon_id = 1

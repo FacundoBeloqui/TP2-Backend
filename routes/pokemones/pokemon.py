@@ -91,7 +91,14 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
 
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> PokemonPublic:
-    pokemon = utils.buscar_pokemon(session, id)
+    if id <= 0:
+        raise HTTPException(
+            status_code=400, detail="El id debe ser un numero entero positivo"
+        )
+
+    pokemon = session.get(Pokemon, id)
+    if not pokemon:
+        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
     session.delete(pokemon)
     session.commit()
     return pokemon

@@ -192,7 +192,7 @@ with open("csv/pokemon.csv") as pokemones:
             evoluciones_inmediatas=evoluciones_pokemones.get(int(linea[0]), []),
         )
         lista_pokemones.append(pokemon)
-print(lista_pokemones[0])
+
 dicc_categorias = {}
 dicc_efectos = {}
 with open("csv/move_damage_class_prose.csv") as categorias:
