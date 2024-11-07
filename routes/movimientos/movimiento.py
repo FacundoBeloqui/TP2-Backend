@@ -1,15 +1,27 @@
-from fastapi import HTTPException, APIRouter
-from db import lista_movimientos
-
+from fastapi import HTTPException, APIRouter, status
+from database import SessionDep
+from modelos import Movimiento
+from sqlmodel import select
 
 router = APIRouter()
 
 
+"""def buscar_movimiento(session: SessionDep, id: int):
+    movimiento = session.exec(select(Movimiento).where(Movimiento.id == id)).first()
+
+    if movimiento:
+        return movimiento
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Movimiento not found"
+    )"""
+
+
 @router.get("/{id}")
-def leer_movimiento_id(id):
-    if not id.isdecimal():
-        raise HTTPException(status_code=400, detail="El id debe ser un numero entero")
-    for movimiento in lista_movimientos:
-        if movimiento.id == int(id):
-            return movimiento
-    raise HTTPException(status_code=404, detail="Movimiento no encontrado")
+def show(session: SessionDep, id: int) -> Movimiento:
+    movimiento = session.exec(select(Movimiento).where(Movimiento.id == id)).first()
+
+    if movimiento:
+        return movimiento
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Movimiento not found"
+    )
