@@ -16,6 +16,13 @@ router = APIRouter()
     )"""
 
 
+@router.get("/")
+def get_movimientos(session: SessionDep) -> list[Movimiento]:
+    query = select(Movimiento)
+    movimientos = session.exec(query)
+    return movimientos
+
+
 @router.get("/{id}")
 def show(session: SessionDep, id: int) -> Movimiento:
     movimiento = session.exec(select(Movimiento).where(Movimiento.id == id)).first()
