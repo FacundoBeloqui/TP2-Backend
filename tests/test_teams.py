@@ -1,13 +1,23 @@
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_naturalezas, Team, PokemonTeam, lista_pokemones, lista_movimientos, lista_equipos, Teams
+from db import (
+    lista_naturalezas,
+    Team,
+    PokemonTeam,
+    lista_pokemones,
+    lista_movimientos,
+    lista_equipos,
+    Teams,
+)
 import pytest
 from routes.teams.teams import lista_equipos
 
 client = TestClient(app)
 
+
 def test_leer_naturalezas():
     response = client.get("/teams")
+
 
 @pytest.fixture(autouse=True)
 def reset_lista_equipos():
@@ -172,14 +182,45 @@ def test_leer_naturalezas():
 
 
 def test_get_team_by_id_empty_list():
-    response = client.get("/teams/1") 
+    response = client.get("/teams/1")
     assert response.status_code == 404
     assert response.json()["detail"] == "Equipo no encontrado"
 
 
 def test_get_team_by_id():
     global lista_equipos
-    lista_equipos.extend([{"id": 1, "nombre": "Equipo A", "generacion": 1, "pokemones": [{"id": 1, "nombre": "Pikachu", "movimientos": [1, 2], "naturaleza_id": 1, "stats": {}}]}, {"id": 2, "nombre": "Equipo B", "generacion": 2, "pokemones": [{"id": 2, "nombre": "Charmander", "movimientos": [2], "naturaleza_id": 1, "stats": {}}]}])
+    lista_equipos.extend(
+        [
+            {
+                "id": 1,
+                "nombre": "Equipo A",
+                "generacion": 1,
+                "pokemones": [
+                    {
+                        "id": 1,
+                        "nombre": "Pikachu",
+                        "movimientos": [1, 2],
+                        "naturaleza_id": 1,
+                        "stats": {},
+                    }
+                ],
+            },
+            {
+                "id": 2,
+                "nombre": "Equipo B",
+                "generacion": 2,
+                "pokemones": [
+                    {
+                        "id": 2,
+                        "nombre": "Charmander",
+                        "movimientos": [2],
+                        "naturaleza_id": 1,
+                        "stats": {},
+                    }
+                ],
+            },
+        ]
+    )
 
     team_id = lista_equipos[0]["id"]
     print("hola")
@@ -191,6 +232,7 @@ def test_get_team_by_id():
     assert content["nombre"] == "Equipo A"
     assert len(content["pokemones"]) == 1
     assert content["pokemones"][0]["nombre"] == "Pikachu"
+
 
 def test_get_team_by_id_not_found():
     response = client.get("/teams/99999")
@@ -212,8 +254,8 @@ def test_get_team_by_id_invalid():
 #     #     {"id": 2, "nombre": "Ascuas", "generacion": 1}
 #     # ])
 #     # generaciones_pokemon = {
-#     #     1: [1],  
-#     #     2: [2],  
+#     #     1: [1],
+#     #     2: [2],
 #     # }
 
 #     team_data = {
@@ -236,10 +278,16 @@ def test_get_team_by_id_invalid():
 def test_create_team_invalid_generation():
     team_data = {
         "nombre": "Equipo A",
-        "generacion": 10, 
+        "generacion": 10,
         "pokemones": [
-            {"id": 1, "nombre": "Pikachu", "movimientos": [1], "naturaleza_id": 1, "stats": {}}
-        ]
+            {
+                "id": 1,
+                "nombre": "Pikachu",
+                "movimientos": [1],
+                "naturaleza_id": 1,
+                "stats": {},
+            }
+        ],
     }
 
     response = client.post("/teams/", json=team_data)
@@ -248,35 +296,35 @@ def test_create_team_invalid_generation():
 
 
 def test_create_team_invalid_pokemons():
-    team_data = {
-        "nombre": "Equipo A",
-        "generacion": 1,
-        "pokemones": [] 
-    }
+    team_data = {"nombre": "Equipo A", "generacion": 1, "pokemones": []}
 
     response = client.post("/teams/", json=team_data)
     assert response.status_code == 400
-    assert response.json()["detail"] == "Debe elegir al menos 1 pokemon y no mas de 6 pokemones"
-
-
+    assert (
+        response.json()["detail"]
+        == "Debe elegir al menos 1 pokemon y no mas de 6 pokemones"
+    )
 
 
 def test_eliminar_equipo_existente():
-    lista_equipos.extend([
-        Teams(id=1, nombre="Equipo 1", pokemones=["Pokemon 1", "Pokemon 2"]),
-        Teams(id=2, nombre="Equipo 2", pokemones=["Pokemon 3", "Pokemon 4"]),
-    ])
+    lista_equipos.extend(
+        [
+            Teams(id=1, nombre="Equipo 1", pokemones=["Pokemon 1", "Pokemon 2"]),
+            Teams(id=2, nombre="Equipo 2", pokemones=["Pokemon 3", "Pokemon 4"]),
+        ]
+    )
     response = client.delete("/teams/1")
     assert response.status_code == 200
-    assert len(response.json()) == 1  
-    assert response.json()[0]["id"] == 2  
+    assert len(response.json()) == 1
+    assert response.json()[0]["id"] == 2
+
 
 def test_eliminar_equipo_no_existente():
-    lista_equipos.extend([
-        Teams(id=1, nombre="Equipo A", pokemones=["Pikachu", "Charizard"]),
-    ])
+    lista_equipos.extend(
+        [
+            Teams(id=1, nombre="Equipo A", pokemones=["Pikachu", "Charizard"]),
+        ]
+    )
     response = client.delete("/teams/999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Equipo con ID 999 no encontrado."}
-
-
