@@ -1,4 +1,4 @@
-"""Relacion 1:N entre equipo e integrante
+"""Creo tabla equipos
 
 Revision ID: 2d88288887ca
 Revises: 6b399131ada0
@@ -20,17 +20,13 @@ depends_on: Union[str, Sequence[str], None] = None
 
 
 def upgrade() -> None:
-    with op.batch_alter_table("integrante") as batch_op:
-        batch_op.add_column(sa.Column("equipo_id", sa.Integer, nullable=True))
-        batch_op.create_foreign_key(
-            "fk_equipo_integrante",
-            "equipo",
-            ["equipo_id"],
-            ["id"],
-        )
+    op.create_table(
+        "equipo",
+        sa.Column("id", sa.Integer, primary_key=True),
+        sa.Column("nombre", sa.Text, nullable=False),
+        sa.Column("generacion", sa.Integer, nullable=False),
+    )
 
 
 def downgrade() -> None:
-    with op.batch_alter_table("integrante") as batch_op:
-        batch_op.drop_constraint("fk_equipo_integrante", type_="foreignkey")
-        batch_op.drop_column("equipo_id")
+    op.drop_table("equipo")

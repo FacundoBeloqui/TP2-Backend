@@ -5,19 +5,6 @@ from sqlmodel import create_engine, Session
 from fastapi import Depends
 from typing import Annotated
 
-# from models import (
-# PokemonSubidaNivel,
-# PokemonTM,
-# PokemonGrupoHuevo,
-# Pokemonmoves,
-# Evolucion,
-# DatosMovimiento,
-# Movimientomoves,
-# )
-
-# from pokemon import Pokemon
-
-
 pokemon_por_id = {}
 with open("csv/pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:
@@ -188,7 +175,7 @@ with open("csv/pokemon.csv") as pokemones:
             grupo_de_huevo=huevos_nombres.get(tipo_huevo.get(linea[0], ""), ""),
             estadisticas=dicc_pokemon_stats.get(linea[0], {}),
             habilidades=habilidades_de_cada_pokemon.get(linea[0], []),
-            generaciones=generaciones_pokemon.get(linea[0], ""),
+            generacion=generaciones_pokemon.get(linea[0], ""),
             evoluciones_inmediatas=evoluciones_pokemones.get(int(linea[0]), []),
         )
         lista_pokemones.append(pokemon)
@@ -228,7 +215,6 @@ with open("csv/pokemon_moves.csv") as movimientos_pokemon:
             metodo_nombre = dicc_metodos[metodo_id]
             if pokemon_id in pokemon_por_id:
                 pokemon_nombre = pokemon_por_id[pokemon_id]
-
                 if metodo_nombre.lower() == "nivel":
                     if linea[2] not in movimientos_subida_nivel:
                         movimientos_subida_nivel[linea[2]] = []
@@ -276,6 +262,7 @@ with open("csv/moves.csv") as movimientos:
                 pokemones_grupo_huevo=movimientos_grupo_huevo.get(linea[0], []),
             )
             lista_movimientos.append(movimiento)
+
 naturalezas_nombres = {}
 with open("csv/nature_names.csv") as nombres_naturalezas:
     for linea in nombres_naturalezas:
@@ -309,24 +296,12 @@ with open("csv/natures.csv") as naturalezas:
             )
             lista_naturalezas.append(naturaleza)
 
-lista_equipos = []
-
-movimientos_aprendibles_por_pokemon = {}
-with open("csv/pokemon_moves.csv") as archivo:
-    for linea in archivo:
-        linea = linea.rstrip("\n").split(",")
-        if linea[0] == "pokemon_id":
-            continue
-        id_pokemon = int(linea[0])
-        id_movimiento = int(linea[2])
-        if id_pokemon not in movimientos_aprendibles_por_pokemon:
-            movimientos_aprendibles_por_pokemon[id_pokemon] = []
-        movimientos_aprendibles_por_pokemon[id_pokemon].append(id_movimiento)
 nombres_movimientos = {}
 with open("csv/moves.csv") as archivo:
     for linea in archivo:
         linea = linea.rstrip("\n").split(",")
         nombres_movimientos[linea[0]] = linea[1]
+
 movimientos_aprendibles_por_pokemon = {}
 with open("csv/pokemon_moves.csv") as archivo:
     for linea in archivo:
@@ -341,3 +316,5 @@ with open("csv/pokemon_moves.csv") as archivo:
         if nombre_movimiento in movimientos_aprendibles_por_pokemon[id_pokemon]:
             continue
         movimientos_aprendibles_por_pokemon[id_pokemon].append(nombre_movimiento)
+
+lista_equipos = []

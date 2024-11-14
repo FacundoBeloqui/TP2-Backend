@@ -6,22 +6,10 @@ from db import (
     fortalezas_tipos,
     lista_pokemones,
     movimientos_aprendibles_por_pokemon,
-    # SessionDep,
     lista_naturalezas,
-    # lista_pokemones,
-    # lista_movimientos,
-    # lista_habilidades,
-    # generaciones_pokemon,
-    # pokemon_tipos,
 )
 from fastapi import HTTPException, APIRouter
 from typing import List
-
-# from models import (
-#     TeamCreate,
-#     TeamDataCreate,
-#     Pokemon,
-# )
 from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
 import routes.utils as utils
 
@@ -69,6 +57,7 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
             "experiencia_base": pokemon.experiencia_base,
             "imagen": pokemon.imagen,
             "grupo_de_huevo": pokemon.grupo_de_huevo,
+            "generacion": pokemon.generacion,
             "tipo": pokemon.tipo,
             "estadisticas": pokemon.estadisticas,
             "habilidades": pokemon.habilidades,
@@ -80,18 +69,28 @@ def show(session: SessionDep, id: int) -> PokemonPublicWithRelations:
             debilidades=calcular_debilidades(pokemon),
             fortalezas=calcular_fortalezas(pokemon),
         )
+    else:
+        raise (
+            HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
+            )
+        )
 
 
-"""
 @router.delete("/{id}")
 def delete(session: SessionDep, id: int) -> PokemonPublic:
-    pokemon = utils.buscar_pokemon(session, id)
+    if id <= 0:
+        raise HTTPException(
+            status_code=400, detail="El id debe ser un numero entero positivo"
+        )
+
+    pokemon = session.get(Pokemon, id)
+    if not pokemon:
+        raise HTTPException(status_code=404, detail="Pokémon no encontrado")
     session.delete(pokemon)
     session.commit()
     return pokemon
 
-
-"""
 
 @router.post("/", response_model=Pokemon, status_code=201)
 def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
@@ -104,27 +103,25 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
         imagen=pokemon_create.imagen,
         tipo=pokemon_create.tipo,
         grupo_de_huevo=pokemon_create.grupo_de_huevo,
+        generacion=pokemon_create.generacion,
         estadisticas=pokemon_create.estadisticas,
         habilidades=pokemon_create.habilidades,
-        generacion=pokemon_create.generacion,
-        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas
+        evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas,
     )
     session.add(pokemon)
     session.commit()
-    session.refresh(pokemon)
     pokemon.id_especie = pokemon.id
+    session.commit()
+    session.refresh(pokemon)
     return pokemon
-"""
 
-"""
+
 @router.get("/{pokemon_id}/movimientos")
 def obtener_movimientos_pokemon(pokemon_id: int):
-    pokemon = movimientos_aprendibles_por_pokemon[str(pokemon_id)]
-    if not pokemon:
-        raise (
-            HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
-            )
+    pokemon_id_str = str(pokemon_id)
+    movimientos = movimientos_aprendibles_por_pokemon.get(pokemon_id_str)
+    if not movimientos:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Pokémon no encontrado"
         )
-    else:
-        return pokemon
+    return movimientos
