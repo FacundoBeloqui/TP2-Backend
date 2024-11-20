@@ -10,10 +10,12 @@ from modelos import (
     Pokemon,
     Movimiento,
     TeamBase,
-    TeamPublicWithIntegrantes
+    TeamPublicWithIntegrantes,
+    TeamCreate,
+    TeamPublic,
 )
 import routes.utils as utils
-from sqlalchemy.orm import selectinload
+from sqlalchemy.orm import selectinload, joinedload
 import sqlalchemy.future
 
 generacion = ""
@@ -36,68 +38,65 @@ def obtener_equipos(session: SessionDep) -> list[Team]:
 
 
 @router.get("/{team_id}")
-def get_team_by_id(session: SessionDep, team_id: int):
+def get_team_by_id(session: SessionDep, team_id: int) -> TeamPublicWithIntegrantes:
     return utils.buscar_equipo(session, team_id)
 
 
-@router.post("/", response_model=Team)
-def create_team(session: SessionDep, team_create: TeamPublicWithIntegrantes):
-
-    if team_create.generacion < 1 or team_create.generacion > 9: 
+@router.post("/", response_model=TeamPublicWithIntegrantes)
+def create_team(session: SessionDep, team_create: TeamCreate) -> TeamPublicWithIntegrantes:
+    if team_create.generacion < 1 or team_create.generacion > 9:
         raise HTTPException(status_code=400, detail="Generacion no permitida")
 
-    team = Team(
-        nombre=team_create.nombre, 
-        generacion=team_create.generacion
-    )
+    if len(team_create.integrantes) < 1 or len(team_create.integrantes) > 6:
+        raise HTTPException(status_code=400, detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones")
+
+    print(team_create)
+
+    team = Team(generacion=team_create.generacion, nombre=team_create.nombre)
 
     session.add(team)
-    session.commit()
-    #session.refresh(team)
+    session.commit()  
+    session.refresh(team)  
 
-    #integrantes = []
     for integrante_data in team_create.integrantes:
-        pokemon = session.get(Pokemon, integrante_data.id_pokemon)
-        if team_create.generacion not in pokemon.generacion:
-            raise HTTPException(status_code=400, detail="El pokemon elegido no corresponde a esta generacion.")
-        naturaleza = session.get(Naturaleza, integrante_data.id_naturaleza)
+        pokemon = session.exec(select(Pokemon).where(Pokemon.id == integrante_data.id_pokemon)).first()
+        naturaleza = session.exec(select(Naturaleza).where(Naturaleza.id == integrante_data.id_naturaleza)).first()
 
         if not pokemon:
             raise HTTPException(status_code=404, detail="Pokemon no encontrado.")
+        if team_create.generacion not in pokemon.generacion:
+            raise HTTPException(status_code=400, detail="El pokemon elegido no pertenece a la generacion elegida.")
         if not naturaleza:
             raise HTTPException(status_code=404, detail="Naturaleza no encontrada.")
-
+        
         integrante = Integrante(
             nombre=integrante_data.nombre,
-            id_equipo=team.id,
-            id_pokemon=pokemon.id,
-            id_naturaleza=naturaleza.id,
+            equipo=team,  
+            pokemon=pokemon,
+            naturaleza=naturaleza,
         )
 
-        if integrante_data.movimientos:
-            for movimiento_id in integrante_data.movimientos:
-                #movimiento = session.get(Movimiento, movimiento_id)
-                movimiento = session.exec(select(Movimiento).where(Movimiento.id == movimiento_id)).first()
-                if movimiento != None and (team_create.generacion in movimiento.generacion):
-                    integrante.movimientos.append(movimiento)
-                else:
-                    raise HTTPException(
-                        status_code=404,
-                        detail=f"Movimiento con id {movimiento_id} no encontrado.",
-                    )
+        session.add(integrante)
+        session.commit()
+        session.refresh(integrante)
 
-        #integrantes.append(integrante)
-        team_create.integrantes.append(integrante)
-    #session.add(team)
-    team.integrantes = team_create.integrantes
+        if len(integrante_data.movimientos) < 1 or len(integrante_data.movimientos) > 4:
+            raise HTTPException(status_code=400, detail="El pokemon no tiene la cantidad de movimientos requerida.")
+
+        for movimiento_id in integrante_data.movimientos:
+            movimiento = session.exec(select(Movimiento).where(Movimiento.id == movimiento_id)).first()
+            if not movimiento:
+                raise HTTPException(status_code=404, detail=f"Movimiento con id {movimiento_id} no encontrado.")
+            if movimiento.generacion != team_create.generacion:
+                raise HTTPException(status_code=400, detail="El movimiento elegido no pertenece a la generacion elegida.")
+            integrante.movimientos.append(movimiento)
+        session.commit()
+        team.integrantes.append(integrante)
+        session.commit()
+
     session.commit()
     session.refresh(team)
-
-    # equipo_con_integrantes = session.exec(
-    #     sqlalchemy.future.select(Team)
-    #     .options(selectinload(Team.integrantes))
-    #     .where(Team.id == team.id)
-    # ).scalar_one()
+    print(team_create)
 
     return team
 
@@ -122,8 +121,10 @@ def update(session: SessionDep, id: int, equipo_nuevo: TeamBase) -> Team:
 
 
 @router.delete("/{id}")
-def delete(session: SessionDep, id: int) -> Team:
+def delete(session: SessionDep, id: int) -> TeamPublic:
     equipo = utils.buscar_equipo(session, id)
+    for integrante in equipo.integrantes:
+        session.delete(integrante)
     session.delete(equipo)
     session.commit()
     return equipo
