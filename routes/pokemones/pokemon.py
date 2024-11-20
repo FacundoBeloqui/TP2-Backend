@@ -6,22 +6,10 @@ from db import (
     fortalezas_tipos,
     lista_pokemones,
     movimientos_aprendibles_por_pokemon,
-    # SessionDep,
     lista_naturalezas,
-    # lista_pokemones,
-    # lista_movimientos,
-    # lista_habilidades,
-    # generaciones_pokemon,
-    # pokemon_tipos,
 )
 from fastapi import HTTPException, APIRouter
 from typing import List
-
-# from models import (
-#     TeamCreate,
-#     TeamDataCreate,
-#     Pokemon,
-# )
 from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
 import routes.utils as utils
 
@@ -121,6 +109,8 @@ def create_pokemon(session: SessionDep, pokemon_create: PokemonCreate):
         evoluciones_inmediatas=pokemon_create.evoluciones_inmediatas,
     )
     session.add(pokemon)
+    session.commit()
+    pokemon.id_especie = pokemon.id
     session.commit()
     session.refresh(pokemon)
     return pokemon
