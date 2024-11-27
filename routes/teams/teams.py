@@ -58,8 +58,6 @@ def create_team(
             detail="Debe elegir al menos 1 pokemon y no mas de 6 pokemones",
         )
 
-    print(team_create)
-
     team = Team(generacion=team_create.generacion, nombre=team_create.nombre)
 
     session.add(team)
@@ -67,6 +65,11 @@ def create_team(
     session.refresh(team)
 
     for integrante_data in team_create.integrantes:
+        nombre_integrante = session.exec(select(Integrante).where(Integrante.nombre == integrante_data.nombre, Integrante.id_equipo == team.id)).first()
+
+        if nombre_integrante: 
+            raise HTTPException(status_code=400, detail=f"Ya existe un integrante con el nombre {integrante_data.nombre} en el equipo.")
+
         pokemon = session.exec(
             select(Pokemon).where(Pokemon.id == integrante_data.id_pokemon)
         ).first()
@@ -122,7 +125,6 @@ def create_team(
 
     session.commit()
     session.refresh(team)
-    print(team_create)
 
     return team
 
