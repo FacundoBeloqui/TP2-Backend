@@ -136,6 +136,7 @@ class IntegranteCreate(SQLModel):
 
 
 class IntegranteUpdate(SQLModel):
+    id_integrante: int
     nombre: str
     id_pokemon: Optional[int]
     id_naturaleza: Optional[int]
