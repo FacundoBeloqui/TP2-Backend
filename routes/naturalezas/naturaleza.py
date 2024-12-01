@@ -6,12 +6,11 @@ from sqlmodel import select
 router = APIRouter()
 
 
-
 @router.get("/")
 def get_naturalezas(session: SessionDep) -> list[Naturaleza]:
     query = select(Naturaleza)
-    movimientos = session.exec(query)
-    return movimientos
+    naturalezas = session.exec(query)
+    return naturalezas
 
 
 @router.get("/{id}")

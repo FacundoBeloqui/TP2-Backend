@@ -27,13 +27,6 @@ generacion = ""
 router = APIRouter()
 
 
-@router.get("/nature")
-def get_naturalezas(session: SessionDep) -> list[Naturaleza]:
-    query = select(Naturaleza)
-    naturalezas = session.exec(query)
-    return naturalezas
-
-
 @router.get("/")
 def obtener_equipos(session: SessionDep) -> list[Team]:
     query = select(Team)
@@ -66,10 +59,18 @@ def create_team(
     session.refresh(team)
 
     for integrante_data in team_create.integrantes:
-        nombre_integrante = session.exec(select(Integrante).where(Integrante.nombre == integrante_data.nombre, Integrante.id_equipo == team.id)).first()
+        nombre_integrante = session.exec(
+            select(Integrante).where(
+                Integrante.nombre == integrante_data.nombre,
+                Integrante.id_equipo == team.id,
+            )
+        ).first()
 
-        if nombre_integrante: 
-            raise HTTPException(status_code=400, detail=f"Ya existe un integrante con el nombre {integrante_data.nombre} en el equipo.")
+        if nombre_integrante:
+            raise HTTPException(
+                status_code=400,
+                detail=f"Ya existe un integrante con el nombre {integrante_data.nombre} en el equipo.",
+            )
 
         pokemon = session.exec(
             select(Pokemon).where(Pokemon.id == integrante_data.id_pokemon)
@@ -205,6 +206,10 @@ def update_integrante(
     session.refresh(integrante)
 
     return integrante
+
+
+# @router.delete("/{team_id}/{integrante_id}")
+# def eliminar_integrante(team_id:int,integrante_id:int,session: SessionDep):
 
 
 @router.delete("/{id}")
