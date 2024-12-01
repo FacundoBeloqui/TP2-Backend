@@ -131,7 +131,7 @@ def create_team(
     return team
 
 
-@router.post(
+@router.put(
     "/{team_id}",
     response_model=IntegrantePublicWithMovimientos,
 )
