@@ -208,8 +208,17 @@ def update_integrante(
     return integrante
 
 
-# @router.delete("/{team_id}/{integrante_id}")
-# def eliminar_integrante(team_id:int,integrante_id:int,session: SessionDep):
+@router.delete("/{team_id}/{integrante_id}")
+def eliminar_integrante(team_id: int, integrante_id: int, session: SessionDep):
+    team = session.exec(select(Team).where(Team.id == team_id)).first()
+    if not team:
+        raise HTTPException(status_code=404, detail="Equipo no encontrado")
+    for integrante in team.integrantes:
+        if integrante.id == integrante_id:
+            integrante_delete = integrante
+    session.delete(integrante_delete)
+    session.commit()
+    return integrante_delete
 
 
 @router.delete("/{id}")
