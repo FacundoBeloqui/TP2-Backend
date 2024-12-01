@@ -15,6 +15,7 @@ from modelos import (
     TeamPublic,
     IntegranteCreate,
     IntegrantePublicWithMovimientos,
+    IntegranteUpdate,
 )
 from db import generaciones_pokemon
 import routes.utils as utils
@@ -129,15 +130,14 @@ def create_team(
     return team
 
 
-@router.put(
-    "/{team_id}/{integrante_id}",
+@router.post(
+    "/{team_id}",
     response_model=IntegrantePublicWithMovimientos,
 )
 def update_integrante(
     team_id: int,
-    integrante_id: int,
     session: SessionDep,
-    integrante_update: IntegranteCreate,
+    integrante_update: IntegranteUpdate,
 ) -> IntegrantePublicWithMovimientos:
 
     team = session.exec(select(Team).where(Team.id == team_id)).first()
@@ -146,7 +146,8 @@ def update_integrante(
 
     integrante = session.exec(
         select(Integrante).where(
-            Integrante.id == integrante_id, Integrante.id_equipo == team_id
+            Integrante.id == integrante_update.id_integrante,
+            Integrante.id_equipo == team_id,
         )
     ).first()
 

@@ -1,14 +1,12 @@
 from fastapi import FastAPI
 from routes.main import api_router
-from sqlmodel import create_engine, Session, select
-from fastapi import Depends, logger
-from typing import Annotated
-from db import lista_naturalezas
-from modelos import Naturaleza
+from sqlmodel import Session, select
+from fastapi import logger
 from database import engine
 import logging
 from database import seed_naturaleza, seed_movimiento, seed_pokemon, seed_equipo
 from sqlalchemy import Engine
+from fastapi.middleware.cors import CORSMiddleware
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -35,6 +33,13 @@ def main() -> None:
 
 
 app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  # O especifica tu dominio aquí
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 app.include_router(api_router)
 
 main()
