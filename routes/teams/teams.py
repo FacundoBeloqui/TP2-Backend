@@ -216,6 +216,8 @@ def eliminar_integrante(team_id: int, integrante_id: int, session: SessionDep):
     for integrante in team.integrantes:
         if integrante.id == integrante_id:
             integrante_delete = integrante
+    if not integrante_delete:
+        raise HTTPException(status_code=404, detail="Integrante no encontrado")
     session.delete(integrante_delete)
     session.commit()
     return integrante_delete
