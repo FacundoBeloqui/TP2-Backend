@@ -1,299 +1,163 @@
-from fastapi.testclient import TestClient
-from main import app
-from db import (
-    lista_naturalezas,
-    Team,
-    PokemonTeam,
-    lista_pokemones,
-    lista_movimientos,
-    lista_equipos,
-    Teams,
-)
 import pytest
-from routes.teams.teams import lista_equipos
+from fastapi.testclient import TestClient
+from sqlmodel import create_engine, Session, SQLModel
+from sqlalchemy.pool import StaticPool
+from main import app
+from database import get_db
+from modelos import Integrante, Team
 
 client = TestClient(app)
 
 
-def test_leer_naturalezas():
-    response = client.get("/teams")
-
-
-@pytest.fixture(autouse=True)
-def reset_lista_equipos():
-    global lista_equipos
-    lista_equipos.clear()
-    yield
-    lista_equipos.clear()
-
-
-def test_no_hay_equipos():
-    response = client.get("/teams")
-    assert response.status_code == 404
-    assert response.json() == {"detail": "No se encontraron equipos creados"}
-
-
-def test_pagina_invalida_cero():
-    lista_equipos.extend(
-        [
-            "Equipo 1",
-            "Equipo 2",
-            "Equipo 3",
-            "Equipo 4",
-            "Equipo 5",
-            "Equipo 6",
-            "Equipo 7",
-            "Equipo 8",
-            "Equipo 9",
-            "Equipo 10",
-            "Equipo 11",
-        ]
+@pytest.fixture(name="session")
+def session_fixture():
+    engine = create_engine(
+        "sqlite://", connect_args={"check_same_thread": False}, poolclass=StaticPool
     )
-    response = client.get("/teams", params={"pagina": 0})
-    assert response.status_code == 400
-    assert response.json() == {
-        "detail": "Error en el ingreso. La pagina debe ser un entero mayor a cero"
-    }
+    SQLModel.metadata.create_all(engine)
+    with Session(engine) as session:
+        yield session
 
 
-def test_pagina_invalida_menor_que_uno():
-    lista_equipos.extend(
-        [
-            "Equipo 1",
-            "Equipo 2",
-            "Equipo 3",
-            "Equipo 4",
-            "Equipo 5",
-            "Equipo 6",
-            "Equipo 7",
-            "Equipo 8",
-            "Equipo 9",
-            "Equipo 10",
-            "Equipo 11",
-        ]
-    )
-    response = client.get("/teams", params={"pagina": -21})
-    assert response.status_code == 400
-    assert response.json() == {
-        "detail": "Error en el ingreso. La pagina debe ser un entero mayor a cero"
-    }
+@pytest.fixture(name="client")
+def client_fixture(session: Session):
+    def get_session_override():
+        return session
+
+    app.dependency_overrides[get_db] = get_session_override
+
+    client = TestClient(app)
+    yield client
+    app.dependency_overrides.clear()
 
 
-def test_pagina_no_encontrada():
-    global lista_equipos
-    lista_equipos.extend(["Equipo 1", "Equipo 2"])
-    response = client.get("/teams", params={"pagina": 2})
-    assert response.status_code == 404
-    assert response.json() == {"detail": "No se encontro la pagina solicitada"}
+def test_crear_equipo(client: TestClient, session: Session) -> None:
+    data = {"nombre": "Equipo 1", "generacion": 1, "integrantes": []}
+    response = client.post("/teams/", json=data)
+    assert response.status_code == 201
+    content = response.json()
+    assert content["nombre"] == "Equipo 1"
+    assert content["generacion"] == 1
 
 
-def test_obtener_equipos_pagina_1():
-    global lista_equipos
-    lista_equipos.extend(
-        [
-            "Equipo 1",
-            "Equipo 2",
-            "Equipo 3",
-            "Equipo 4",
-            "Equipo 5",
-            "Equipo 6",
-            "Equipo 7",
-            "Equipo 8",
-            "Equipo 9",
-            "Equipo 10",
-            "Equipo 11",
-        ]
-    )
-    response = client.get("/teams", params={"pagina": 1})
-    assert response.status_code == 200
-    assert response.json() == lista_equipos[:10]
-
-
-def test_obtener_equipos_pagina_2():
-    global lista_equipos
-    lista_equipos.extend(
-        [
-            "Equipo 1",
-            "Equipo 2",
-            "Equipo 3",
-            "Equipo 4",
-            "Equipo 5",
-            "Equipo 6",
-            "Equipo 7",
-            "Equipo 8",
-            "Equipo 9",
-            "Equipo 10",
-            "Equipo 11",
-        ]
-    )
-    response = client.get("/teams", params={"pagina": 2})
-    assert response.status_code == 200
-    assert response.json() == lista_equipos[10:]
-
-
-def test_pagina_excesiva():
-    global lista_equipos
-    lista_equipos.extend(
-        [
-            "Equipo 1",
-            "Equipo 2",
-            "Equipo 3",
-            "Equipo 4",
-            "Equipo 5",
-            "Equipo 6",
-            "Equipo 7",
-            "Equipo 8",
-            "Equipo 9",
-            "Equipo 10",
-            "Equipo 11",
-        ]
-    )
-    response = client.get("/teams", params={"pagina": 3})
-    assert response.status_code == 404
-    assert response.json() == {"detail": "No se encontro la pagina solicitada"}
-
-
-def test_leer_naturalezas():
-    response = client.get("/teams/nature")
+def test_obtener_equipos(client: TestClient) -> None:
+    response = client.get("/teams/")
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, list)
-    if lista_naturalezas:
-        assert len(content) == len(lista_naturalezas)
-        primera_naturaleza = content[0]
-        assert primera_naturaleza["id"] == lista_naturalezas[0].id
-        assert primera_naturaleza["nombre"] == lista_naturalezas[0].nombre
-        assert (
-            primera_naturaleza["stat_decreciente"]
-            == lista_naturalezas[0].stat_decreciente
-        )
-        assert (
-            primera_naturaleza["stat_creciente"] == lista_naturalezas[0].stat_creciente
-        )
-        assert (
-            primera_naturaleza["id_gusto_preferido"]
-            == lista_naturalezas[0].id_gusto_preferido
-        )
-        assert (
-            primera_naturaleza["id_gusto_menos_preferido"]
-            == lista_naturalezas[0].id_gusto_menos_preferido
-        )
-        assert primera_naturaleza["indice_juego"] == lista_naturalezas[0].indice_juego
 
 
-def test_get_team_by_id_empty_list():
-    response = client.get("/teams/1")
-    assert response.status_code == 404
-    assert response.json()["detail"] == "Equipo no encontrado"
+def test_obtener_equipo_por_id(client: TestClient, session: Session) -> None:
+    team = Team(nombre="Equipo 2", generacion=2)
+    session.add(team)
+    session.commit()
+    session.refresh(team)
 
-
-def test_get_team_by_id():
-    global lista_equipos
-    lista_equipos.extend(
-        [
-            {
-                "id": 1,
-                "nombre": "Equipo A",
-                "generacion": 1,
-                "pokemones": [
-                    {
-                        "id": 1,
-                        "nombre": "Pikachu",
-                        "movimientos": [1, 2],
-                        "naturaleza_id": 1,
-                        "stats": {},
-                    }
-                ],
-            },
-            {
-                "id": 2,
-                "nombre": "Equipo B",
-                "generacion": 2,
-                "pokemones": [
-                    {
-                        "id": 2,
-                        "nombre": "Charmander",
-                        "movimientos": [2],
-                        "naturaleza_id": 1,
-                        "stats": {},
-                    }
-                ],
-            },
-        ]
-    )
-
-    team_id = lista_equipos[0]["id"]
-    print("hola")
-    response = client.get(f"/teams/{team_id}")
-    print("buenas")
+    response = client.get(f"/teams/{team.id}")
     assert response.status_code == 200
     content = response.json()
-    assert content["id"] == int(team_id)
-    assert content["nombre"] == "Equipo A"
-    assert len(content["pokemones"]) == 1
-    assert content["pokemones"][0]["nombre"] == "Pikachu"
+    assert content["nombre"] == team.nombre
 
 
-def test_get_team_by_id_not_found():
-    response = client.get("/teams/99999")
+def test_agregar_integrante(client: TestClient, session: Session) -> None:
+    team = Team(nombre="Equipo 3", generacion=3)
+    session.add(team)
+    session.commit()
+    session.refresh(team)
+
+    integrante_data = {
+        "nombre": "Integrante 1",
+        "id_pokemon": 1,
+        "id_naturaleza": 1,
+        "movimientos": [1, 2],
+    }
+    response = client.post(f"/teams/{team.id}/integrantes", json=integrante_data)
+    assert response.status_code == 201
+    content = response.json()
+    assert content["nombre"] == "Integrante 1"
+
+
+def test_actualizar_integrante(client: TestClient, session: Session) -> None:
+    team = Team(nombre="Equipo 4", generacion=4)
+    session.add(team)
+    session.commit()
+    session.refresh(team)
+
+    integrante = Integrante(nombre="Integrante 2", id_equipo=team.id)
+    session.add(integrante)
+    session.commit()
+    session.refresh(integrante)
+
+    update_data = {
+        "id_integrante": integrante.id,
+        "nombre": "Integrante Actualizado",
+        "id_pokemon": 1,
+        "id_naturaleza": 1,
+        "movimientos": [1, 2],
+    }
+    response = client.put(f"/teams/{team.id}/integrantes", json=update_data)
+    assert response.status_code == 200
+    content = response.json()
+    assert content["nombre"] == "Integrante Actualizado"
+
+
+def test_eliminar_integrante(client: TestClient, session: Session) -> None:
+    team = Team(nombre="Equipo 5", generacion=5)
+    session.add(team)
+    session.commit()
+    session.refresh(team)
+
+    integrante = Integrante(nombre="Integrante 3", id_equipo=team.id)
+    session.add(integrante)
+    session.commit()
+    session.refresh(integrante)
+
+    response = client.delete(f"/teams/{team.id}/integrantes/{integrante.id}")
+    assert response.status_code == 200
+    content = response.json()
+    assert content["nombre"] == "Integrante 3"
+
+    response = client.get(f"/teams/{team.id}/integrantes/{integrante.id}")
+    assert response.status_code == 404
+
+
+def test_eliminar_equipo(client: TestClient, session: Session) -> None:
+    team = Team(nombre="Equipo 6", generacion=6)
+    session.add(team)
+    session.commit()
+    session.refresh(team)
+
+    response = client.delete(f"/teams/{team.id}")
+    assert response.status_code == 200
+    content = response.json()
+    assert content["nombre"] == team.nombre
+
+    response = client.get(f"/teams/{team.id}")
+    assert response.status_code == 404
+
+
+def test_eliminar_equipo_no_existente(client: TestClient) -> None:
+    response = client.delete("/teams/9999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Equipo no encontrado"}
 
 
-def test_get_team_by_id_invalid():
-    response = client.get("/teams/abc")
-    assert response.status_code == 400
-    assert response.json() == {"detail": "El id debe ser un numero entero"}
-
-
-
-def test_create_team_success(client: TestClient):
-    team_create = {
+def test_crear_equipo_con_integrantes(client: TestClient, session: Session) -> None:
+    data = {
+        "nombre": "Equipo 7",
         "generacion": 1,
-        "nombre": "Equipo 1",
         "integrantes": [
             {
-                "nombre": "Pikachu",
+                "nombre": "Integrante 4",
                 "id_pokemon": 1,
                 "id_naturaleza": 1,
-                "movimientos": [1]
-            }
-        ]
-    }
-
-    response = client.post("/teams/", json=team_create)
-    
-    assert response.status_code == 200
-    data = response.json()
-    assert data["nombre"] == team_create["nombre"]
-    assert len(data["integrantes"]) == 1
-
-def test_create_team_invalid_generation(client: TestClient):
-    team_data = {
-        "nombre": "Equipo A",
-        "generacion": 10,
-        "pokemones": [
-            {
-                "id": 1,
-                "nombre": "Pikachu",
-                "movimientos": [1],
-                "naturaleza_id": 1,
-                "stats": {},
+                "movimientos": [1, 2],
             }
         ],
     }
-
-    response = client.post("/teams/", json=team_data)
-    assert response.status_code == 404
-    assert response.json()["detail"] == "No se encontró la generacion"
-
-
-def test_create_team_invalid_pokemons(client: TestClient):
-    team_data = {"nombre": "Equipo A", "generacion": 1, "pokemones": []}
-
-    response = client.post("/teams/", json=team_data)
-    assert response.status_code == 400
-    assert (
-        response.json()["detail"]
-        == "Debe elegir al menos 1 pokemon y no mas de 6 pokemones"
-    )
+    response = client.post("/teams/", json=data)
+    assert response.status_code == 201
+    content = response.json()
+    assert content["nombre"] == "Equipo 7"
+    assert len(content["integrantes"]) == 1
+    assert content["integrantes"][0]["nombre"] == "Integrante 4"

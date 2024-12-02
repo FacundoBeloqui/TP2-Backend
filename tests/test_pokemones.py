@@ -1,12 +1,6 @@
 import pytest
 from fastapi.testclient import TestClient
 from main import app
-from db import lista_pokemones, lista_movimientos
-from routes.pokemones.pokemon import (
-    calcular_debilidades,
-    calcular_fortalezas,
-    obtener_movimientos_pokemon,
-)
 from sqlmodel import Session, SQLModel, create_engine, select
 from sqlmodel.pool import StaticPool
 from modelos import Pokemon

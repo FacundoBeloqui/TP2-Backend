@@ -1,10 +1,5 @@
 from modelos import Naturaleza, Pokemon, Movimiento
 
-from typing import List, Dict, Optional
-from sqlmodel import create_engine, Session
-from fastapi import Depends
-from typing import Annotated
-
 pokemon_por_id = {}
 with open("csv/pokemon.csv") as archivo_pokemon:
     for linea in archivo_pokemon:

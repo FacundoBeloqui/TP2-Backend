@@ -2,25 +2,20 @@ from fastapi import APIRouter, HTTPException, status
 from sqlmodel import select
 from database import SessionDep
 from fastapi import HTTPException, APIRouter
-from typing import List
 from modelos import (
     Naturaleza,
     Integrante,
     Team,
     Pokemon,
     Movimiento,
-    TeamBase,
     TeamPublicWithIntegrantes,
     TeamCreate,
     TeamPublic,
     IntegranteCreate,
     IntegrantePublicWithMovimientos,
     IntegranteUpdate,
-    IntegranteBase,
 )
-from db import generaciones_pokemon
 import routes.utils as utils
-from sqlalchemy.orm import selectinload, joinedload
 
 
 generacion = ""

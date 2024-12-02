@@ -1,6 +1,5 @@
 from fastapi import HTTPException, status
 from sqlmodel import select
-
 from database import SessionDep
 from modelos import Pokemon, Team
 

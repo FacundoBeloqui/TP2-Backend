@@ -6,16 +6,6 @@ from sqlmodel import select
 router = APIRouter()
 
 
-"""def buscar_movimiento(session: SessionDep, id: int):
-    movimiento = session.exec(select(Movimiento).where(Movimiento.id == id)).first()
-
-    if movimiento:
-        return movimiento
-    raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Movimiento not found"
-    )"""
-
-
 @router.get("/")
 def get_movimientos(session: SessionDep) -> list[Movimiento]:
     query = select(Movimiento)
