@@ -208,6 +208,79 @@ def update_integrante(
     return integrante
 
 
+@router.post("/{team_id}")
+def agregar_integrante(
+    team_id: int, integrante_data: IntegranteCreate, session: SessionDep
+):
+    team = session.exec(select(Team).where(Team.id == team_id)).first()
+    nombre_integrante = session.exec(
+        select(Integrante).where(
+            Integrante.nombre == integrante_data.nombre,
+            Integrante.id_equipo == team.id,
+        )
+    ).first()
+
+    if nombre_integrante:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Ya existe un integrante con el nombre {integrante_data.nombre} en el equipo.",
+        )
+
+    pokemon = session.exec(
+        select(Pokemon).where(Pokemon.id == integrante_data.id_pokemon)
+    ).first()
+    naturaleza = session.exec(
+        select(Naturaleza).where(Naturaleza.id == integrante_data.id_naturaleza)
+    ).first()
+
+    if not pokemon:
+        raise HTTPException(status_code=404, detail="Pokemon no encontrado.")
+    if team.generacion not in pokemon.generacion:
+        raise HTTPException(
+            status_code=400,
+            detail="El pokemon elegido no pertenece a la generacion elegida.",
+        )
+    if not naturaleza:
+        raise HTTPException(status_code=404, detail="Naturaleza no encontrada.")
+
+    integrante = Integrante(
+        nombre=integrante_data.nombre,
+        equipo=team,
+        pokemon=pokemon,
+        naturaleza=naturaleza,
+    )
+
+    session.add(integrante)
+    session.commit()
+    session.refresh(integrante)
+
+    if len(integrante_data.movimientos) < 1 or len(integrante_data.movimientos) > 4:
+        raise HTTPException(
+            status_code=400,
+            detail="El pokemon no tiene la cantidad de movimientos requerida.",
+        )
+
+    for movimiento_id in integrante_data.movimientos:
+        movimiento = session.exec(
+            select(Movimiento).where(Movimiento.id == movimiento_id)
+        ).first()
+        if not movimiento:
+            raise HTTPException(
+                status_code=404,
+                detail=f"Movimiento con id {movimiento_id} no encontrado.",
+            )
+        if movimiento.generacion > team.generacion:
+            raise HTTPException(
+                status_code=400,
+                detail="El movimiento elegido no pertenece a la generacion elegida.",
+            )
+        integrante.movimientos.append(movimiento)
+    session.commit()
+    team.integrantes.append(integrante)
+    session.commit()
+    return "Integrante creado exitosamente"
+
+
 @router.delete("/{team_id}/{integrante_id}")
 def eliminar_integrante(team_id: int, integrante_id: int, session: SessionDep):
     team = session.exec(select(Team).where(Team.id == team_id)).first()
