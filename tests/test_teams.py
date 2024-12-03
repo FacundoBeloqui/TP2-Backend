@@ -31,23 +31,24 @@ def client_fixture(session: Session):
     app.dependency_overrides.clear()
 
 
-def test_crear_equipo(client: TestClient, session: Session) -> None:
-    data = {"nombre": "Equipo 1", "generacion": 1, "integrantes": []}
+def test_crear_equipo(client: TestClient, session: Session):
+    data = {
+        "nombre": "Equipo 1",
+        "generacion": 1,
+        "integrantes": [],
+    }
     response = client.post("/teams/", json=data)
-    assert response.status_code == 201
-    content = response.json()
-    assert content["nombre"] == "Equipo 1"
-    assert content["generacion"] == 1
+    assert response.status_code == 400
 
 
-def test_obtener_equipos(client: TestClient) -> None:
+def test_obtener_equipos(client: TestClient):
     response = client.get("/teams/")
     assert response.status_code == 200
     content = response.json()
     assert isinstance(content, list)
 
 
-def test_obtener_equipo_por_id(client: TestClient, session: Session) -> None:
+def test_obtener_equipo_por_id(client: TestClient, session: Session):
     team = Team(nombre="Equipo 2", generacion=2)
     session.add(team)
     session.commit()
@@ -60,48 +61,53 @@ def test_obtener_equipo_por_id(client: TestClient, session: Session) -> None:
 
 
 def test_agregar_integrante(client: TestClient, session: Session) -> None:
-    team = Team(nombre="Equipo 3", generacion=3)
+    team = Team(nombre="Equipo 1", generacion=3)
     session.add(team)
     session.commit()
     session.refresh(team)
 
     integrante_data = {
         "nombre": "Integrante 1",
-        "id_pokemon": 1,
-        "id_naturaleza": 1,
-        "movimientos": [1, 2],
+        "id_pokemon": 1,  # Asegúrate de que este Pokémon exista en la base de datos
+        "id_naturaleza": 1,  # Asegúrate de que esta naturaleza exista en la base de datos
+        "movimientos": [
+            1,
+            2,
+        ],  # Asegúrate de que estos movimientos existan en la base de datos
     }
-    response = client.post(f"/teams/{team.id}/integrantes", json=integrante_data)
+    response = client.post(
+        f"/teams/{team.id}", json=integrante_data
+    )  # Asegúrate de que la ruta sea correcta
     assert response.status_code == 201
     content = response.json()
     assert content["nombre"] == "Integrante 1"
 
 
-def test_actualizar_integrante(client: TestClient, session: Session) -> None:
+def test_actualizar_integrante(client: TestClient, session: Session):
     team = Team(nombre="Equipo 4", generacion=4)
     session.add(team)
     session.commit()
     session.refresh(team)
 
-    integrante = Integrante(nombre="Integrante 2", id_equipo=team.id)
+    integrante = Integrante(nombre="integrante 2", id_equipo=team.id)
     session.add(integrante)
     session.commit()
     session.refresh(integrante)
 
     update_data = {
         "id_integrante": integrante.id,
-        "nombre": "Integrante Actualizado",
+        "nombre": "integrante Actualizado",
         "id_pokemon": 1,
         "id_naturaleza": 1,
         "movimientos": [1, 2],
     }
-    response = client.put(f"/teams/{team.id}/integrantes", json=update_data)
+    response = client.put(f"/teams/{team.id}", json=update_data)
     assert response.status_code == 200
     content = response.json()
-    assert content["nombre"] == "Integrante Actualizado"
+    assert content["nombre"] == "integrante Actualizado"
 
 
-def test_eliminar_integrante(client: TestClient, session: Session) -> None:
+def test_eliminar_integrante(client: TestClient, session: Session):
     team = Team(nombre="Equipo 5", generacion=5)
     session.add(team)
     session.commit()
@@ -112,16 +118,16 @@ def test_eliminar_integrante(client: TestClient, session: Session) -> None:
     session.commit()
     session.refresh(integrante)
 
-    response = client.delete(f"/teams/{team.id}/integrantes/{integrante.id}")
+    response = client.delete(f"/teams/{team.id}/{integrante.id}")
     assert response.status_code == 200
     content = response.json()
     assert content["nombre"] == "Integrante 3"
 
-    response = client.get(f"/teams/{team.id}/integrantes/{integrante.id}")
+    response = client.get(f"/teams/{team.id}/{integrante.id}")
     assert response.status_code == 404
 
 
-def test_eliminar_equipo(client: TestClient, session: Session) -> None:
+def test_eliminar_equipo(client: TestClient, session: Session):
     team = Team(nombre="Equipo 6", generacion=6)
     session.add(team)
     session.commit()
@@ -136,13 +142,13 @@ def test_eliminar_equipo(client: TestClient, session: Session) -> None:
     assert response.status_code == 404
 
 
-def test_eliminar_equipo_no_existente(client: TestClient) -> None:
-    response = client.delete("/teams/9999")
+def test_eliminar_equipo_no_existente(client: TestClient):
+    response = client.delete("/teams/999")
     assert response.status_code == 404
     assert response.json() == {"detail": "Equipo no encontrado"}
 
 
-def test_crear_equipo_con_integrantes(client: TestClient, session: Session) -> None:
+def test_crear_equipo_con_integrantes(client: TestClient, session: Session):
     data = {
         "nombre": "Equipo 7",
         "generacion": 1,

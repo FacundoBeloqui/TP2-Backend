@@ -10,7 +10,7 @@ def buscar_pokemon(session: SessionDep, id: int) -> Pokemon:
     if pokemon:
         return pokemon
     raise HTTPException(
-        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon not found"
+        status_code=status.HTTP_404_NOT_FOUND, detail="Pokemon no encontrado"
     )
 
 
@@ -20,4 +20,6 @@ def buscar_equipo(session: SessionDep, grupo_id: int) -> Team:
 
     if grupo:
         return grupo
-    raise HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Grupo not found")
+    raise HTTPException(
+        status_code=status.HTTP_404_NOT_FOUND, detail="Equipo no encontrado"
+    )
