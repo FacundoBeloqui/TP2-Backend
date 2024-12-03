@@ -4,14 +4,10 @@ from database import SessionDep
 from db import (
     debilidades_tipos,
     fortalezas_tipos,
-    lista_pokemones,
     movimientos_aprendibles_por_pokemon,
-    lista_naturalezas,
 )
 from fastapi import HTTPException, APIRouter
-from typing import List
 from modelos import Pokemon, PokemonPublic, PokemonPublicWithRelations, PokemonCreate
-import routes.utils as utils
 
 router = APIRouter()
 

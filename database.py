@@ -23,7 +23,6 @@ logger = logging.getLogger(__name__)
 
 def seed_naturaleza():
     with Session(engine) as session:
-        # Do no seed if there's data present in the DB
         if session.exec(select(Naturaleza)).first():
             logger.info("NOT loading seeds")
             return
@@ -39,7 +38,6 @@ def seed_naturaleza():
 
 def seed_pokemon():
     with Session(engine) as session:
-        # Do no seed if there's data present in the DB
         if session.exec(select(Pokemon)).first():
             logger.info("NOT loading seeds")
             return
@@ -55,7 +53,6 @@ def seed_pokemon():
 
 def seed_movimiento():
     with Session(engine) as session:
-        # Do no seed if there's data present in the DB
         if session.exec(select(Movimiento)).first():
             logger.info("NOT loading seeds")
             return
@@ -68,13 +65,13 @@ def seed_movimiento():
 
         logger.info("Seeds loaded on Db")
 
+
 def seed_equipo():
     with Session(engine) as session:
-        # Do no seed if there's data present in the DB
         if session.exec(select(Team)).first():
             logger.info("NOT loading seeds")
             return
-        
+
         logger.info("Loading seeds...")
 
         session.add_all(lista_equipos)
